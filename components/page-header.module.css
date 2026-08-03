@@ -1,0 +1,22 @@
+.header {
+  padding: var(--sp-8) 0;
+  background: linear-gradient(180deg, var(--shell) 0%, var(--bone) 100%);
+  border-bottom: 1px solid var(--border);
+}
+
+.title {
+  max-width: 18ch;
+  margin-bottom: var(--sp-4);
+}
+
+.lede {
+  max-width: 58ch;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  margin-top: var(--sp-6);
+}

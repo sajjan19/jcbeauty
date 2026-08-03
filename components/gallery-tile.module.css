@@ -1,0 +1,35 @@
+.tile {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 1;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--shell);
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.tile:hover .image {
+  transform: scale(1.03);
+}
+
+.caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: var(--sp-5) var(--sp-4) var(--sp-3);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--white);
+  background: linear-gradient(
+    180deg,
+    rgba(22, 19, 15, 0) 0%,
+    rgba(22, 19, 15, 0.72) 100%
+  );
+}

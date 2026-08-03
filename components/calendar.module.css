@@ -1,0 +1,136 @@
+.calendar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+
+.monthLabel {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--char);
+}
+
+.navBtn {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  line-height: 1;
+  background: transparent;
+  color: var(--char);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.navBtn:hover:not(:disabled) {
+  border-color: var(--taupe);
+  background: var(--shell);
+}
+
+.navBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-2);
+}
+
+.weekdays span {
+  text-align: center;
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--sp-1);
+  transition: opacity 0.15s ease;
+}
+
+.gridLoading {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.pad {
+  aspect-ratio: 1;
+}
+
+.day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--slate);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.day:disabled {
+  color: var(--sand);
+  cursor: not-allowed;
+}
+
+.dayFree {
+  color: var(--char);
+  border-color: var(--border);
+  background: var(--bone);
+  font-weight: 500;
+}
+
+.dayFree:hover {
+  border-color: var(--accent);
+  background: var(--shell);
+}
+
+.daySelected {
+  background: var(--char);
+  border-color: var(--char);
+  color: var(--white);
+  font-weight: 500;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: var(--sp-5) 0 0;
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--border);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.legendDot {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius);
+  background: var(--bone);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}

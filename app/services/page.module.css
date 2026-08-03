@@ -1,0 +1,127 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--sp-6);
+  align-items: start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6);
+  scroll-margin-top: 100px;
+}
+
+.rowPopular {
+  border-color: var(--taupe);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-3);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: 1.625rem;
+  color: var(--char);
+  margin: 0;
+}
+
+.flag {
+  background: var(--char);
+  color: var(--white);
+  font-size: 0.5625rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 3px var(--sp-3);
+  border-radius: var(--radius);
+}
+
+.summary {
+  color: var(--slate);
+  max-width: 62ch;
+  margin: 0 0 var(--sp-5);
+}
+
+.details {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.details li {
+  position: relative;
+  padding-left: var(--sp-5);
+  font-size: 0.9375rem;
+  color: var(--slate);
+}
+
+.details li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 10px;
+  height: 1px;
+  background: var(--taupe);
+}
+
+.aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sp-3);
+  text-align: right;
+  min-width: 160px;
+}
+
+.price {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.duration {
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+
+.note {
+  margin-top: var(--sp-7);
+}
+
+@media (max-width: 720px) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: var(--sp-5);
+  }
+
+  .aside {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+    text-align: left;
+    padding-top: var(--sp-4);
+    border-top: 1px solid var(--border);
+    order: 2;
+  }
+
+  .aside .btn {
+    width: auto;
+  }
+}

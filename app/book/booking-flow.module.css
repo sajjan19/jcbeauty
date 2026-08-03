@@ -1,0 +1,446 @@
+.wrap {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: var(--sp-7);
+  align-items: start;
+}
+
+/* ── Step rail ───────────────────────────── */
+
+.rail {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  position: sticky;
+  top: 100px;
+}
+
+.railItem {
+  display: block;
+}
+
+.railBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  width: 100%;
+  padding: var(--sp-3);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: left;
+  color: var(--stone);
+  transition: color 0.18s ease, background 0.18s ease;
+}
+
+.railBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.railBtn:hover:not(:disabled) {
+  background: var(--shell);
+}
+
+.railNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  font-size: 0.75rem;
+}
+
+.railLabel {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.railActive {
+  color: var(--char);
+}
+
+.railActive .railNum {
+  background: var(--char);
+  color: var(--white);
+  border-color: var(--char);
+}
+
+.railDone {
+  color: var(--accent);
+}
+
+/* ── Panel ───────────────────────────────── */
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-7);
+  min-height: 420px;
+}
+
+.stepTitle {
+  font-size: 1.875rem;
+  margin: 0 0 var(--sp-2);
+}
+
+.stepHint {
+  color: var(--text-muted);
+  margin: 0 0 var(--sp-6);
+}
+
+.stepNav {
+  margin-top: var(--sp-6);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--border);
+}
+
+/* ── Service picker ──────────────────────── */
+
+.serviceList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.serviceOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  width: 100%;
+  padding: var(--sp-5);
+  background: var(--bone);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.18s ease, background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.serviceOption:hover {
+  border-color: var(--taupe);
+  transform: translateY(-1px);
+}
+
+.serviceSelected {
+  border-color: var(--char);
+  background: var(--shell);
+}
+
+.serviceMain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.serviceName {
+  font-family: var(--font-display);
+  font-size: 1.1875rem;
+  color: var(--char);
+}
+
+.serviceSummary {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  max-width: 52ch;
+}
+
+.serviceMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.servicePrice {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.serviceDuration {
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+
+/* ── Slots ───────────────────────────────── */
+
+.slotGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: var(--sp-3);
+}
+
+.slot {
+  padding: var(--sp-4) var(--sp-3);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--char);
+  background: var(--bone);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.slot:hover {
+  border-color: var(--accent);
+  background: var(--shell);
+}
+
+.slotSelected {
+  background: var(--char);
+  border-color: var(--char);
+  color: var(--white);
+}
+
+/* ── Summary block ───────────────────────── */
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--sp-4);
+  padding: var(--sp-5);
+  background: var(--bone);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--sp-6);
+}
+
+.summary > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summaryLabel {
+  font-size: 0.625rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+
+.summaryValue {
+  font-size: 0.9375rem;
+  color: var(--char);
+}
+
+/* ── Form ────────────────────────────────── */
+
+.form {
+  margin-top: var(--sp-2);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-4);
+}
+
+.formNotice {
+  margin-bottom: var(--sp-5);
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+  font-size: 0.9375rem;
+  color: var(--slate);
+  cursor: pointer;
+}
+
+.check input {
+  margin-top: 0.3em;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--char);
+  flex-shrink: 0;
+}
+
+.policyBox {
+  background: var(--bone);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5);
+  margin-bottom: var(--sp-5);
+}
+
+.policyHead {
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin: 0 0 var(--sp-3);
+}
+
+.policyList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.policyList li {
+  position: relative;
+  padding-left: var(--sp-5);
+  font-size: 0.875rem;
+  color: var(--slate);
+}
+
+.policyList li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 8px;
+  height: 1px;
+  background: var(--taupe);
+}
+
+.policyLink {
+  font-size: 0.8125rem;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.policyLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.submitRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--border);
+}
+
+/* ── Confirmation ────────────────────────── */
+
+.confirmation {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.confirmTitle {
+  font-size: 2.25rem;
+  margin-bottom: var(--sp-4);
+}
+
+.confirmBody {
+  color: var(--slate);
+  margin-bottom: var(--sp-6);
+}
+
+.confirmCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6);
+  text-align: left;
+  margin-bottom: var(--sp-6);
+}
+
+.refRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding-bottom: var(--sp-4);
+  margin-bottom: var(--sp-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.refValue {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  color: var(--char);
+  letter-spacing: 0.06em;
+}
+
+.confirmActions {
+  display: flex;
+  gap: var(--sp-4);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .wrap {
+    grid-template-columns: 1fr;
+    gap: var(--sp-5);
+  }
+
+  .rail {
+    position: static;
+    flex-direction: row;
+    gap: var(--sp-2);
+    overflow-x: auto;
+  }
+
+  .railBtn {
+    flex-direction: column;
+    gap: var(--sp-2);
+    align-items: center;
+    text-align: center;
+    padding: var(--sp-3) var(--sp-2);
+  }
+
+  .railLabel {
+    font-size: 0.625rem;
+  }
+
+  .panel {
+    padding: var(--sp-5);
+  }
+}
+
+@media (max-width: 560px) {
+  .serviceOption {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-4);
+  }
+
+  .serviceMeta {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--sp-3);
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .submitRow {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .slotGrid {
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  }
+}
