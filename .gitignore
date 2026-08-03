@@ -45,3 +45,6 @@ next-env.d.ts
 
 # SQLite database — real client bookings, never commit
 /data
+
+# generated preview assets
+/preview

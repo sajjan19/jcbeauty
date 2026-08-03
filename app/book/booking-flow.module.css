@@ -380,6 +380,28 @@
   letter-spacing: 0.06em;
 }
 
+/* The card supplies the trailing space; the summary shouldn't add its own. */
+.confirmCard .summary {
+  margin-bottom: 0;
+}
+
+.calendarBlock {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6);
+  margin-bottom: var(--sp-6);
+}
+
+.calendarNote {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: var(--sp-4) 0 0;
+  max-width: 46ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .confirmActions {
   display: flex;
   gap: var(--sp-4);

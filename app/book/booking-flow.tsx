@@ -16,6 +16,7 @@ import {
   parseTime,
 } from "@/lib/time";
 import { Calendar } from "@/components/calendar";
+import { AddToCalendar } from "@/components/add-to-calendar";
 import {
   fetchMonthAvailability,
   fetchSlots,
@@ -467,6 +468,21 @@ function Confirmation({
           </div>
         )}
       </div>
+
+      {service && date && time && (
+        <div className={styles.calendarBlock}>
+          <AddToCalendar
+            service={service}
+            date={date}
+            time={time}
+            reference={reference}
+          />
+          <p className={styles.calendarNote}>
+            Saved as tentative with a reminder the day before. I&apos;ll email
+            you once it&apos;s confirmed.
+          </p>
+        </div>
+      )}
 
       <div className={styles.confirmActions}>
         <Link href="/info" className="btn btn-outline">
