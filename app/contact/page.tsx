@@ -36,60 +36,83 @@ export default function ContactPage() {
       <section className="section-sm">
         <div className="container">
           <div className={styles.grid}>
-            <div className={styles.cards}>
-              <a
-                href={business.instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.card}
-              >
-                <span className="eyebrow">Instagram</span>
-                <span className={styles.cardValue}>@{business.instagram}</span>
-                <span className={styles.cardNote}>
-                  Best for questions and shade advice
-                </span>
-              </a>
-
-              {hasEmail && (
-                <a href={`mailto:${business.email}`} className={styles.card}>
-                  <span className="eyebrow">Email</span>
-                  <span className={styles.cardValue}>{business.email}</span>
-                  <span className={styles.cardNote}>
-                    For anything that needs a paper trail
-                  </span>
-                </a>
-              )}
-
-              {business.phone && telHref && (
-                <a href={telHref} className={styles.card}>
-                  <span className="eyebrow">Phone</span>
-                  <span className={styles.cardValue}>{business.phone}</span>
-                  <span className={styles.cardNote}>
-                    Calls and texts during studio hours
-                  </span>
-                </a>
-              )}
-
-              {business.showAddress ? (
+            <div className={styles.column}>
+              <div className={styles.cards}>
                 <a
-                  href={mapsUrl()}
+                  href={business.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.card}
                 >
-                  <span className="eyebrow">Studio</span>
-                  <span className={styles.cardValue}>{business.street}</span>
+                  <span className="eyebrow">Instagram</span>
+                  <span className={styles.cardValue}>
+                    @{business.instagram}
+                  </span>
                   <span className={styles.cardNote}>
-                    {business.city} — view on map
+                    Best for questions and shade advice
                   </span>
                 </a>
-              ) : (
-                <div className={styles.card}>
-                  <span className="eyebrow">Studio</span>
-                  <span className={styles.cardValue}>{business.city}</span>
-                  <span className={styles.cardNote}>
-                    {business.addressNote}
-                  </span>
+
+                {hasEmail && (
+                  <a href={`mailto:${business.email}`} className={styles.card}>
+                    <span className="eyebrow">Email</span>
+                    <span className={styles.cardValue}>{business.email}</span>
+                    <span className={styles.cardNote}>
+                      For anything that needs a paper trail
+                    </span>
+                  </a>
+                )}
+
+                {business.phone && telHref && (
+                  <a href={telHref} className={styles.card}>
+                    <span className="eyebrow">Phone</span>
+                    <span className={styles.cardValue}>{business.phone}</span>
+                    <span className={styles.cardNote}>
+                      Calls and texts during studio hours
+                    </span>
+                  </a>
+                )}
+
+                {/* With the address public the map carries it, so there's no
+                    separate Studio card. Hidden addresses still need one. */}
+                {!business.showAddress && (
+                  <div className={styles.card}>
+                    <span className="eyebrow">Studio</span>
+                    <span className={styles.cardValue}>{business.city}</span>
+                    <span className={styles.cardNote}>
+                      {business.addressNote}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {business.showAddress && (
+                <div className={styles.mapBlock}>
+                  <div className={styles.mapHead}>
+                    <div>
+                      <span className="eyebrow">Studio</span>
+                      <p className={styles.mapTitle}>{business.street}</p>
+                      <p className={styles.mapSub}>{business.city}</p>
+                    </div>
+                    <a
+                      href={mapsUrl()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-outline btn-sm"
+                    >
+                      Directions
+                    </a>
+                  </div>
+
+                  <div className={styles.mapFrame}>
+                    <iframe
+                      src={mapEmbedUrl()}
+                      title={`Map showing ${business.address}`}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      allowFullScreen
+                    />
+                  </div>
                 </div>
               )}
             </div>
@@ -119,36 +142,6 @@ export default function ContactPage() {
               </p>
             </aside>
           </div>
-
-          {business.showAddress && (
-            <section className={styles.mapSection}>
-              <div className={styles.mapHead}>
-                <div>
-                  <p className="eyebrow">Finding me</p>
-                  <h2 className={styles.mapTitle}>{business.street}</h2>
-                  <p className={styles.mapSub}>{business.city}</p>
-                </div>
-                <a
-                  href={mapsUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline btn-sm"
-                >
-                  Get Directions
-                </a>
-              </div>
-
-              <div className={styles.mapFrame}>
-                <iframe
-                  src={mapEmbedUrl()}
-                  title={`Map showing ${business.address}`}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  allowFullScreen
-                />
-              </div>
-            </section>
-          )}
         </div>
       </section>
     </>

@@ -260,6 +260,19 @@ export type GalleryItem = {
 };
 
 export const gallery: GalleryItem[] = [
+  // Real client work. Everything below marked "placeholder" is still artwork
+  // waiting to be replaced the same way: drop the file into public/gallery/
+  // and swap the src, alt and caption here.
+  {
+    src: "/gallery/brow-shape-wax-before.jpeg",
+    alt: "A client's natural brow before shaping and waxing, with stray hairs and a soft, undefined edge",
+    caption: "Brow Shape & Wax — Before",
+  },
+  {
+    src: "/gallery/brow-shape-wax-after.jpeg",
+    alt: "The same client's brow after shaping and waxing, with a clean arch and a defined edge",
+    caption: "Brow Shape & Wax — After",
+  },
   {
     src: "/gallery/placeholder-1.svg",
     alt: "Placeholder artwork for a brow lamination before and after",
@@ -269,11 +282,6 @@ export const gallery: GalleryItem[] = [
     src: "/gallery/placeholder-2.svg",
     alt: "Placeholder artwork for a lamination and tint before and after",
     caption: "Lamination + Tint",
-  },
-  {
-    src: "/gallery/placeholder-3.svg",
-    alt: "Placeholder artwork for a brow shape and wax before and after",
-    caption: "Brow Shape & Wax",
   },
   {
     src: "/gallery/placeholder-4.svg",
