@@ -1,0 +1,39 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+#
+# Bookings live in a SQLite file, which only survives deploys and restarts if
+# it sits on a persistent disk. Disks require a PAID instance type on Render;
+# free instances have an ephemeral filesystem and would lose every booking on
+# each deploy. That is why `plan` below is not `free`.
+
+services:
+  - type: web
+    name: jc-beauty
+    runtime: node
+    plan: starter
+    region: oregon
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    healthCheckPath: /
+
+    # The database file lives here, on the mounted disk — not in the app
+    # directory, which is replaced on every deploy.
+    disk:
+      name: jc-beauty-data
+      mountPath: /var/data
+      sizeGB: 1
+
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+
+      - key: DATABASE_PATH
+        value: /var/data/jcbeauty.db
+
+      # Set this yourself in the Render dashboard — it is never stored in git.
+      - key: ADMIN_PASSWORD
+        sync: false
+
+      # Render generates a random value on first deploy. Changing it later
+      # signs everyone out of /admin.
+      - key: ADMIN_SECRET
+        generateValue: true
