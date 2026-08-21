@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { business, dayNames, hours } from "@/lib/content";
+import {
+  business,
+  dayNames,
+  hours,
+  mapEmbedUrl,
+  mapsUrl,
+  phoneHref,
+} from "@/lib/content";
 import { formatTime12, parseTime } from "@/lib/time";
 import { PageHeader } from "@/components/page-header";
 import styles from "./page.module.css";
@@ -11,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 const hasEmail = !business.email.startsWith("TODO");
+const telHref = phoneHref();
 
 export default function ContactPage() {
   return (
@@ -52,8 +60,8 @@ export default function ContactPage() {
                 </a>
               )}
 
-              {business.phone && (
-                <a href={`tel:${business.phone}`} className={styles.card}>
+              {business.phone && telHref && (
+                <a href={telHref} className={styles.card}>
                   <span className="eyebrow">Phone</span>
                   <span className={styles.cardValue}>{business.phone}</span>
                   <span className={styles.cardNote}>
@@ -62,15 +70,28 @@ export default function ContactPage() {
                 </a>
               )}
 
-              <div className={styles.card}>
-                <span className="eyebrow">Studio</span>
-                <span className={styles.cardValue}>{business.city}</span>
-                <span className={styles.cardNote}>
-                  {business.showAddress
-                    ? business.address
-                    : business.addressNote}
-                </span>
-              </div>
+              {business.showAddress ? (
+                <a
+                  href={mapsUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.card}
+                >
+                  <span className="eyebrow">Studio</span>
+                  <span className={styles.cardValue}>{business.street}</span>
+                  <span className={styles.cardNote}>
+                    {business.city} — view on map
+                  </span>
+                </a>
+              ) : (
+                <div className={styles.card}>
+                  <span className="eyebrow">Studio</span>
+                  <span className={styles.cardValue}>{business.city}</span>
+                  <span className={styles.cardNote}>
+                    {business.addressNote}
+                  </span>
+                </div>
+              )}
             </div>
 
             <aside className={styles.hoursPanel}>
@@ -98,6 +119,36 @@ export default function ContactPage() {
               </p>
             </aside>
           </div>
+
+          {business.showAddress && (
+            <section className={styles.mapSection}>
+              <div className={styles.mapHead}>
+                <div>
+                  <p className="eyebrow">Finding me</p>
+                  <h2 className={styles.mapTitle}>{business.street}</h2>
+                  <p className={styles.mapSub}>{business.city}</p>
+                </div>
+                <a
+                  href={mapsUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-outline btn-sm"
+                >
+                  Get Directions
+                </a>
+              </div>
+
+              <div className={styles.mapFrame}>
+                <iframe
+                  src={mapEmbedUrl()}
+                  title={`Map showing ${business.address}`}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              </div>
+            </section>
+          )}
         </div>
       </section>
     </>

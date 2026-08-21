@@ -28,7 +28,7 @@ export function SiteHeader() {
         <Link href="/" className={styles.brand} onClick={close}>
           <Logo size={44} />
           <span className={styles.brandText}>
-            <span className={styles.brandName}>{business.name}</span>
+            <span className={styles.brandName}>{business.artist}</span>
             <span className={styles.brandTag}>{business.tagline}</span>
           </span>
         </Link>

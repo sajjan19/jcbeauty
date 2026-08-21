@@ -19,10 +19,13 @@ export const business = {
     "Brow lamination, shaping, and tinting in Vancouver. Fuller, softer, more defined brows — tailored to your face.",
   city: "Vancouver, BC",
 
-  // TODO: confirm the real address, or leave as-is to keep it private
-  // until the client books. Set `showAddress` to true once confirmed.
-  showAddress: false,
-  address: "TODO: studio address",
+  /**
+   * Set `showAddress` back to false to hide the street address everywhere —
+   * the site then falls back to `addressNote` and only the city is public.
+   */
+  showAddress: true,
+  street: "8138 Prince Edward Street",
+  address: "8138 Prince Edward Street, Vancouver, BC",
   addressNote: "Exact address is sent once your appointment is confirmed.",
 
   instagram: "jcbeauty.van",
@@ -30,9 +33,32 @@ export const business = {
 
   // TODO: replace with her real business email
   email: "TODO@example.com",
-  // TODO: replace with her real booking phone, or set to null to hide it
-  phone: null as string | null,
+  /** Display format. The tel: link is derived from the digits. */
+  phone: "(778) 994-8138" as string | null,
 };
+
+/** A `tel:` href built from whatever digits are in `business.phone`. */
+export function phoneHref(): string | null {
+  if (!business.phone) return null;
+  const digits = business.phone.replace(/\D/g, "");
+  return `tel:+1${digits}`;
+}
+
+/** Opens the studio address in whichever maps app the device prefers. */
+export function mapsUrl(): string {
+  return `https://maps.google.com/?q=${encodeURIComponent(business.address)}`;
+}
+
+/**
+ * Embeddable map of the studio. Uses Google's keyless embed, so there's no
+ * API key to manage or bill. If it ever stops working, the official
+ * replacement is the Maps Embed API, which does need a (free) key.
+ */
+export function mapEmbedUrl(): string {
+  return `https://www.google.com/maps?q=${encodeURIComponent(
+    business.address,
+  )}&output=embed`;
+}
 
 /**
  * Services offered.
