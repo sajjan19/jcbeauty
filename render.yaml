@@ -1,35 +1,44 @@
 # Render Blueprint — https://render.com/docs/blueprint-spec
 #
-# Bookings live in a SQLite file, which only survives deploys and restarts if
-# it sits on a persistent disk. Disks require a PAID instance type on Render;
-# free instances have an ephemeral filesystem and would lose every booking on
-# each deploy. That is why `plan` below is not `free`.
+# ─────────────────────────────────────────────────────────────
+#  THIS IS A DEMO DEPLOY. BOOKINGS ARE NOT KEPT.
+#
+#  Free Render instances have an ephemeral filesystem and cannot attach a
+#  persistent disk, so the SQLite database is wiped on every deploy — and
+#  again whenever the instance restarts after spinning down. Free services
+#  spin down after 15 minutes without traffic.
+#
+#  Fine for showing the site to family. Do not send real clients here.
+#
+#  To make it real, switch to a paid instance and attach a disk:
+#
+#    plan: starter
+#    disk:
+#      name: jc-beauty-data
+#      mountPath: /var/data
+#      sizeGB: 1
+#    envVars:
+#      - key: DATABASE_PATH
+#        value: /var/data/jcbeauty.db
+#
+#  Nothing else needs to change — the app already reads DATABASE_PATH.
+# ─────────────────────────────────────────────────────────────
 
 services:
   - type: web
     name: jc-beauty
     runtime: node
-    plan: starter
+    plan: free
     region: oregon
     buildCommand: npm ci && npm run build
     startCommand: npm run start
     healthCheckPath: /
 
-    # The database file lives here, on the mounted disk — not in the app
-    # directory, which is replaced on every deploy.
-    disk:
-      name: jc-beauty-data
-      mountPath: /var/data
-      sizeGB: 1
-
     envVars:
       - key: NODE_VERSION
         value: "22"
 
-      - key: DATABASE_PATH
-        value: /var/data/jcbeauty.db
-
-      # Set this yourself in the Render dashboard — it is never stored in git.
+      # Set this yourself in the Render dashboard — never stored in git.
       - key: ADMIN_PASSWORD
         sync: false
 
