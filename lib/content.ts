@@ -253,10 +253,18 @@ export const policies = [
  * Drop files into /public/gallery/ and list them here.
  * TODO: replace these placeholders with her real before/after photos.
  */
+export type GalleryImage = { src: string; alt: string };
+
 export type GalleryItem = {
+  /** The tile image. For a pair, this is the combined side-by-side shot. */
   src: string;
   alt: string;
   caption: string;
+  /**
+   * When present, tapping the tile opens both shots full size with
+   * before/after labels.
+   */
+  pair?: { before: GalleryImage; after: GalleryImage };
 };
 
 export const gallery: GalleryItem[] = [
@@ -264,14 +272,20 @@ export const gallery: GalleryItem[] = [
   // waiting to be replaced the same way: drop the file into public/gallery/
   // and swap the src, alt and caption here.
   {
-    src: "/gallery/brow-shape-wax-before.jpeg",
-    alt: "A client's natural brow before shaping and waxing, with stray hairs and a soft, undefined edge",
-    caption: "Brow Shape & Wax — Before",
-  },
-  {
+    // The tile always shows the finished result; the before is revealed on tap.
     src: "/gallery/brow-shape-wax-after.jpeg",
-    alt: "The same client's brow after shaping and waxing, with a clean arch and a defined edge",
-    caption: "Brow Shape & Wax — After",
+    alt: "A client's brow after shaping and waxing, with a clean arch and a defined edge",
+    caption: "Brow Shape & Wax",
+    pair: {
+      before: {
+        src: "/gallery/brow-shape-wax-before.jpeg",
+        alt: "A client's natural brow before shaping and waxing, with stray hairs and a soft, undefined edge",
+      },
+      after: {
+        src: "/gallery/brow-shape-wax-after.jpeg",
+        alt: "The same client's brow after shaping and waxing, with a clean arch and a defined edge",
+      },
+    },
   },
   {
     src: "/gallery/placeholder-1.svg",

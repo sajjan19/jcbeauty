@@ -1,0 +1,154 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--sp-4);
+}
+
+.tileButton {
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  display: block;
+}
+
+.viewHint {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.5625rem;
+  letter-spacing: 0.18em;
+  color: var(--accent-soft);
+}
+
+/* ── Lightbox ────────────────────────────── */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(22, 19, 15, 0.86);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-5);
+  animation: fade 0.18s ease;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.dialog {
+  width: 100%;
+  max-width: 1000px;
+  max-height: 100%;
+  overflow-y: auto;
+  background: var(--bone);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5);
+}
+
+.dialogHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-4);
+}
+
+.dialogTitle {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  color: var(--char);
+  margin: 0;
+}
+
+.closeBtn {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9375rem;
+  line-height: 1;
+  color: var(--slate);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.closeBtn:hover {
+  background: var(--char);
+  border-color: var(--char);
+  color: var(--white);
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-4);
+}
+
+.pane {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.paneLabel {
+  align-self: flex-start;
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--stone);
+  border: 1px solid var(--sand);
+  border-radius: var(--radius);
+  padding: 3px var(--sp-3);
+  background: var(--surface);
+}
+
+.paneLabelAfter {
+  color: var(--accent);
+  border-color: var(--accent-soft);
+}
+
+.paneImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--shell);
+}
+
+.paneImg {
+  object-fit: cover;
+}
+
+@media (max-width: 760px) {
+  .pair {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sp-3);
+  }
+
+  .dialog {
+    padding: var(--sp-4);
+  }
+}

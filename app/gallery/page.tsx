@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { business, gallery } from "@/lib/content";
 import { PageHeader } from "@/components/page-header";
-import { GalleryTile } from "@/components/gallery-tile";
-import styles from "./page.module.css";
+import { GalleryGrid } from "@/components/gallery-grid";
 
 export const metadata: Metadata = {
   title: "Gallery",
@@ -34,11 +33,7 @@ export default function GalleryPage() {
 
       <section className="section-sm">
         <div className="container">
-          <div className={styles.grid}>
-            {gallery.map((item, i) => (
-              <GalleryTile key={item.src} item={item} priority={i < 3} />
-            ))}
-          </div>
+          <GalleryGrid items={gallery} />
         </div>
       </section>
     </>
