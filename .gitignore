@@ -48,3 +48,6 @@ next-env.d.ts
 
 # generated preview assets
 /preview
+
+# local dev server log
+dev.log

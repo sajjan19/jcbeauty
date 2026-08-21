@@ -9,12 +9,19 @@ Built with Next.js 16 (App Router) and SQLite.
 
 ## Running it locally
 
+This project is fully self-contained — its own git repo, dependencies, database
+and config. Nothing is shared with any other project on this machine.
+
 ```bash
+cd ~/Documents/Projects/jc-beauty
 npm install
 npm run dev
 ```
 
-Then open http://localhost:3000.
+Then open **http://localhost:3100**.
+
+> The port is pinned to 3100 rather than the Next.js default of 3000, so this
+> can run at the same time as anything else without a collision.
 
 On the very first run, copy the environment template and fill it in:
 
