@@ -21,6 +21,9 @@ export function SiteFooter() {
             <p className={styles.colTitle}>Explore</p>
             <ul className={styles.list}>
               <li>
+                <Link href="/about">About Japman</Link>
+              </li>
+              <li>
                 <Link href="/services">Services &amp; Prices</Link>
               </li>
               <li>

@@ -8,6 +8,7 @@ import { business } from "@/lib/content";
 import styles from "./site-header.module.css";
 
 const links = [
+  { href: "/about", label: "About" },
   { href: "/services", label: "Services" },
   { href: "/gallery", label: "Gallery" },
   { href: "/info", label: "Info" },

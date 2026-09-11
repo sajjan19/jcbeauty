@@ -315,6 +315,43 @@ export const gallery: GalleryItem[] = [
 ];
 
 /** Short answers shown on the info page. */
+/**
+ * The About page.
+ *
+ * TODO: the bio below is written only from facts already confirmed (her
+ * Instagram, services and studio). Replace it with Japman's own words.
+ */
+export type Certification = {
+  name: string;
+  /** The academy, brand or body that issued it. */
+  issuer: string;
+  year?: number;
+};
+
+export const about = {
+  headline: "Hi, I'm Japman.",
+  paragraphs: [
+    "I'm a brow artist working from a private studio in Vancouver, specialising in brow lamination, shaping, waxing and tinting.",
+    "Every appointment starts with mapping your brows to your features, so the shape we land on suits your face rather than a template.",
+    "I keep the studio small and book by appointment only, so you have my full attention from consultation to aftercare.",
+  ],
+  /**
+   * Put a portrait in public/about/ and set the path, e.g. "/about/japman.jpg".
+   * Leave null to show the logo instead.
+   */
+  portrait: null as string | null,
+  /**
+   * TODO: lorem ipsum placeholders — replace with her real certifications.
+   * Keep them obviously fake until then, so nothing reads as a real
+   * credential. Emptying the list hides the section entirely.
+   */
+  certifications: [
+    { name: "Lorem Ipsum Dolor", issuer: "Consectetur Academy", year: 2024 },
+    { name: "Sit Amet Certificate", issuer: "Adipiscing Institute", year: 2024 },
+    { name: "Elit Sed Do", issuer: "Eiusmod Tempor Studio", year: 2025 },
+  ] as Certification[],
+};
+
 export const faqs = [
   {
     q: "How long does brow lamination last?",
