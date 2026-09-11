@@ -9,7 +9,7 @@
 .portrait {
   position: relative;
   aspect-ratio: 4 / 5;
-  border-radius: 240px 240px var(--radius-lg) var(--radius-lg);
+  border-radius: var(--radius-lg);
   background: linear-gradient(165deg, var(--sand) 0%, var(--shell) 55%);
   border: 1px solid var(--border);
   display: flex;
