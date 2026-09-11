@@ -13,6 +13,7 @@ import {
   createClient,
   deleteClient,
   setBookingStatus,
+  updateClientNotes,
   unblockPeriod,
   type BookingStatus,
 } from "@/lib/bookings";
@@ -134,6 +135,19 @@ export async function addClient(
 
   revalidatePath("/admin");
   return { added: `${name} saved to contacts.` };
+}
+
+/** Free-text notes she keeps about a client. */
+export async function saveClientNotes(formData: FormData): Promise<void> {
+  await requireAdmin();
+
+  const id = Number(formData.get("id"));
+  const notes = String(formData.get("notes") ?? "").trim();
+  if (!Number.isInteger(id) || id <= 0) throw new Error("Invalid contact.");
+
+  updateClientNotes(id, notes || null);
+  revalidatePath(`/admin/clients/${id}`);
+  revalidatePath("/admin");
 }
 
 /** Removes the contact. Their past bookings are kept. */

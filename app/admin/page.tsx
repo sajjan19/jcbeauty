@@ -174,7 +174,14 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
                 {clients.map((client) => (
                   <article key={client.email} className={styles.contact}>
                     <div>
-                      <p className={styles.contactName}>{client.name}</p>
+                      <p className={styles.contactName}>
+                        <Link
+                          href={`/admin/clients/${client.id}`}
+                          className={styles.contactNameLink}
+                        >
+                          {client.name}
+                        </Link>
+                      </p>
                       <span className={styles.contactSince}>
                         {client.firstVisit
                           ? `Since ${formatDateShort(client.firstVisit)}`

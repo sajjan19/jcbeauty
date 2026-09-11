@@ -513,6 +513,31 @@ export function listClients(): Client[] {
     .all(studioNow().date) as Client[];
 }
 
+/**
+ * One contact with their stats. Filtered from the full list rather than
+ * given its own query: a single studio's address book is small enough that
+ * the extra SQL isn't worth maintaining.
+ */
+export function getClient(id: number): Client | undefined {
+  return listClients().find((c) => c.id === id);
+}
+
+/** Every appointment this person has had, newest first. */
+export function listBookingsForClient(email: string): Booking[] {
+  if (!email) return [];
+  return db
+    .prepare(
+      `SELECT * FROM bookings
+       WHERE LOWER(email) = LOWER(?)
+       ORDER BY date DESC, start_minutes DESC`,
+    )
+    .all(email) as Booking[];
+}
+
+export function updateClientNotes(id: number, notes: string | null): void {
+  db.prepare(`UPDATE clients SET notes = ? WHERE id = ?`).run(notes, id);
+}
+
 export function createClient(
   name: string,
   email: string,

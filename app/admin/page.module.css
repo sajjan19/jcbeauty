@@ -386,6 +386,144 @@
   margin-top: var(--sp-7);
 }
 
+.contactNameLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.contactNameLink:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* ── Contact detail page ─────────────────── */
+
+.backLink {
+  font-size: 0.8125rem;
+  margin-bottom: var(--sp-4);
+}
+
+.backLink a {
+  color: var(--stone);
+  text-decoration: none;
+}
+
+.backLink a:hover {
+  color: var(--char);
+}
+
+.aboutGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--sp-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5);
+}
+
+.detailRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detailLabel {
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+
+.detailValue {
+  font-size: 0.9375rem;
+  color: var(--char);
+  word-break: break-word;
+}
+
+.detailValue a {
+  color: var(--char);
+  text-decoration: none;
+}
+
+.detailValue a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.notesForm {
+  margin-top: var(--sp-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5);
+}
+
+.historyList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.historyRow {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: var(--sp-4);
+  align-items: start;
+  padding: var(--sp-4) 0;
+  border-top: 1px solid var(--border);
+}
+
+.historyRow:first-child {
+  border-top: 0;
+}
+
+.historyDate {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  color: var(--char);
+}
+
+.historyTime {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--accent);
+}
+
+.historyService {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.9375rem;
+  color: var(--char);
+}
+
+.historyMeta {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.historyNotes {
+  font-size: 0.875rem;
+  font-style: italic;
+  color: var(--slate);
+  margin-top: var(--sp-2);
+  padding-left: var(--sp-3);
+  border-left: 2px solid var(--sand);
+}
+
+@media (max-width: 640px) {
+  .historyRow {
+    grid-template-columns: 1fr;
+  }
+}
+
 .contact {
   display: grid;
   grid-template-columns: 1.2fr 1.4fr auto auto;
