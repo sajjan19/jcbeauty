@@ -355,6 +355,8 @@ export function createBooking(
       .prepare(`SELECT * FROM bookings WHERE id = ?`)
       .get(info.lastInsertRowid) as Booking;
 
+    rememberClient(input.name, input.email, input.phone);
+
     return { ok: true, booking };
   });
 
@@ -429,6 +431,8 @@ export function createBookingAsAdmin(input: {
         new Date().toISOString(),
       );
 
+    rememberClient(input.name, input.email, input.phone);
+
     return {
       ok: true,
       booking: db
@@ -468,35 +472,87 @@ export function unblockPeriod(id: number): void {
  * between visits. Someone who books under two different emails shows up twice.
  */
 export type Client = {
+  id: number;
   name: string;
   email: string;
   phone: string;
+  notes: string | null;
   bookings: number;
   upcoming: number;
-  firstVisit: string;
-  lastVisit: string;
+  /** Null until they've actually booked something. */
+  firstVisit: string | null;
+  lastVisit: string | null;
   /** Total of non-cancelled bookings. Booked value, not money received. */
   value: number;
 };
 
+/** The address book, with each person's booking history joined on. */
 export function listClients(): Client[] {
   return db
     .prepare(
       `SELECT
-         MAX(client_name) AS name,
-         MAX(email)       AS email,
-         MAX(phone)       AS phone,
-         COUNT(*)         AS bookings,
-         MIN(date)        AS firstVisit,
-         MAX(date)        AS lastVisit,
-         SUM(CASE WHEN status != 'cancelled' THEN price ELSE 0 END) AS value,
-         SUM(CASE WHEN date >= ? AND status IN ('pending','confirmed')
-                  THEN 1 ELSE 0 END) AS upcoming
-       FROM bookings
-       GROUP BY LOWER(email)
-       ORDER BY name COLLATE NOCASE`,
+         c.id, c.name, c.email, c.phone, c.notes,
+         COALESCE(b.bookings, 0) AS bookings,
+         COALESCE(b.upcoming, 0) AS upcoming,
+         b.firstVisit, b.lastVisit,
+         COALESCE(b.value, 0) AS value
+       FROM clients c
+       LEFT JOIN (
+         SELECT LOWER(email) AS key,
+                COUNT(*)  AS bookings,
+                MIN(date) AS firstVisit,
+                MAX(date) AS lastVisit,
+                SUM(CASE WHEN status != 'cancelled' THEN price ELSE 0 END) AS value,
+                SUM(CASE WHEN date >= ? AND status IN ('pending','confirmed')
+                         THEN 1 ELSE 0 END) AS upcoming
+         FROM bookings
+         GROUP BY LOWER(email)
+       ) b ON b.key = LOWER(c.email)
+       ORDER BY c.name COLLATE NOCASE`,
     )
     .all(studioNow().date) as Client[];
+}
+
+export function createClient(
+  name: string,
+  email: string,
+  phone: string,
+  notes: string | null,
+): { ok: true } | { ok: false; error: string } {
+  if (email) {
+    const existing = db
+      .prepare(`SELECT 1 FROM clients WHERE LOWER(email) = LOWER(?)`)
+      .get(email);
+    if (existing) {
+      return { ok: false, error: "Someone with that email is already saved." };
+    }
+  }
+
+  db.prepare(
+    `INSERT INTO clients (name, email, phone, notes, created_at)
+     VALUES (?, ?, ?, ?, ?)`,
+  ).run(name, email, phone, notes, new Date().toISOString());
+
+  return { ok: true };
+}
+
+/** Removes the contact only. Their past bookings are left untouched. */
+export function deleteClient(id: number): void {
+  db.prepare(`DELETE FROM clients WHERE id = ?`).run(id);
+}
+
+/**
+ * Keeps the address book in step with bookings, so anyone who books through
+ * the website turns up in Contacts without her adding them by hand.
+ */
+function rememberClient(name: string, email: string, phone: string): void {
+  if (!email) return;
+  db.prepare(
+    `INSERT INTO clients (name, email, phone, created_at)
+     VALUES (?, ?, ?, ?)
+     ON CONFLICT (LOWER(email)) WHERE email <> ''
+     DO UPDATE SET name = excluded.name, phone = excluded.phone`,
+  ).run(name, email, phone, new Date().toISOString());
 }
 
 /** Counts for the admin dashboard header. */

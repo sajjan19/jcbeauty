@@ -10,6 +10,8 @@ import {
 import {
   blockPeriod,
   createBookingAsAdmin,
+  createClient,
+  deleteClient,
   setBookingStatus,
   unblockPeriod,
   type BookingStatus,
@@ -107,6 +109,42 @@ export async function addBooking(
 
   revalidatePath("/admin");
   return { added: `${name} booked in for ${date} at ${time}.` };
+}
+
+export type AddClientState = { error?: string; added?: string };
+
+export async function addClient(
+  _prev: AddClientState,
+  formData: FormData,
+): Promise<AddClientState> {
+  await requireAdmin();
+
+  const name = String(formData.get("name") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+  const phone = String(formData.get("phone") ?? "").trim();
+  const notes = String(formData.get("notes") ?? "").trim();
+
+  if (!name) return { error: "Add a name." };
+  if (!email && !phone) {
+    return { error: "Add an email or a phone number so you can reach them." };
+  }
+
+  const result = createClient(name, email, phone, notes || null);
+  if (!result.ok) return { error: result.error };
+
+  revalidatePath("/admin");
+  return { added: `${name} saved to contacts.` };
+}
+
+/** Removes the contact. Their past bookings are kept. */
+export async function removeClient(formData: FormData): Promise<void> {
+  await requireAdmin();
+
+  const id = Number(formData.get("id"));
+  if (!Number.isInteger(id) || id <= 0) throw new Error("Invalid contact.");
+
+  deleteClient(id);
+  revalidatePath("/admin");
 }
 
 /** Blocks either a whole day or a window within one. */

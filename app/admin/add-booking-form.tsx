@@ -24,18 +24,33 @@ export function AddBookingForm({
     {},
   );
 
-  // Controlled so picking a past client can fill them in.
+  // Controlled so a suggestion can fill all three at once.
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [picked, setPicked] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
-  function choose(value: string) {
-    setPicked(value);
-    const client = clients.find((c) => c.email === value);
-    setName(client ? client.name : "");
-    setEmail(client ? client.email : "");
-    setPhone(client ? client.phone : "");
+  // Match on name, phone or email, so typing a number finds them too.
+  const query = name.trim().toLowerCase();
+  const digits = query.replace(/\D/g, "");
+  const matches =
+    query.length < 2
+      ? []
+      : clients
+          .filter((c) => {
+            const byName = c.name.toLowerCase().includes(query);
+            const byEmail = c.email.toLowerCase().includes(query);
+            const byPhone =
+              digits.length >= 2 && c.phone.replace(/\D/g, "").includes(digits);
+            return byName || byEmail || byPhone;
+          })
+          .slice(0, 6);
+
+  function pick(client: KnownClient) {
+    setName(client.name);
+    setEmail(client.email);
+    setPhone(client.phone);
+    setShowSuggestions(false);
   }
 
   return (
@@ -51,38 +66,46 @@ export function AddBookingForm({
         </div>
       )}
 
-      {clients.length > 0 && (
-        <label className={`field ${styles.clientPicker}`}>
-          <span className="label">Returning client</span>
-          <select
-            className="select"
-            value={picked}
-            onChange={(e) => choose(e.target.value)}
-          >
-            <option value="">Someone new</option>
-            {clients.map((c) => (
-              <option key={c.email} value={c.email}>
-                {c.name} ({c.phone || c.email})
-              </option>
-            ))}
-          </select>
-          <span className="hint">
-            Picking someone fills in their details below.
-          </span>
-        </label>
-      )}
-
       <div className={styles.addGrid}>
-        <label className="field">
-          <span className="label">Client name</span>
+        <label className={`field ${styles.suggestField}`}>
+          <span className="label">Client name or number</span>
           <input
             className="input"
             name="name"
             required
             maxLength={100}
+            autoComplete="off"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              setShowSuggestions(true);
+            }}
+            onFocus={() => setShowSuggestions(true)}
+            // Delayed so a click on a suggestion registers first.
+            onBlur={() => window.setTimeout(() => setShowSuggestions(false), 150)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setShowSuggestions(false);
+            }}
           />
+          {showSuggestions && matches.length > 0 && (
+            <ul className={styles.suggestList}>
+              {matches.map((client) => (
+                <li key={client.email || client.phone}>
+                  <button
+                    type="button"
+                    className={styles.suggestItem}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => pick(client)}
+                  >
+                    <span className={styles.suggestName}>{client.name}</span>
+                    <span className={styles.suggestMeta}>
+                      {[client.phone, client.email].filter(Boolean).join(" · ")}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </label>
 
         <label className="field">

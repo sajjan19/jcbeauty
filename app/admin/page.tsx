@@ -19,10 +19,12 @@ import {
 import { LoginForm } from "./login-form";
 import { AdminCalendar } from "./admin-calendar";
 import { AddBookingForm } from "./add-booking-form";
+import { AddClientForm } from "./add-client-form";
 import {
   addBlockedTime,
   logout,
   removeBlockedTime,
+  removeClient,
   updateBookingStatus,
 } from "./actions";
 import styles from "./page.module.css";
@@ -147,8 +149,16 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
         {tab === "contacts" && (
           <section className={styles.section}>
             <p className={styles.sectionHint}>
-              Everyone who has booked, grouped by email address.
+              Your address book. Anyone who books through the website is added
+              automatically, and you can save someone here before they book.
+              Removing a contact keeps their past appointments.
             </p>
+
+            <AddClientForm />
+
+            <h2 className={`${styles.sectionTitle} ${styles.contactsHeading}`}>
+              Saved contacts
+            </h2>
             {clients.length === 0 ? (
               <p className="muted">No clients yet.</p>
             ) : (
@@ -158,7 +168,9 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
                     <div>
                       <p className={styles.contactName}>{client.name}</p>
                       <span className={styles.contactSince}>
-                        Since {formatDateShort(client.firstVisit)}
+                        {client.firstVisit
+                          ? `Since ${formatDateShort(client.firstVisit)}`
+                          : "No bookings yet"}
                       </span>
                     </div>
                     <div className={styles.contactLinks}>
@@ -184,6 +196,18 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
                         </span>
                         <span className={styles.contactStatLabel}>Booked</span>
                       </div>
+                    </div>
+                    <div className={styles.contactActions}>
+                      <form action={removeClient}>
+                        <input type="hidden" name="id" value={client.id} />
+                        <button
+                          type="submit"
+                          className="btn btn-ghost btn-sm"
+                          aria-label={`Remove ${client.name} from contacts`}
+                        >
+                          Remove
+                        </button>
+                      </form>
                     </div>
                   </article>
                 ))}

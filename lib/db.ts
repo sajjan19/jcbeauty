@@ -65,7 +65,37 @@ function connect(): Database.Database {
 
     CREATE INDEX IF NOT EXISTS idx_blocked_periods_date
       ON blocked_periods (date);
+
+    -- Her address book. Kept separate from bookings so a client can be added
+    -- before they've booked, and removed without erasing their history.
+    CREATE TABLE IF NOT EXISTS clients (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      name       TEXT NOT NULL,
+      email      TEXT NOT NULL DEFAULT '',
+      phone      TEXT NOT NULL DEFAULT '',
+      notes      TEXT,
+      created_at TEXT NOT NULL
+    );
+
+    -- Partial, so several contacts without an email don't collide.
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_clients_email
+      ON clients (LOWER(email)) WHERE email <> '';
   `);
+
+  // First run after this table appeared: seed it from whoever has booked.
+  const clientCount = db
+    .prepare(`SELECT COUNT(*) AS n FROM clients`)
+    .get() as { n: number };
+
+  if (clientCount.n === 0) {
+    db.exec(`
+      INSERT INTO clients (name, email, phone, created_at)
+        SELECT MAX(client_name), MAX(email), MAX(phone), MIN(created_at)
+        FROM bookings
+        WHERE email <> ''
+        GROUP BY LOWER(email);
+    `);
+  }
 
   // Carry over any whole-day blocks from the original table, then retire it.
   const legacy = db

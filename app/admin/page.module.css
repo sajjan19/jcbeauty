@@ -251,6 +251,64 @@
   padding: var(--sp-5);
 }
 
+/* ── Name type-ahead ─────────────────────── */
+
+.suggestField {
+  position: relative;
+}
+
+.suggestList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  margin: 2px 0 0;
+  padding: var(--sp-1);
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.suggestItem {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  width: 100%;
+  padding: var(--sp-2) var(--sp-3);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.suggestItem:hover {
+  background: var(--shell);
+}
+
+.suggestName {
+  font-size: 0.9375rem;
+  color: var(--char);
+}
+
+.suggestMeta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ── Contact actions ─────────────────────── */
+
+.contactActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .clientPicker {
   max-width: 420px;
   padding-bottom: var(--sp-4);
@@ -313,9 +371,13 @@
   gap: var(--sp-3);
 }
 
+.contactsHeading {
+  margin-top: var(--sp-7);
+}
+
 .contact {
   display: grid;
-  grid-template-columns: 1.2fr 1.4fr auto;
+  grid-template-columns: 1.2fr 1.4fr auto auto;
   gap: var(--sp-5);
   align-items: center;
   background: var(--surface);
