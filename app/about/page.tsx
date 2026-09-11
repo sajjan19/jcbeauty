@@ -8,7 +8,7 @@ import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: `About ${business.artist}`,
-  description: `Meet ${business.artist}, a brow artist in ${business.city} specialising in brow lamination, shaping, waxing and tinting.`,
+  description: `Meet ${business.artist}, a brow and lash artist in ${business.city} specialising in brow lamination, shaping, waxing and tinting.`,
 };
 
 export default function AboutPage() {

@@ -14,7 +14,7 @@ import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: `Get in touch with ${business.artist}, a brow artist in ${business.city}.`,
+  description: `Get in touch with ${business.artist}, a brow and lash artist in ${business.city}.`,
 };
 
 const hasEmail = !business.email.startsWith("TODO");

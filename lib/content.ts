@@ -13,7 +13,7 @@
 export const business = {
   name: "JC Beauty",
   artist: "Japman Chera",
-  tagline: "Vancouver Brow Artist",
+  tagline: "Vancouver Brow and Lash Artist",
   /** Shown in the hero. One or two sentences. */
   intro:
     "Brow lamination, shaping and tinting in Vancouver. Fuller, softer, more defined brows, tailored to your face.",
@@ -348,7 +348,7 @@ export const home = {
 export const about = {
   headline: "Hi, I'm Japman.",
   paragraphs: [
-    "I'm a brow artist working from a private studio in Vancouver, specialising in brow lamination, shaping, waxing and tinting.",
+    "I'm a brow and lash artist working from a private studio in Vancouver, specialising in brow lamination, shaping, waxing and tinting.",
     "Every appointment starts with mapping your brows to your features, so the shape we land on suits your face rather than a template.",
     "I keep the studio small and book by appointment only, so you have my full attention from consultation to aftercare.",
     "Outside the studio, I love technology and travelling. Discovering new tools at home and new beauty traditions abroad keeps inspiring the way I work.",
