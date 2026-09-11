@@ -15,9 +15,12 @@ export type KnownClient = { name: string; email: string; phone: string };
 export function AddBookingForm({
   today,
   clients,
+  prefill,
 }: {
   today: string;
   clients: KnownClient[];
+  /** Set when arriving from a contact's Book button. */
+  prefill?: KnownClient | null;
 }) {
   const [state, action, pending] = useActionState<AddBookingState, FormData>(
     addBooking,
@@ -25,9 +28,9 @@ export function AddBookingForm({
   );
 
   // Controlled so a suggestion can fill all three at once.
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [name, setName] = useState(prefill?.name ?? "");
+  const [email, setEmail] = useState(prefill?.email ?? "");
+  const [phone, setPhone] = useState(prefill?.phone ?? "");
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   // Match on name, phone or email, so typing a number finds them too.

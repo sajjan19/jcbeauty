@@ -60,8 +60,16 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
   const blocked = listBlockedPeriods(today);
   // The calendar can be paged back through past months, so it gets everything.
   const allBookings = listBookings({});
-  // Needed by both the contacts tab and the manual booking form's client picker.
+  // Needed by both the contacts tab and the manual booking form's type-ahead.
   const clients = listClients();
+
+  // Set when arriving from a contact's Book button.
+  const clientParam = Array.isArray(params.client)
+    ? params.client[0]
+    : params.client;
+  const prefill = clientParam
+    ? (clients.find((c) => String(c.id) === clientParam) ?? null)
+    : null;
 
   return (
     <div className={styles.wrap}>
@@ -198,11 +206,17 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
                       </div>
                     </div>
                     <div className={styles.contactActions}>
+                      <Link
+                        href={`/admin?client=${client.id}#add-appointment`}
+                        className="btn btn-outline btn-sm"
+                      >
+                        Book
+                      </Link>
                       <form action={removeClient}>
                         <input type="hidden" name="id" value={client.id} />
                         <button
                           type="submit"
-                          className="btn btn-ghost btn-sm"
+                          className={`btn btn-ghost btn-sm ${styles.removeBtn}`}
                           aria-label={`Remove ${client.name} from contacts`}
                         >
                           Remove
@@ -225,15 +239,28 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
               nowMinutes={studioNow().minutes}
             />
 
-            <section className={styles.section}>
+            <section className={styles.section} id="add-appointment">
               <h2 className={styles.sectionTitle}>Add an appointment</h2>
               <p className={styles.sectionHint}>
                 For bookings taken by DM, phone or in person. Any date and time
                 is allowed, as long as it doesn&apos;t overlap something already
-                in the book.
+                in the book. Start typing a name or number to pull up someone
+                who has booked before.
               </p>
               <AddBookingForm
+                // Remounts when a different contact is picked, so their
+                // details actually replace what's in the fields.
+                key={prefill ? `client-${prefill.id}` : "new"}
                 today={today}
+                prefill={
+                  prefill
+                    ? {
+                        name: prefill.name,
+                        email: prefill.email,
+                        phone: prefill.phone,
+                      }
+                    : null
+                }
                 clients={clients.map((c) => ({
                   name: c.name,
                   email: c.email,

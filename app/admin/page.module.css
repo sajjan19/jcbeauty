@@ -306,7 +306,18 @@
 
 .contactActions {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  gap: var(--sp-2);
+}
+
+.removeBtn {
+  color: var(--danger);
+}
+
+.removeBtn:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
 }
 
 .clientPicker {
