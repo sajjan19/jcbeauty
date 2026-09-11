@@ -146,7 +146,6 @@ export async function saveClientNotes(formData: FormData): Promise<void> {
   if (!Number.isInteger(id) || id <= 0) throw new Error("Invalid contact.");
 
   updateClientNotes(id, notes || null);
-  revalidatePath(`/admin/clients/${id}`);
   revalidatePath("/admin");
 }
 

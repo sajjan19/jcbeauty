@@ -5,6 +5,7 @@ import {
   getStats,
   listBlockedPeriods,
   listBookings,
+  listBookingsForClient,
   listClients,
   type Booking,
 } from "@/lib/bookings";
@@ -20,11 +21,11 @@ import { LoginForm } from "./login-form";
 import { AdminCalendar } from "./admin-calendar";
 import { AddBookingForm } from "./add-booking-form";
 import { AddClientForm } from "./add-client-form";
+import { ContactsList } from "./contacts-list";
 import {
   addBlockedTime,
   logout,
   removeBlockedTime,
-  removeClient,
   updateBookingStatus,
 } from "./actions";
 import styles from "./page.module.css";
@@ -70,6 +71,13 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
   const prefill = clientParam
     ? (clients.find((c) => String(c.id) === clientParam) ?? null)
     : null;
+
+  // The pop-up shows each contact's appointments, so they travel with the
+  // list. Only built for the tab that needs them.
+  const contactsWithHistory =
+    tab === "contacts"
+      ? clients.map((c) => ({ ...c, history: listBookingsForClient(c.email) }))
+      : [];
 
   return (
     <div className={styles.wrap}>
@@ -167,73 +175,7 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
             <h2 className={`${styles.sectionTitle} ${styles.contactsHeading}`}>
               Saved contacts
             </h2>
-            {clients.length === 0 ? (
-              <p className="muted">No clients yet.</p>
-            ) : (
-              <div className={styles.contactList}>
-                {clients.map((client) => (
-                  <article key={client.email} className={styles.contact}>
-                    <div>
-                      <p className={styles.contactName}>
-                        <Link
-                          href={`/admin/clients/${client.id}`}
-                          className={styles.contactNameLink}
-                        >
-                          {client.name}
-                        </Link>
-                      </p>
-                      <span className={styles.contactSince}>
-                        {client.firstVisit
-                          ? `Since ${formatDateShort(client.firstVisit)}`
-                          : "No bookings yet"}
-                      </span>
-                    </div>
-                    <div className={styles.contactLinks}>
-                      <a href={`mailto:${client.email}`}>{client.email}</a>
-                      <a href={`tel:${client.phone}`}>{client.phone}</a>
-                    </div>
-                    <div className={styles.contactStats}>
-                      <div className={styles.contactStat}>
-                        <span className={styles.contactStatValue}>
-                          {client.bookings}
-                        </span>
-                        <span className={styles.contactStatLabel}>Visits</span>
-                      </div>
-                      <div className={styles.contactStat}>
-                        <span className={styles.contactStatValue}>
-                          {client.upcoming}
-                        </span>
-                        <span className={styles.contactStatLabel}>Upcoming</span>
-                      </div>
-                      <div className={styles.contactStat}>
-                        <span className={styles.contactStatValue}>
-                          ${client.value}
-                        </span>
-                        <span className={styles.contactStatLabel}>Booked</span>
-                      </div>
-                    </div>
-                    <div className={styles.contactActions}>
-                      <Link
-                        href={`/admin?client=${client.id}#add-appointment`}
-                        className="btn btn-outline btn-sm"
-                      >
-                        Book
-                      </Link>
-                      <form action={removeClient}>
-                        <input type="hidden" name="id" value={client.id} />
-                        <button
-                          type="submit"
-                          className={`btn btn-ghost btn-sm ${styles.removeBtn}`}
-                          aria-label={`Remove ${client.name} from contacts`}
-                        >
-                          Remove
-                        </button>
-                      </form>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
+            <ContactsList contacts={contactsWithHistory} today={today} />
           </section>
         )}
 
