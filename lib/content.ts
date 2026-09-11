@@ -339,8 +339,10 @@ export type Certification = {
  * Japman, her studio and her work to people deciding whether to book.
  */
 export const home = {
-  photo: null as string | null,
-  photoAlt: "",
+  // NOTE: this hero image is AI-generated, not a photograph of Japman or
+  // her studio. Swap in a real photo when one is available.
+  photo: "/home/hero.jpg" as string | null,
+  photoAlt: "Brow threading in progress at the JC Beauty studio",
 };
 
 export const about = {
@@ -355,7 +357,7 @@ export const about = {
    * Put a portrait in public/about/ and set the path, e.g. "/about/japman.jpg".
    * Leave null to show the logo instead.
    */
-  portrait: null as string | null,
+  portrait: "/about/japman.jpg" as string | null,
   /**
    * TODO: lorem ipsum placeholders — replace with her real certifications.
    * Keep them obviously fake until then, so nothing reads as a real
