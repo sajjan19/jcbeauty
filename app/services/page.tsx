@@ -16,7 +16,7 @@ export default function ServicesPage() {
     <>
       <PageHeader
         eyebrow="Services"
-        title="Brow services & price list."
+        title="Services & price list."
         lede="Every appointment includes a consultation and mapping to your facial proportions. Not sure which to pick? Message me and I'll help you choose."
       >
         <Link href="/book" className="btn">
