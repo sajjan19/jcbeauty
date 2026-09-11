@@ -16,7 +16,7 @@ export const business = {
   tagline: "Vancouver Brow and Lash Artist",
   /** Shown in the hero. One or two sentences. */
   intro:
-    "Brow lamination, shaping and tinting in Vancouver. Fuller, softer, more defined brows, tailored to your face.",
+    "Brow lamination, shaping, tinting and lash lifts in Vancouver. Fuller, softer, more defined brows, tailored to your face.",
   city: "Vancouver, BC",
 
   /**
@@ -148,6 +148,23 @@ export const services: Service[] = [
       "Results typically last 6 to 8 weeks",
     ],
     popular: true,
+  },
+  {
+    slug: "lash-lift",
+    name: "Lash Lift",
+    // TODO: PLACEHOLDER price and length, both invented. Confirm with Japman
+    // before quoting anyone. The length matters most, since it decides how
+    // much time each booking blocks off in her calendar.
+    price: 75,
+    durationMinutes: 60,
+    summary:
+      "A lift and set for your natural lashes, curling them upward so your eyes look more open. No extensions involved.",
+    details: [
+      "Works with your own lashes",
+      "No extensions and no daily upkeep",
+      "Results typically last 6 to 8 weeks",
+      "Keep lashes dry for 24 hours afterwards",
+    ],
   },
 ];
 
@@ -348,7 +365,7 @@ export const home = {
 export const about = {
   headline: "Hi, I'm Japman.",
   paragraphs: [
-    "I'm a brow and lash artist working from a private studio in Vancouver, specialising in brow lamination, shaping, waxing and tinting.",
+    "I'm a brow and lash artist working from a private studio in Vancouver, specialising in brow lamination, shaping, waxing, tinting and lash lifts.",
     "Every appointment starts with mapping your brows to your features, so the shape we land on suits your face rather than a template.",
     "I keep the studio small and book by appointment only, so you have my full attention from consultation to aftercare.",
     "Outside the studio, I love technology and travelling. Discovering new tools at home and new beauty traditions abroad keeps inspiring the way I work.",
