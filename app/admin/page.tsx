@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { isAdmin } from "@/lib/auth";
 import {
   getStats,
-  listBlockedDates,
+  listBlockedPeriods,
   listBookings,
+  listClients,
   type Booking,
 } from "@/lib/bookings";
 import {
@@ -15,10 +17,12 @@ import {
   studioNow,
 } from "@/lib/time";
 import { LoginForm } from "./login-form";
+import { AdminCalendar } from "./admin-calendar";
+import { AddBookingForm } from "./add-booking-form";
 import {
-  addBlockedDate,
+  addBlockedTime,
   logout,
-  removeBlockedDate,
+  removeBlockedTime,
   updateBookingStatus,
 } from "./actions";
 import styles from "./page.module.css";
@@ -31,19 +35,31 @@ export const metadata: Metadata = {
 // Bookings change constantly — never serve this from a cache.
 export const dynamic = "force-dynamic";
 
-export default async function AdminPage() {
+type Tab = "bookings" | "pending" | "contacts";
+
+export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
   if (!(await isAdmin())) {
     return <LoginForm />;
   }
 
+  const params = await searchParams;
+  const raw = Array.isArray(params.tab) ? params.tab[0] : params.tab;
+  const tab: Tab =
+    raw === "pending" || raw === "contacts" ? raw : "bookings";
+
   const today = studioNow().date;
   const stats = getStats();
   const upcoming = listBookings({ from: today });
+  const pending = upcoming.filter((b) => b.status === "pending");
   const past = listBookings({ to: addDays(today, -1), order: "desc" }).slice(
     0,
     20,
   );
-  const blocked = listBlockedDates(today);
+  const blocked = listBlockedPeriods(today);
+  // The calendar can be paged back through past months, so it gets everything.
+  const allBookings = listBookings({});
+  // Needed by both the contacts tab and the manual booking form's client picker.
+  const clients = listClients();
 
   return (
     <div className={styles.wrap}>
@@ -51,7 +67,13 @@ export default async function AdminPage() {
         <header className={styles.header}>
           <div>
             <p className="eyebrow">Studio admin</p>
-            <h1 className={styles.title}>Bookings</h1>
+            <h1 className={styles.title}>
+              {tab === "contacts"
+                ? "Contacts"
+                : tab === "pending"
+                  ? "Awaiting confirmation"
+                  : "Bookings"}
+            </h1>
           </div>
           <form action={logout}>
             <button type="submit" className="btn btn-outline btn-sm">
@@ -61,100 +83,243 @@ export default async function AdminPage() {
         </header>
 
         <div className={styles.stats}>
-          <div className={styles.stat}>
+          <Link
+            href="/admin?tab=pending"
+            className={`${styles.stat} ${styles.statLink}`}
+          >
             <span className={styles.statValue}>{stats.pending}</span>
             <span className={styles.statLabel}>Awaiting confirmation</span>
-          </div>
+          </Link>
           <div className={styles.stat}>
             <span className={styles.statValue}>{stats.thisWeek}</span>
             <span className={styles.statLabel}>Next 7 days</span>
           </div>
-          <div className={styles.stat}>
+          <Link
+            href="/admin?tab=contacts"
+            className={`${styles.stat} ${styles.statLink}`}
+          >
             <span className={styles.statValue}>{stats.upcoming}</span>
             <span className={styles.statLabel}>Upcoming total</span>
-          </div>
+          </Link>
         </div>
 
-        {/* ── Upcoming ──────────────────────── */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Upcoming</h2>
-          {upcoming.length === 0 ? (
-            <p className="muted">No upcoming appointments yet.</p>
-          ) : (
-            <div className={styles.bookingList}>
-              {upcoming.map((booking) => (
-                <BookingCard key={booking.id} booking={booking} />
-              ))}
-            </div>
-          )}
-        </section>
+        <nav className={styles.tabs}>
+          <Link
+            href="/admin"
+            className={`${styles.tab} ${tab === "bookings" ? styles.tabActive : ""}`}
+          >
+            Calendar
+          </Link>
+          <Link
+            href="/admin?tab=pending"
+            className={`${styles.tab} ${tab === "pending" ? styles.tabActive : ""}`}
+          >
+            Awaiting
+            <span className={styles.tabCount}>{stats.pending}</span>
+          </Link>
+          <Link
+            href="/admin?tab=contacts"
+            className={`${styles.tab} ${tab === "contacts" ? styles.tabActive : ""}`}
+          >
+            Contacts
+          </Link>
+        </nav>
 
-        {/* ── Time off ──────────────────────── */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Block time off</h2>
-          <p className={styles.sectionHint}>
-            Blocked dates disappear from the booking calendar straight away.
-            Existing appointments on that date are not cancelled, so handle those
-            below.
-          </p>
-
-          <form action={addBlockedDate} className={styles.blockForm}>
-            <label className="field">
-              <span className="label">Date</span>
-              <input
-                className="input"
-                type="date"
-                name="date"
-                min={today}
-                required
-              />
-            </label>
-            <label className="field">
-              <span className="label">Reason (optional)</span>
-              <input
-                className="input"
-                name="reason"
-                placeholder="Holiday, training day…"
-                maxLength={120}
-              />
-            </label>
-            <button type="submit" className="btn">
-              Block Date
-            </button>
-          </form>
-
-          {blocked.length > 0 && (
-            <ul className={styles.blockedList}>
-              {blocked.map((entry) => (
-                <li key={entry.date} className={styles.blockedItem}>
-                  <span>
-                    <strong>{formatDateLong(entry.date)}</strong>
-                    {entry.reason && (
-                      <span className="muted"> ({entry.reason})</span>
-                    )}
-                  </span>
-                  <form action={removeBlockedDate}>
-                    <input type="hidden" name="date" value={entry.date} />
-                    <button type="submit" className="btn btn-ghost btn-sm">
-                      Unblock
-                    </button>
-                  </form>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        {/* ── History ───────────────────────── */}
-        {past.length > 0 && (
+        {/* ── Awaiting confirmation ─────────── */}
+        {tab === "pending" && (
           <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>Recent history</h2>
-            <div className={styles.bookingList}>
-              {past.map((booking) => (
-                <BookingCard key={booking.id} booking={booking} past />
-              ))}
-            </div>
+            <p className={styles.sectionHint}>
+              Requests from the website that you haven&apos;t confirmed yet.
+            </p>
+            {pending.length === 0 ? (
+              <p className="muted">Nothing waiting. All caught up.</p>
+            ) : (
+              <div className={styles.bookingList}>
+                {pending.map((booking) => (
+                  <BookingCard key={booking.id} booking={booking} />
+                ))}
+              </div>
+            )}
           </section>
+        )}
+
+        {/* ── Contacts ──────────────────────── */}
+        {tab === "contacts" && (
+          <section className={styles.section}>
+            <p className={styles.sectionHint}>
+              Everyone who has booked, grouped by email address.
+            </p>
+            {clients.length === 0 ? (
+              <p className="muted">No clients yet.</p>
+            ) : (
+              <div className={styles.contactList}>
+                {clients.map((client) => (
+                  <article key={client.email} className={styles.contact}>
+                    <div>
+                      <p className={styles.contactName}>{client.name}</p>
+                      <span className={styles.contactSince}>
+                        Since {formatDateShort(client.firstVisit)}
+                      </span>
+                    </div>
+                    <div className={styles.contactLinks}>
+                      <a href={`mailto:${client.email}`}>{client.email}</a>
+                      <a href={`tel:${client.phone}`}>{client.phone}</a>
+                    </div>
+                    <div className={styles.contactStats}>
+                      <div className={styles.contactStat}>
+                        <span className={styles.contactStatValue}>
+                          {client.bookings}
+                        </span>
+                        <span className={styles.contactStatLabel}>Visits</span>
+                      </div>
+                      <div className={styles.contactStat}>
+                        <span className={styles.contactStatValue}>
+                          {client.upcoming}
+                        </span>
+                        <span className={styles.contactStatLabel}>Upcoming</span>
+                      </div>
+                      <div className={styles.contactStat}>
+                        <span className={styles.contactStatValue}>
+                          ${client.value}
+                        </span>
+                        <span className={styles.contactStatLabel}>Booked</span>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* ── Calendar and everything else ──── */}
+        {tab === "bookings" && (
+          <>
+            <AdminCalendar
+              bookings={allBookings}
+              today={today}
+              nowMinutes={studioNow().minutes}
+            />
+
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Add an appointment</h2>
+              <p className={styles.sectionHint}>
+                For bookings taken by DM, phone or in person. Any date and time
+                is allowed, as long as it doesn&apos;t overlap something already
+                in the book.
+              </p>
+              <AddBookingForm
+                today={today}
+                clients={clients.map((c) => ({
+                  name: c.name,
+                  email: c.email,
+                  phone: c.phone,
+                }))}
+              />
+            </section>
+
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Upcoming</h2>
+              {upcoming.length === 0 ? (
+                <p className="muted">No upcoming appointments yet.</p>
+              ) : (
+                <div className={styles.bookingList}>
+                  {upcoming.map((booking) => (
+                    <BookingCard key={booking.id} booking={booking} />
+                  ))}
+                </div>
+              )}
+            </section>
+
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Block time off</h2>
+              <p className={styles.sectionHint}>
+                Block a whole day, or just part of one when you can work the
+                rest. Blocked time disappears from the booking calendar straight
+                away. Appointments already booked are not cancelled, so handle
+                those above.
+              </p>
+
+              <form action={addBlockedTime} className={styles.blockForm}>
+                <label className="field">
+                  <span className="label">Date</span>
+                  <input
+                    className="input"
+                    type="date"
+                    name="date"
+                    min={today}
+                    required
+                  />
+                </label>
+                <label className="field">
+                  <span className="label">Block</span>
+                  <select className="select" name="mode" defaultValue="day">
+                    <option value="day">The whole day</option>
+                    <option value="time">Just these hours</option>
+                  </select>
+                </label>
+                <label className="field">
+                  <span className="label">From</span>
+                  <input className="input" type="time" name="from" />
+                </label>
+                <label className="field">
+                  <span className="label">To</span>
+                  <input className="input" type="time" name="to" />
+                </label>
+                <label className="field">
+                  <span className="label">Reason (optional)</span>
+                  <input
+                    className="input"
+                    name="reason"
+                    placeholder="Holiday, school run…"
+                    maxLength={120}
+                  />
+                </label>
+                <button type="submit" className="btn">
+                  Block Time
+                </button>
+              </form>
+
+              {blocked.length > 0 && (
+                <ul className={styles.blockedList}>
+                  {blocked.map((entry) => (
+                    <li key={entry.id} className={styles.blockedItem}>
+                      <span>
+                        <strong>{formatDateLong(entry.date)}</strong>
+                        <span className="muted">
+                          {" · "}
+                          {entry.start_minutes === null ||
+                          entry.end_minutes === null
+                            ? "whole day"
+                            : `${formatTime12(entry.start_minutes)} to ${formatTime12(entry.end_minutes)}`}
+                        </span>
+                        {entry.reason && (
+                          <span className="muted"> ({entry.reason})</span>
+                        )}
+                      </span>
+                      <form action={removeBlockedTime}>
+                        <input type="hidden" name="id" value={entry.id} />
+                        <button type="submit" className="btn btn-ghost btn-sm">
+                          Unblock
+                        </button>
+                      </form>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            {past.length > 0 && (
+              <section className={styles.section}>
+                <h2 className={styles.sectionTitle}>Recent history</h2>
+                <div className={styles.bookingList}>
+                  {past.map((booking) => (
+                    <BookingCard key={booking.id} booking={booking} past />
+                  ))}
+                </div>
+              </section>
+            )}
+          </>
         )}
       </div>
     </div>

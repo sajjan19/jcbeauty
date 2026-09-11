@@ -1,0 +1,604 @@
+/* Apple Calendar idiom: white ground, hairline grey rules, a segmented
+   view switcher, and a red accent reserved for "now" and "today". */
+
+.wrap {
+  --line: #e4e4e6;
+  --line-strong: #d2d2d5;
+  --grey-text: #86868b;
+  --accent-red: #ff3b30;
+
+  background: #ffffff;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: var(--sp-8);
+  font-family: var(--font-body);
+}
+
+/* ── Toolbar ─────────────────────────────── */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.navBtn,
+.todayBtn {
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  color: #1d1d1f;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.navBtn {
+  width: 30px;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.navBtn:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.navBtn:last-of-type {
+  border-radius: 0 6px 6px 0;
+  border-left: 0;
+}
+
+.todayBtn {
+  padding: 0 var(--sp-3);
+  font-size: 0.75rem;
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+}
+
+.navBtn:hover,
+.todayBtn:hover {
+  background: #f5f5f7;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: #1d1d1f;
+  margin: 0 0 0 var(--sp-3);
+  white-space: nowrap;
+}
+
+.segmented {
+  display: inline-flex;
+  background: #f0f0f2;
+  border-radius: 7px;
+  padding: 2px;
+}
+
+.segBtn {
+  padding: 4px var(--sp-4);
+  font-family: inherit;
+  font-size: 0.75rem;
+  color: #1d1d1f;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.segBtnActive {
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.14);
+}
+
+/* ── Day and week grid ───────────────────── */
+
+.timeWrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeHeader {
+  display: flex;
+  border-bottom: 1px solid var(--line-strong);
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+}
+
+.gutterSpacer {
+  width: 56px;
+  flex: none;
+  border-right: 1px solid var(--line);
+}
+
+.headerCols {
+  display: grid;
+  flex: 1;
+  /* Without this the grid overflows its flex parent and the header columns
+     drift out of alignment with the body columns below. */
+  min-width: 0;
+}
+
+.dayHead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--sp-2) 0;
+  background: transparent;
+  border: 0;
+  border-left: 1px solid var(--line);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.headerCols .dayHead:first-child {
+  border-left: 0;
+}
+
+.dayHead:hover {
+  background: #f5f5f7;
+}
+
+.dayName {
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--grey-text);
+}
+
+.dayNum {
+  font-size: 1.25rem;
+  color: #1d1d1f;
+  line-height: 1.5;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.dayNumToday {
+  background: var(--accent-red);
+  color: #fff;
+}
+
+.timeBody {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+}
+
+.gutter {
+  width: 56px;
+  flex: none;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+}
+
+.gutterLabel {
+  display: block;
+  text-align: right;
+  padding-right: var(--sp-2);
+  font-size: 0.625rem;
+  color: var(--grey-text);
+  transform: translateY(-0.4em);
+}
+
+.cols {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.col {
+  position: relative;
+  min-width: 0;
+  border-left: 1px solid var(--line);
+}
+
+.cols .col:first-child {
+  border-left: 0;
+}
+
+.hourLine {
+  display: block;
+  border-bottom: 1px solid var(--line);
+}
+
+/* ── Events ──────────────────────────────── */
+
+.event {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 2px var(--sp-2);
+  border-radius: 4px;
+  border: 0;
+  border-left: 3px solid currentColor;
+  overflow: hidden;
+  font-size: 0.625rem;
+  line-height: 1.3;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.event:hover {
+  filter: brightness(0.96);
+}
+
+/* ── Booking detail dialog ───────────────── */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(22, 19, 15, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-5);
+}
+
+.dialog {
+  width: 100%;
+  max-width: 460px;
+  max-height: 100%;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 24px 60px -16px rgba(0, 0, 0, 0.4);
+}
+
+.dialogHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-5) var(--sp-5) var(--sp-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.dialogTitle {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  color: #1d1d1f;
+  margin: 0 0 2px;
+}
+
+.dialogWhen {
+  font-size: 0.8125rem;
+  color: var(--grey-text);
+}
+
+.closeBtn {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f2;
+  border: 0;
+  border-radius: 50%;
+  color: #6e6e73;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.closeBtn:hover {
+  background: #e4e4e6;
+}
+
+.detailBody {
+  padding: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.detailRow {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: var(--sp-4);
+  align-items: baseline;
+  font-size: 0.875rem;
+}
+
+.detailLabel {
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--grey-text);
+}
+
+.detailValue {
+  color: #1d1d1f;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.detailValue a {
+  color: #1d1d1f;
+  text-decoration: none;
+}
+
+.detailValue a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.detailNotes {
+  font-style: italic;
+  color: #3a3a3c;
+  padding-left: var(--sp-3);
+  border-left: 2px solid var(--line-strong);
+}
+
+.dialogActions {
+  display: flex;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5) var(--sp-5);
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+/* A 30 minute slot is too short for stacked lines, so those sit inline. */
+.eventShort {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.eventShort .eventName {
+  flex: 1;
+  min-width: 0;
+}
+
+.eventTime {
+  font-weight: 500;
+  flex: none;
+}
+
+.eventName {
+  color: #1d1d1f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eventMeta {
+  color: var(--grey-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event_pending {
+  color: #b8860b;
+  background: #fdf3dd;
+}
+
+.event_confirmed {
+  color: #2f6b45;
+  background: #e4f2e8;
+}
+
+.event_cancelled {
+  color: #9b3b32;
+  background: #f7e4e2;
+}
+
+.event_cancelled .eventName {
+  text-decoration: line-through;
+}
+
+.nowLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--accent-red);
+  z-index: 3;
+}
+
+.nowLine::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: -3.5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-red);
+}
+
+/* ── Month ───────────────────────────────── */
+
+.monthWrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.monthHead {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.monthHead span {
+  text-align: center;
+  padding: var(--sp-2) 0;
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--grey-text);
+}
+
+.monthGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.monthCell {
+  min-height: 104px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3px;
+  padding: 4px;
+  background: #fff;
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  font-family: inherit;
+  text-align: left;
+}
+
+.monthGrid .monthCell:nth-child(7n + 1) {
+  border-left: 0;
+}
+
+.monthCell:hover {
+  background: #fafafa;
+}
+
+.monthCellOutside {
+  background: #fbfbfd;
+}
+
+.monthCellOutside .monthNum {
+  color: #c7c7cc;
+}
+
+.monthNum {
+  align-self: flex-start;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: #1d1d1f;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.monthNum:hover {
+  background: #ececed;
+}
+
+.monthNumToday {
+  background: var(--accent-red);
+  color: #fff;
+}
+
+.monthEvents {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 3px;
+  border-radius: 3px;
+  font-size: 0.625rem;
+  line-height: 1.4;
+  min-width: 0;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.pill:hover {
+  background: #f0f0f2;
+}
+
+.pillDot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.pillTime {
+  color: var(--grey-text);
+  flex: none;
+}
+
+.pillName {
+  color: #1d1d1f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pill_pending {
+  color: #b8860b;
+}
+.pill_confirmed {
+  color: #2f6b45;
+}
+.pill_cancelled {
+  color: #9b3b32;
+}
+
+.more {
+  font-size: 0.5625rem;
+  color: var(--grey-text);
+  padding-left: 3px;
+}
+
+@media (max-width: 900px) {
+  .toolbar {
+    justify-content: center;
+  }
+
+  .title {
+    font-size: 1.0625rem;
+  }
+
+  .gutterSpacer,
+  .gutter {
+    width: 42px;
+  }
+
+  .monthCell {
+    min-height: 74px;
+  }
+
+  .pillTime {
+    display: none;
+  }
+}

@@ -8,11 +8,13 @@ import {
   startAdminSession,
 } from "@/lib/auth";
 import {
-  blockDate,
+  blockPeriod,
+  createBookingAsAdmin,
   setBookingStatus,
-  unblockDate,
+  unblockPeriod,
   type BookingStatus,
 } from "@/lib/bookings";
+import { parseTime } from "@/lib/time";
 
 export type LoginState = { error?: string };
 
@@ -65,24 +67,81 @@ export async function updateBookingStatus(formData: FormData): Promise<void> {
   revalidatePath("/admin");
 }
 
-export async function addBlockedDate(formData: FormData): Promise<void> {
+export type AddBookingState = { error?: string; added?: string };
+
+/** Records an appointment she took by phone, DM or in person. */
+export async function addBooking(
+  _prev: AddBookingState,
+  formData: FormData,
+): Promise<AddBookingState> {
+  await requireAdmin();
+
+  const serviceSlug = String(formData.get("service") ?? "");
+  const date = String(formData.get("date") ?? "");
+  const time = String(formData.get("time") ?? "");
+  const name = String(formData.get("name") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+  const phone = String(formData.get("phone") ?? "").trim();
+  const notes = String(formData.get("notes") ?? "").trim();
+  const status = String(formData.get("status") ?? "confirmed");
+
+  if (!name) return { error: "Add a name." };
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: "Pick a date." };
+  if (!/^\d{2}:\d{2}$/.test(time)) return { error: "Pick a start time." };
+  if (!["pending", "confirmed"].includes(status)) {
+    return { error: "Invalid status." };
+  }
+
+  const result = createBookingAsAdmin({
+    serviceSlug,
+    date,
+    time,
+    name,
+    email,
+    phone,
+    notes,
+    status: status as BookingStatus,
+  });
+
+  if (!result.ok) return { error: result.error };
+
+  revalidatePath("/admin");
+  return { added: `${name} booked in for ${date} at ${time}.` };
+}
+
+/** Blocks either a whole day or a window within one. */
+export async function addBlockedTime(formData: FormData): Promise<void> {
   await requireAdmin();
 
   const date = String(formData.get("date") ?? "");
+  const mode = String(formData.get("mode") ?? "day");
   const reason = String(formData.get("reason") ?? "").trim();
 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error("Invalid date.");
 
-  blockDate(date, reason || null);
+  if (mode === "day") {
+    blockPeriod(date, null, null, reason || null);
+  } else {
+    const from = String(formData.get("from") ?? "");
+    const to = String(formData.get("to") ?? "");
+    if (!/^\d{2}:\d{2}$/.test(from) || !/^\d{2}:\d{2}$/.test(to)) {
+      throw new Error("Pick a start and end time.");
+    }
+    const start = parseTime(from);
+    const end = parseTime(to);
+    if (end <= start) throw new Error("The end time must be after the start.");
+    blockPeriod(date, start, end, reason || null);
+  }
+
   revalidatePath("/admin");
 }
 
-export async function removeBlockedDate(formData: FormData): Promise<void> {
+export async function removeBlockedTime(formData: FormData): Promise<void> {
   await requireAdmin();
 
-  const date = String(formData.get("date") ?? "");
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error("Invalid date.");
+  const id = Number(formData.get("id"));
+  if (!Number.isInteger(id) || id <= 0) throw new Error("Invalid entry.");
 
-  unblockDate(date);
+  unblockPeriod(id);
   revalidatePath("/admin");
 }

@@ -52,12 +52,35 @@ function connect(): Database.Database {
     CREATE INDEX IF NOT EXISTS idx_bookings_date
       ON bookings (date, status);
 
-    CREATE TABLE IF NOT EXISTS blocked_dates (
-      date       TEXT PRIMARY KEY,
-      reason     TEXT,
-      created_at TEXT NOT NULL
+    -- A row with NULL start/end blocks the whole day. Otherwise it blocks
+    -- just that window, so she can work part of a day.
+    CREATE TABLE IF NOT EXISTS blocked_periods (
+      id            INTEGER PRIMARY KEY AUTOINCREMENT,
+      date          TEXT NOT NULL,
+      start_minutes INTEGER,
+      end_minutes   INTEGER,
+      reason        TEXT,
+      created_at    TEXT NOT NULL
     );
+
+    CREATE INDEX IF NOT EXISTS idx_blocked_periods_date
+      ON blocked_periods (date);
   `);
+
+  // Carry over any whole-day blocks from the original table, then retire it.
+  const legacy = db
+    .prepare(
+      `SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'blocked_dates'`,
+    )
+    .get();
+
+  if (legacy) {
+    db.exec(`
+      INSERT INTO blocked_periods (date, start_minutes, end_minutes, reason, created_at)
+        SELECT date, NULL, NULL, reason, created_at FROM blocked_dates;
+      DROP TABLE blocked_dates;
+    `);
+  }
 
   return db;
 }

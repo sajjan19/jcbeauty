@@ -33,8 +33,15 @@ export type Booking = {
   created_at: string;
 };
 
-export type BlockedDate = {
+/**
+ * Time she isn't available. `start_minutes` and `end_minutes` are null for a
+ * whole day off, or set to block only part of a day.
+ */
+export type BlockedPeriod = {
+  id: number;
   date: string;
+  start_minutes: number | null;
+  end_minutes: number | null;
   reason: string | null;
   created_at: string;
 };
@@ -52,22 +59,41 @@ function activeBookingsOn(date: string): Booking[] {
     .all(date) as Booking[];
 }
 
-export function isDateBlocked(date: string): boolean {
-  const row = db
-    .prepare(`SELECT 1 FROM blocked_dates WHERE date = ?`)
-    .get(date);
-  return row !== undefined;
+function blockedPeriodsOn(date: string): BlockedPeriod[] {
+  return db
+    .prepare(`SELECT * FROM blocked_periods WHERE date = ?`)
+    .all(date) as BlockedPeriod[];
 }
 
-export function listBlockedDates(fromDate?: string): BlockedDate[] {
+/** True only when the entire day is blocked out. */
+export function isDateBlocked(date: string): boolean {
+  return blockedPeriodsOn(date).some((p) => p.start_minutes === null);
+}
+
+/** Does [start, end) collide with any time she has blocked off that day? */
+function hitsBlockedTime(date: string, start: number, end: number): boolean {
+  return blockedPeriodsOn(date).some((period) => {
+    if (period.start_minutes === null || period.end_minutes === null) {
+      return true; // whole day
+    }
+    return start < period.end_minutes && period.start_minutes < end;
+  });
+}
+
+export function listBlockedPeriods(fromDate?: string): BlockedPeriod[] {
   if (fromDate) {
     return db
-      .prepare(`SELECT * FROM blocked_dates WHERE date >= ? ORDER BY date`)
-      .all(fromDate) as BlockedDate[];
+      .prepare(
+        `SELECT * FROM blocked_periods WHERE date >= ?
+         ORDER BY date, COALESCE(start_minutes, -1)`,
+      )
+      .all(fromDate) as BlockedPeriod[];
   }
   return db
-    .prepare(`SELECT * FROM blocked_dates ORDER BY date`)
-    .all() as BlockedDate[];
+    .prepare(
+      `SELECT * FROM blocked_periods ORDER BY date, COALESCE(start_minutes, -1)`,
+    )
+    .all() as BlockedPeriod[];
 }
 
 export function listBookings(filter: {
@@ -183,6 +209,9 @@ export function getAvailableSlots(serviceSlug: string, date: string): string[] {
     );
     if (clashes) continue;
 
+    // Part of this day may be blocked off even when the day itself is open.
+    if (hitsBlockedTime(date, start, end)) continue;
+
     slots.push(formatTime24(start));
   }
 
@@ -257,8 +286,8 @@ export function createBooking(
   const end = start + service.durationMinutes;
 
   const transaction = db.transaction((): CreateBookingResult => {
-    if (isDateBlocked(input.date)) {
-      return { ok: false, error: "That date is no longer available." };
+    if (hitsBlockedTime(input.date, start, end)) {
+      return { ok: false, error: "That time is no longer available." };
     }
 
     const dayHours = hours[weekday(input.date)];
@@ -332,19 +361,142 @@ export function createBooking(
   return transaction();
 }
 
+/**
+ * Add a booking from the admin side.
+ *
+ * Deliberately looser than the client flow: no minimum notice, no
+ * how-far-ahead limit and no opening-hours check, because she needs to be
+ * able to record an appointment she agreed in person or squeeze one in
+ * outside her usual times. Double-booking is still refused.
+ */
+export function createBookingAsAdmin(input: {
+  serviceSlug: string;
+  date: string;
+  time: string;
+  name: string;
+  email: string;
+  phone: string;
+  notes?: string;
+  status?: BookingStatus;
+}): CreateBookingResult {
+  const service = getService(input.serviceSlug);
+  if (!service) return { ok: false, error: "That service isn't available." };
+
+  const start = parseTime(input.time);
+  if (Number.isNaN(start)) {
+    return { ok: false, error: "That start time isn't valid." };
+  }
+  const end = start + service.durationMinutes;
+
+  const transaction = db.transaction((): CreateBookingResult => {
+    const clash = activeBookingsOn(input.date).some((b) =>
+      overlaps(start, end, b.start_minutes, b.end_minutes),
+    );
+    if (clash) {
+      return {
+        ok: false,
+        error: "That overlaps an appointment already in the book.",
+      };
+    }
+
+    let reference = generateReference();
+    for (let i = 0; i < 5 && getBookingByReference(reference); i++) {
+      reference = generateReference();
+    }
+
+    const info = db
+      .prepare(
+        `INSERT INTO bookings (
+           reference, service_slug, service_name, price, duration_minutes,
+           date, start_minutes, end_minutes,
+           client_name, email, phone, notes, first_time, status, created_at
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)`,
+      )
+      .run(
+        reference,
+        service.slug,
+        service.name,
+        service.price,
+        service.durationMinutes,
+        input.date,
+        start,
+        end,
+        input.name,
+        input.email,
+        input.phone,
+        input.notes?.trim() || null,
+        input.status ?? "confirmed",
+        new Date().toISOString(),
+      );
+
+    return {
+      ok: true,
+      booking: db
+        .prepare(`SELECT * FROM bookings WHERE id = ?`)
+        .get(info.lastInsertRowid) as Booking,
+    };
+  });
+
+  return transaction();
+}
+
 export function setBookingStatus(id: number, status: BookingStatus): void {
   db.prepare(`UPDATE bookings SET status = ? WHERE id = ?`).run(status, id);
 }
 
-export function blockDate(date: string, reason: string | null): void {
+/** Pass start/end as null to block the whole day. */
+export function blockPeriod(
+  date: string,
+  start: number | null,
+  end: number | null,
+  reason: string | null,
+): void {
   db.prepare(
-    `INSERT INTO blocked_dates (date, reason, created_at) VALUES (?, ?, ?)
-     ON CONFLICT(date) DO UPDATE SET reason = excluded.reason`,
-  ).run(date, reason, new Date().toISOString());
+    `INSERT INTO blocked_periods (date, start_minutes, end_minutes, reason, created_at)
+     VALUES (?, ?, ?, ?, ?)`,
+  ).run(date, start, end, reason, new Date().toISOString());
 }
 
-export function unblockDate(date: string): void {
-  db.prepare(`DELETE FROM blocked_dates WHERE date = ?`).run(date);
+export function unblockPeriod(id: number): void {
+  db.prepare(`DELETE FROM blocked_periods WHERE id = ?`).run(id);
+}
+
+/**
+ * Everyone who has ever booked, one row per person.
+ *
+ * Grouped by email, since that's the field a client is least likely to vary
+ * between visits. Someone who books under two different emails shows up twice.
+ */
+export type Client = {
+  name: string;
+  email: string;
+  phone: string;
+  bookings: number;
+  upcoming: number;
+  firstVisit: string;
+  lastVisit: string;
+  /** Total of non-cancelled bookings. Booked value, not money received. */
+  value: number;
+};
+
+export function listClients(): Client[] {
+  return db
+    .prepare(
+      `SELECT
+         MAX(client_name) AS name,
+         MAX(email)       AS email,
+         MAX(phone)       AS phone,
+         COUNT(*)         AS bookings,
+         MIN(date)        AS firstVisit,
+         MAX(date)        AS lastVisit,
+         SUM(CASE WHEN status != 'cancelled' THEN price ELSE 0 END) AS value,
+         SUM(CASE WHEN date >= ? AND status IN ('pending','confirmed')
+                  THEN 1 ELSE 0 END) AS upcoming
+       FROM bookings
+       GROUP BY LOWER(email)
+       ORDER BY name COLLATE NOCASE`,
+    )
+    .all(studioNow().date) as Client[];
 }
 
 /** Counts for the admin dashboard header. */
