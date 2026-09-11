@@ -334,7 +334,7 @@ export const about = {
     "I'm a brow artist working from a private studio in Vancouver, specialising in brow lamination, shaping, waxing and tinting.",
     "Every appointment starts with mapping your brows to your features, so the shape we land on suits your face rather than a template.",
     "I keep the studio small and book by appointment only, so you have my full attention from consultation to aftercare.",
-    "Outside the studio, I love technology and travelling. I'm always curious about new tools and ideas, and seeing how beauty is done in different places keeps my eye fresh and my work evolving.",
+    "Outside the studio, I love technology and travelling. Discovering new tools at home and new beauty traditions abroad keeps inspiring the way I work.",
   ],
   /**
    * Put a portrait in public/about/ and set the path, e.g. "/about/japman.jpg".
