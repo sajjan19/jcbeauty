@@ -1,5 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
-import { business, gallery, services } from "@/lib/content";
+import { business, gallery, home, services } from "@/lib/content";
 import { formatDuration } from "@/lib/time";
 import { LogoLockup } from "@/components/logo";
 import { GalleryTile } from "@/components/gallery-tile";
@@ -52,7 +53,18 @@ export default function HomePage() {
             </div>
 
             <div className={styles.heroArt}>
-              <LogoLockup size={220} />
+              {home.photo ? (
+                <Image
+                  src={home.photo}
+                  alt={home.photoAlt}
+                  fill
+                  sizes="(max-width: 900px) 320px, 440px"
+                  className={styles.heroPhoto}
+                  priority
+                />
+              ) : (
+                <LogoLockup size={220} />
+              )}
             </div>
           </div>
         </div>

@@ -328,6 +328,21 @@ export type Certification = {
   year?: number;
 };
 
+/**
+ * The home page hero.
+ *
+ * Drop a photo into public/home/ and set `photo` to its path, e.g.
+ * "/home/hero.jpg". Leave it null and the logo lockup shows instead.
+ * Portrait orientation suits the arch best (4:5, at least 1200x1500).
+ *
+ * Use a real photograph. An AI-generated image here would misrepresent
+ * Japman, her studio and her work to people deciding whether to book.
+ */
+export const home = {
+  photo: null as string | null,
+  photoAlt: "",
+};
+
 export const about = {
   headline: "Hi, I'm Japman.",
   paragraphs: [
