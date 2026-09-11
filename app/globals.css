@@ -75,7 +75,9 @@ html {
 html,
 body {
   max-width: 100vw;
-  overflow-x: hidden;
+  /* `clip` rather than `hidden`: both stop sideways scrolling, but `hidden`
+     makes these a scroll container, which silently breaks the sticky header. */
+  overflow-x: clip;
 }
 
 @media (prefers-reduced-motion: reduce) {
