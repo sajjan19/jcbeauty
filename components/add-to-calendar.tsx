@@ -18,12 +18,12 @@ export function AddToCalendar({
   reference: string;
 }) {
   const event: CalendarEvent = {
-    title: `${service.name} — ${business.name}`,
+    title: `${service.name} at ${business.name}`,
     description: [
       `${service.name} with ${business.artist}.`,
       `Booking reference: ${reference}.`,
       "",
-      "This appointment is pending confirmation — you'll get an email once it's confirmed.",
+      "This appointment is pending confirmation. You'll get an email once it's confirmed.",
       "",
       `Questions: instagram.com/${business.instagram}`,
     ].join("\n"),

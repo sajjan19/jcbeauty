@@ -137,7 +137,7 @@ export function Calendar({
               } ${free && !isSelected ? styles.dayFree : ""}`}
               disabled={disabled}
               aria-pressed={isSelected}
-              aria-label={`${date}${disabled ? " — unavailable" : ""}`}
+              aria-label={`${date}${disabled ? " (unavailable)" : ""}`}
               onClick={() => onSelect(date)}
             >
               {Number(date.slice(-2))}

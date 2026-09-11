@@ -79,7 +79,7 @@ export async function submitBooking(
   if (!serviceSlug || !date || !time) {
     return {
       status: "error",
-      message: "Something went missing — please pick your service and time again.",
+      message: "Something went missing. Please pick your service and time again.",
     };
   }
 

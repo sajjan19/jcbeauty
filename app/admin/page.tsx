@@ -94,7 +94,7 @@ export default async function AdminPage() {
           <h2 className={styles.sectionTitle}>Block time off</h2>
           <p className={styles.sectionHint}>
             Blocked dates disappear from the booking calendar straight away.
-            Existing appointments on that date are not cancelled — handle those
+            Existing appointments on that date are not cancelled, so handle those
             below.
           </p>
 
@@ -130,7 +130,7 @@ export default async function AdminPage() {
                   <span>
                     <strong>{formatDateLong(entry.date)}</strong>
                     {entry.reason && (
-                      <span className="muted"> — {entry.reason}</span>
+                      <span className="muted"> ({entry.reason})</span>
                     )}
                   </span>
                   <form action={removeBlockedDate}>

@@ -21,12 +21,12 @@ const sans = Jost({
 
 export const metadata: Metadata = {
   title: {
-    default: `${business.name} — ${business.tagline}`,
-    template: `%s — ${business.name}`,
+    default: `${business.name} | ${business.tagline}`,
+    template: `%s | ${business.name}`,
   },
   description: business.intro,
   openGraph: {
-    title: `${business.name} — ${business.tagline}`,
+    title: `${business.name} | ${business.tagline}`,
     description: business.intro,
     type: "website",
     locale: "en_CA",

@@ -16,7 +16,7 @@ export const business = {
   tagline: "Vancouver Brow Artist",
   /** Shown in the hero. One or two sentences. */
   intro:
-    "Brow lamination, shaping, and tinting in Vancouver. Fuller, softer, more defined brows — tailored to your face.",
+    "Brow lamination, shaping and tinting in Vancouver. Fuller, softer, more defined brows, tailored to your face.",
   city: "Vancouver, BC",
 
   /**
@@ -105,7 +105,7 @@ export const services: Service[] = [
     details: [
       "Everything in the shape & wax, plus a custom tint",
       "Tint shade matched to your hair and skin tone",
-      "Tint typically lasts 2–4 weeks",
+      "Tint typically lasts 2 to 4 weeks",
     ],
   },
   {
@@ -118,7 +118,7 @@ export const services: Service[] = [
     details: [
       "The lifted, brushed-up effect on its own",
       "No shaping, waxing, or tinting included",
-      "Results typically last 6–8 weeks",
+      "Results typically last 6 to 8 weeks",
     ],
   },
   {
@@ -130,8 +130,8 @@ export const services: Service[] = [
       "Brow lamination, mapping and waxing. Perfect for those wanting a natural look.",
     details: [
       "Lamination with a full shape and wax",
-      "No tint — keeps things soft and natural",
-      "Results typically last 6–8 weeks",
+      "No tint, which keeps things soft and natural",
+      "Results typically last 6 to 8 weeks",
     ],
     popular: true,
   },
@@ -143,9 +143,9 @@ export const services: Service[] = [
     summary:
       "A full package including brow lamination, mapping, tinting and waxing. Perfect for those wanting the lifted effect of brow lamination with a little more definition.",
     details: [
-      "The complete service — lamination, mapping, tint and wax",
+      "The complete service: lamination, mapping, tint and wax",
       "Most definition of any option",
-      "Results typically last 6–8 weeks",
+      "Results typically last 6 to 8 weeks",
     ],
     popular: true,
   },
@@ -203,8 +203,8 @@ export const scheduling = {
  * Taken from her PRE-APPT Instagram highlight.
  */
 export const preAppointment = [
-  "Do NOT tweeze or trim your brows 3–4 weeks prior to your appointment.",
-  "Avoid retinol, AHAs, and exfoliants for at least 2 weeks prior to your appointment.",
+  "Do NOT tweeze or trim your brows 3 to 4 weeks prior to your appointment.",
+  "Avoid retinol, AHAs and exfoliants for at least 2 weeks prior to your appointment.",
   "You must be off Accutane for 6+ months.",
   "Avoid spray tans for 48 hours before and after your appointment.",
   "You must not be pregnant or breastfeeding.",
@@ -213,7 +213,7 @@ export const preAppointment = [
 /** Shown on the info page. Taken from her AFTERCARE Instagram highlight. */
 export const aftercare = [
   "Keep your brows dry for 24 hours.",
-  "Avoid steam, saunas, and heavy workouts for 24 hours.",
+  "Avoid steam, saunas and heavy workouts for 24 hours.",
   "Apply castor oil every night and brush your brows.",
   "Please be gentle with your brows!",
 ];
@@ -356,7 +356,7 @@ export const about = {
 export const faqs = [
   {
     q: "How long does brow lamination last?",
-    a: "Usually 6–8 weeks, depending on your hair type and how well you follow the aftercare. Most clients rebook around the 8 week mark.",
+    a: "Usually 6 to 8 weeks, depending on your hair type and how well you follow the aftercare. Most clients rebook around the 8 week mark.",
   },
   {
     q: "Does it hurt?",
@@ -364,7 +364,7 @@ export const faqs = [
   },
   {
     q: "Can I wear makeup afterwards?",
-    a: "Keep the brow area dry and product-free for the first 24 hours. After that, you're free to do your usual routine — though most clients find they need much less brow product.",
+    a: "Keep the brow area dry and product-free for the first 24 hours. After that, you're free to do your usual routine, though most clients find they need much less brow product.",
   },
   {
     q: "Which service should I pick?",
@@ -372,7 +372,7 @@ export const faqs = [
   },
   {
     q: "Is a deposit required?",
-    a: "Yes — a non-refundable $25 deposit secures your appointment. I'll send the details once your requested time is confirmed.",
+    a: "Yes, a non-refundable $25 deposit secures your appointment. I'll send the details once your requested time is confirmed.",
   },
   {
     q: "Do you do men's brows?",

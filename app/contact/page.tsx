@@ -14,7 +14,7 @@ import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: `Get in touch with ${business.artist} — ${business.tagline} in ${business.city}.`,
+  description: `Get in touch with ${business.artist}, a brow artist in ${business.city}.`,
 };
 
 const hasEmail = !business.email.startsWith("TODO");
@@ -26,7 +26,7 @@ export default function ContactPage() {
       <PageHeader
         eyebrow="Contact"
         title="Get in touch."
-        lede="The fastest way to reach me is Instagram — I check messages daily. For appointments, the booking page is quicker than a DM."
+        lede="The fastest way to reach me is Instagram. I check messages daily. For appointments, the booking page is quicker than a DM."
       >
         <Link href="/book" className="btn">
           Book an Appointment
@@ -127,7 +127,7 @@ export default function ContactPage() {
                       <span className={styles.dayName}>{dayNames[day]}</span>
                       {h ? (
                         <span>
-                          {formatTime12(parseTime(h.open))} –{" "}
+                          {formatTime12(parseTime(h.open))} to{" "}
                           {formatTime12(parseTime(h.close))}
                         </span>
                       ) : (
@@ -138,7 +138,7 @@ export default function ContactPage() {
                 })}
               </ul>
               <p className={`hint ${styles.hoursNote}`}>
-                Appointments are by booking only — please don&apos;t drop in.
+                Appointments are by booking only, so please don&apos;t drop in.
               </p>
             </aside>
           </div>

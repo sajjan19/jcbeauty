@@ -287,7 +287,7 @@ export function createBooking(
     if (clash) {
       return {
         ok: false,
-        error: "Sorry — that time was just taken. Please pick another.",
+        error: "Sorry, that time was just taken. Please pick another.",
       };
     }
 

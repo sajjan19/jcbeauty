@@ -59,7 +59,7 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
               type="button"
               className={`${tileStyles.tile} ${styles.tileButton}`}
               onClick={() => setOpenIndex(i)}
-              aria-label={`${item.caption} — view before and after`}
+              aria-label={`${item.caption}: view before and after`}
             >
               <Image
                 src={item.src}

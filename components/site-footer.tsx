@@ -51,7 +51,7 @@ export function SiteFooter() {
                     <strong>{dayNames[day].slice(0, 3)}</strong>
                     {h ? (
                       <span>
-                        {formatTime12(parseTime(h.open))} –{" "}
+                        {formatTime12(parseTime(h.open))} to{" "}
                         {formatTime12(parseTime(h.close))}
                       </span>
                     ) : (

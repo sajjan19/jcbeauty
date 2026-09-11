@@ -184,7 +184,7 @@ export function BookingFlow({
           <section>
             <h2 className={styles.stepTitle}>Pick a date</h2>
             <p className={styles.stepHint}>
-              Showing days with room for {service.name} —{" "}
+              Showing days with room for {service.name}, taking{" "}
               {formatDuration(service.durationMinutes)}.
             </p>
             <Calendar
@@ -431,7 +431,7 @@ function Confirmation({
   return (
     <div className={styles.confirmation}>
       <p className="eyebrow">Request received</p>
-      <h2 className={styles.confirmTitle}>Thank you — you&apos;re on my list.</h2>
+      <h2 className={styles.confirmTitle}>Thank you. You&apos;re on my list.</h2>
       <p className={styles.confirmBody}>
         Your appointment is <strong>pending confirmation</strong>. I&apos;ll
         email you shortly to confirm the time and send deposit details. It

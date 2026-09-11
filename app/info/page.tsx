@@ -7,7 +7,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "Before & Aftercare",
   description:
-    "How to prepare for your brow appointment, how to care for your brows afterwards, and the booking policies.",
+    "How to prepare for your brow appointment, how to care for your brows afterwards and the booking policies.",
 };
 
 export default function InfoPage() {
@@ -16,7 +16,7 @@ export default function InfoPage() {
       <PageHeader
         eyebrow="Good to know"
         title="Before, after & the fine print."
-        lede="A few minutes of prep makes a real difference to your results. Please read the pre-appointment list before booking — some points decide whether a service can go ahead at all."
+        lede="A few minutes of prep makes a real difference to your results. Please read the pre-appointment list before booking, since some points decide whether a service can go ahead at all."
       />
 
       <section className="section-sm">
@@ -47,7 +47,7 @@ export default function InfoPage() {
                 ))}
               </ul>
               <p className={`hint ${styles.blockNote}`}>
-                The first 24 hours matter most — that&apos;s when the shape
+                The first 24 hours matter most, since that&apos;s when the shape
                 sets.
               </p>
             </section>

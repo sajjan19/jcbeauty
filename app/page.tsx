@@ -41,7 +41,7 @@ export default function HomePage() {
                   <span className={styles.metaLabel}>Services from</span>
                 </div>
                 <div className={styles.metaItem}>
-                  <span className={styles.metaValue}>6–8</span>
+                  <span className={styles.metaValue}>6 to 8</span>
                   <span className={styles.metaLabel}>Weeks of results</span>
                 </div>
                 <div className={styles.metaItem}>
@@ -127,7 +127,7 @@ export default function HomePage() {
               <span className={styles.stepNumber}>03</span>
               <h3 className={styles.stepTitle}>The service</h3>
               <p className={styles.stepBody}>
-                Lamination, shaping, waxing, or tinting — whichever you booked,
+                Lamination, shaping, waxing, or tinting. Whichever you booked, it&apos;s
                 done unhurried in a private studio.
               </p>
             </div>
@@ -169,7 +169,7 @@ export default function HomePage() {
         <div className="container-narrow">
           <h2 className={styles.ctaTitle}>Ready when you are.</h2>
           <p className={styles.ctaBody}>
-            Pick your service, choose a time that works, and I&apos;ll confirm
+            Pick your service, choose a time that works and I&apos;ll confirm
             your appointment. New clients welcome.
           </p>
           <Link href="/book" className={`btn ${styles.ctaBtn}`}>

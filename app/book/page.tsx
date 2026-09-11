@@ -7,7 +7,7 @@ import { BookingFlow } from "./booking-flow";
 export const metadata: Metadata = {
   title: "Book an Appointment",
   description:
-    "Choose your brow service, pick a time that works, and request your appointment.",
+    "Choose your brow service, pick a time that works and request your appointment.",
 };
 
 export default async function BookPage({
@@ -24,7 +24,7 @@ export default async function BookPage({
       <PageHeader
         eyebrow="Booking"
         title="Book an appointment."
-        lede="Four quick steps. Your request is confirmed by email — it isn't final until you hear back from me."
+        lede="Four quick steps. Your request is confirmed by email and isn't final until you hear back from me."
       />
 
       <section className="section-sm">

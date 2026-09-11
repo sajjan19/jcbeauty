@@ -8,7 +8,7 @@ import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: `About ${business.artist}`,
-  description: `Meet ${business.artist}, ${business.tagline.toLowerCase()} — specialising in brow lamination, shaping, waxing and tinting.`,
+  description: `Meet ${business.artist}, a brow artist in ${business.city} specialising in brow lamination, shaping, waxing and tinting.`,
 };
 
 export default function AboutPage() {
@@ -17,7 +17,7 @@ export default function AboutPage() {
       <PageHeader
         eyebrow="About"
         title={`Meet ${business.artist}.`}
-        lede="The person behind the brows, and what to expect when you're in her chair."
+        lede="The person behind the brows and what to expect when you're in her chair."
       />
 
       <section className="section-sm">
