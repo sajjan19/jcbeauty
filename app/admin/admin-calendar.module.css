@@ -82,11 +82,63 @@
   white-space: nowrap;
 }
 
+.toolbarRight {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.addBtn {
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 var(--sp-3);
+  font-family: inherit;
+  font-size: 0.75rem;
+  color: #fff;
+  background: #16130f;
+  border: 1px solid #16130f;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.addBtn:hover {
+  background: #3a3a3c;
+  border-color: #3a3a3c;
+}
+
 .segmented {
   display: inline-flex;
   background: #f0f0f2;
   border-radius: 7px;
   padding: 2px;
+}
+
+/* ── New appointment dialog ──────────────── */
+
+.createDialog {
+  width: 100%;
+  max-width: 760px;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bone);
+  border-radius: 12px;
+  box-shadow: 0 24px 60px -16px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.createBody {
+  padding: var(--sp-5);
+  overflow-y: auto;
+}
+
+.createHint {
+  font-size: 0.8125rem;
+  color: var(--grey-text);
+  margin: 0 0 var(--sp-4);
 }
 
 .segBtn {
@@ -363,6 +415,41 @@
   flex-wrap: wrap;
 }
 
+/* ── Reschedule ──────────────────────────── */
+
+.rescheduleForm {
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--line);
+}
+
+.rescheduleRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-4);
+}
+
+.rescheduleRow .field {
+  margin-bottom: 0;
+}
+
+@media (max-width: 520px) {
+  .rescheduleRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Gesture hint ────────────────────────── */
+
+.gestureHint {
+  margin: 0;
+  padding: var(--sp-3) var(--sp-4);
+  border-top: 1px solid var(--line);
+  font-size: 0.6875rem;
+  color: var(--grey-text);
+  text-align: center;
+}
+
 /* A 30 minute slot is too short for stacked lines, so those sit inline. */
 .eventShort {
   flex-direction: row;
@@ -411,6 +498,33 @@
 
 .event_cancelled .eventName {
   text-decoration: line-through;
+}
+
+/* ── Selected spot for a new appointment ─── */
+
+.ghost {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  display: flex;
+  align-items: flex-start;
+  border-radius: 4px;
+  background: rgba(10, 132, 255, 0.18);
+  border: 1px solid #0a84ff;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ghostLabel {
+  padding: 2px var(--sp-2);
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: #0a6fd8;
+}
+
+.monthCellSelected {
+  background: rgba(10, 132, 255, 0.12);
+  box-shadow: inset 0 0 0 2px #0a84ff;
 }
 
 .nowLine {

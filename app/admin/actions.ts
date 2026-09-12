@@ -12,6 +12,7 @@ import {
   createBookingAsAdmin,
   createClient,
   deleteClient,
+  rescheduleBooking,
   setBookingStatus,
   updateClientNotes,
   unblockPeriod,
@@ -110,6 +111,30 @@ export async function addBooking(
 
   revalidatePath("/admin");
   return { added: `${name} booked in for ${date} at ${time}.` };
+}
+
+export type RescheduleState = { error?: string; moved?: string };
+
+/** Moves an appointment to a new date and time. */
+export async function rescheduleAppointment(
+  _prev: RescheduleState,
+  formData: FormData,
+): Promise<RescheduleState> {
+  await requireAdmin();
+
+  const id = Number(formData.get("id"));
+  const date = String(formData.get("date") ?? "");
+  const time = String(formData.get("time") ?? "");
+
+  if (!Number.isInteger(id) || id <= 0) return { error: "Invalid appointment." };
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: "Pick a date." };
+  if (!/^\d{2}:\d{2}$/.test(time)) return { error: "Pick a start time." };
+
+  const result = rescheduleBooking(id, date, time);
+  if (!result.ok) return { error: result.error };
+
+  revalidatePath("/admin");
+  return { moved: `Moved to ${date} at ${time}.` };
 }
 
 export type AddClientState = { error?: string; added?: string };

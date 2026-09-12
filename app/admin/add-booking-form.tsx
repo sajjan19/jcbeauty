@@ -16,11 +16,16 @@ export function AddBookingForm({
   today,
   clients,
   prefill,
+  defaultDate,
+  defaultTime,
 }: {
   today: string;
   clients: KnownClient[];
   /** Set when arriving from a contact's Book button. */
   prefill?: KnownClient | null;
+  /** Set when the form opens from a spot on the calendar. */
+  defaultDate?: string;
+  defaultTime?: string;
 }) {
   const [state, action, pending] = useActionState<AddBookingState, FormData>(
     addBooking,
@@ -132,14 +137,20 @@ export function AddBookingForm({
             className="input"
             type="date"
             name="date"
-            defaultValue={today}
+            defaultValue={defaultDate ?? today}
             required
           />
         </label>
 
         <label className="field">
           <span className="label">Start time</span>
-          <input className="input" type="time" name="time" required />
+          <input
+            className="input"
+            type="time"
+            name="time"
+            defaultValue={defaultTime}
+            required
+          />
         </label>
 
         <label className="field">

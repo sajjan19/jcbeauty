@@ -444,6 +444,49 @@ export function createBookingAsAdmin(input: {
   return transaction();
 }
 
+/**
+ * Moves an existing appointment. Keeps its service and length, so only the
+ * date and start time change, and refuses a move that would collide with
+ * something else already booked.
+ */
+export function rescheduleBooking(
+  id: number,
+  date: string,
+  time: string,
+): { ok: true } | { ok: false; error: string } {
+  const booking = db.prepare(`SELECT * FROM bookings WHERE id = ?`).get(id) as
+    | Booking
+    | undefined;
+  if (!booking) return { ok: false, error: "That appointment no longer exists." };
+
+  const start = parseTime(time);
+  if (Number.isNaN(start)) {
+    return { ok: false, error: "That start time isn't valid." };
+  }
+  const end = start + booking.duration_minutes;
+
+  const transaction = db.transaction(
+    (): { ok: true } | { ok: false; error: string } => {
+      const clash = activeBookingsOn(date).some(
+        (b) =>
+          b.id !== id && overlaps(start, end, b.start_minutes, b.end_minutes),
+      );
+      if (clash) {
+        return { ok: false, error: "That overlaps another appointment." };
+      }
+
+      db.prepare(
+        `UPDATE bookings SET date = ?, start_minutes = ?, end_minutes = ?
+         WHERE id = ?`,
+      ).run(date, start, end, id);
+
+      return { ok: true };
+    },
+  );
+
+  return transaction();
+}
+
 export function setBookingStatus(id: number, status: BookingStatus): void {
   db.prepare(`UPDATE bookings SET status = ? WHERE id = ?`).run(status, id);
 }
