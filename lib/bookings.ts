@@ -520,13 +520,19 @@ export type Client = {
   email: string;
   phone: string;
   notes: string | null;
+  /** Every appointment ever, past and future. */
   bookings: number;
+  /** Appointments that have actually happened: past and not cancelled. */
+  visits: number;
   upcoming: number;
   /** Null until they've actually booked something. */
   firstVisit: string | null;
   lastVisit: string | null;
-  /** Total of non-cancelled bookings. Booked value, not money received. */
-  value: number;
+  /**
+   * Total of appointments that have already happened. Excludes upcoming
+   * ones, which haven't been paid for yet.
+   */
+  spent: number;
 };
 
 /** The address book, with each person's booking history joined on. */
@@ -536,16 +542,20 @@ export function listClients(): Client[] {
       `SELECT
          c.id, c.name, c.email, c.phone, c.notes,
          COALESCE(b.bookings, 0) AS bookings,
+         COALESCE(b.visits, 0)   AS visits,
          COALESCE(b.upcoming, 0) AS upcoming,
          b.firstVisit, b.lastVisit,
-         COALESCE(b.value, 0) AS value
+         COALESCE(b.spent, 0) AS spent
        FROM clients c
        LEFT JOIN (
          SELECT LOWER(email) AS key,
                 COUNT(*)  AS bookings,
                 MIN(date) AS firstVisit,
                 MAX(date) AS lastVisit,
-                SUM(CASE WHEN status != 'cancelled' THEN price ELSE 0 END) AS value,
+                SUM(CASE WHEN date < ? AND status != 'cancelled'
+                         THEN 1 ELSE 0 END) AS visits,
+                SUM(CASE WHEN date < ? AND status != 'cancelled'
+                         THEN price ELSE 0 END) AS spent,
                 SUM(CASE WHEN date >= ? AND status IN ('pending','confirmed')
                          THEN 1 ELSE 0 END) AS upcoming
          FROM bookings
@@ -553,7 +563,7 @@ export function listClients(): Client[] {
        ) b ON b.key = LOWER(c.email)
        ORDER BY c.name COLLATE NOCASE`,
     )
-    .all(studioNow().date) as Client[];
+    .all(studioNow().date, studioNow().date, studioNow().date) as Client[];
 }
 
 /**
@@ -577,8 +587,54 @@ export function listBookingsForClient(email: string): Booking[] {
     .all(email) as Booking[];
 }
 
-export function updateClientNotes(id: number, notes: string | null): void {
-  db.prepare(`UPDATE clients SET notes = ? WHERE id = ?`).run(notes, id);
+/**
+ * Edits a contact's details.
+ *
+ * Appointments are linked to a contact by email, so changing one would cut
+ * them off from their own history. Their bookings are updated in the same
+ * transaction to keep the two in step.
+ */
+export function updateClient(
+  id: number,
+  name: string,
+  email: string,
+  phone: string,
+  notes: string | null,
+): { ok: true } | { ok: false; error: string } {
+  const existing = db
+    .prepare(`SELECT email FROM clients WHERE id = ?`)
+    .get(id) as { email: string } | undefined;
+
+  if (!existing) return { ok: false, error: "That contact no longer exists." };
+
+  if (email) {
+    const clash = db
+      .prepare(
+        `SELECT 1 FROM clients WHERE LOWER(email) = LOWER(?) AND id != ?`,
+      )
+      .get(email, id);
+    if (clash) {
+      return { ok: false, error: "Another contact already uses that email." };
+    }
+  }
+
+  const transaction = db.transaction((): { ok: true } => {
+    if (existing.email) {
+      db.prepare(
+        `UPDATE bookings SET client_name = ?, email = ?, phone = ?
+         WHERE LOWER(email) = LOWER(?)`,
+      ).run(name, email, phone, existing.email);
+    }
+
+    db.prepare(
+      `UPDATE clients SET name = ?, email = ?, phone = ?, notes = ?
+       WHERE id = ?`,
+    ).run(name, email, phone, notes, id);
+
+    return { ok: true };
+  });
+
+  return transaction();
 }
 
 export function createClient(

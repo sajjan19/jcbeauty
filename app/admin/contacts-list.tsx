@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   formatDateLong,
@@ -8,7 +8,11 @@ import {
   formatDuration,
   formatTime12,
 } from "@/lib/time";
-import { removeClient, saveClientNotes } from "./actions";
+import {
+  removeClient,
+  saveClientDetails,
+  type SaveClientState,
+} from "./actions";
 import styles from "./page.module.css";
 
 export type ContactBooking = {
@@ -30,10 +34,11 @@ export type Contact = {
   phone: string;
   notes: string | null;
   bookings: number;
+  visits: number;
   upcoming: number;
   firstVisit: string | null;
   lastVisit: string | null;
-  value: number;
+  spent: number;
   history: ContactBooking[];
 };
 
@@ -130,9 +135,7 @@ export function ContactsList({
 
             <div className={styles.contactStats}>
               <div className={styles.contactStat}>
-                <span className={styles.contactStatValue}>
-                  {client.bookings}
-                </span>
+                <span className={styles.contactStatValue}>{client.visits}</span>
                 <span className={styles.contactStatLabel}>Visits</span>
               </div>
               <div className={styles.contactStat}>
@@ -140,10 +143,6 @@ export function ContactsList({
                   {client.upcoming}
                 </span>
                 <span className={styles.contactStatLabel}>Upcoming</span>
-              </div>
-              <div className={styles.contactStat}>
-                <span className={styles.contactStatValue}>${client.value}</span>
-                <span className={styles.contactStatLabel}>Booked</span>
               </div>
             </div>
 
@@ -189,9 +188,14 @@ function ContactDialog({
   today: string;
   onClose: () => void;
 }) {
-  const upcoming = client.history.filter(
-    (b) => b.date >= today && b.status !== "cancelled",
-  );
+  // Upcoming reads best soonest-first; history reads best most-recent-first,
+  // which is the order the query already returns.
+  const upcoming = client.history
+    .filter((b) => b.date >= today && b.status !== "cancelled")
+    .sort(
+      (a, b) =>
+        a.date.localeCompare(b.date) || a.start_minutes - b.start_minutes,
+    );
   const previous = client.history.filter(
     (b) => b.date < today || b.status === "cancelled",
   );
@@ -212,8 +216,8 @@ function ContactDialog({
           <div>
             <p className={styles.dialogTitle}>{client.name}</p>
             <span className={styles.dialogSub}>
-              {client.bookings} appointment{client.bookings === 1 ? "" : "s"} ·
-              ${client.value} booked
+              {client.visits} visit{client.visits === 1 ? "" : "s"} ·{" "}
+              {client.upcoming} upcoming
             </span>
           </div>
           <button
@@ -230,26 +234,6 @@ function ContactDialog({
         <div className={styles.dialogBody}>
           <h3 className={styles.dialogSection}>About</h3>
           <div className={styles.aboutGrid}>
-            <div className={styles.detailRow}>
-              <span className={styles.detailLabel}>Phone</span>
-              <span className={styles.detailValue}>
-                {client.phone ? (
-                  <a href={`tel:${client.phone}`}>{client.phone}</a>
-                ) : (
-                  <span className="muted">Not recorded</span>
-                )}
-              </span>
-            </div>
-            <div className={styles.detailRow}>
-              <span className={styles.detailLabel}>Email</span>
-              <span className={styles.detailValue}>
-                {client.email ? (
-                  <a href={`mailto:${client.email}`}>{client.email}</a>
-                ) : (
-                  <span className="muted">Not recorded</span>
-                )}
-              </span>
-            </div>
             <div className={styles.detailRow}>
               <span className={styles.detailLabel}>First visit</span>
               <span className={styles.detailValue}>
@@ -270,24 +254,21 @@ function ContactDialog({
                 )}
               </span>
             </div>
+            <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Total spent</span>
+              <span className={styles.detailValue}>
+                ${client.spent}
+                {client.upcoming > 0 && (
+                  <span className="muted">
+                    {" "}
+                    (excludes {client.upcoming} upcoming)
+                  </span>
+                )}
+              </span>
+            </div>
           </div>
 
-          <form action={saveClientNotes} className={styles.notesForm}>
-            <input type="hidden" name="id" value={client.id} />
-            <label className="field">
-              <span className="label">Notes</span>
-              <textarea
-                className="textarea"
-                name="notes"
-                defaultValue={client.notes ?? ""}
-                maxLength={1000}
-                placeholder="Allergies, preferred shape, what they usually book…"
-              />
-            </label>
-            <button type="submit" className="btn btn-outline btn-sm">
-              Save Notes
-            </button>
-          </form>
+          <ClientDetailsForm client={client} />
 
           <h3 className={styles.dialogSection}>Upcoming</h3>
           {upcoming.length === 0 ? (
@@ -322,6 +303,81 @@ function ContactDialog({
         </div>
       </div>
     </div>
+  );
+}
+
+/** Editable name, phone, email and notes for one contact. */
+function ClientDetailsForm({ client }: { client: Contact }) {
+  const [state, action, pending] = useActionState<SaveClientState, FormData>(
+    saveClientDetails,
+    {},
+  );
+
+  return (
+    <form action={action} className={styles.notesForm} key={client.id}>
+      <input type="hidden" name="id" value={client.id} />
+
+      {state.error && (
+        <div className="notice notice-error" role="alert">
+          {state.error}
+        </div>
+      )}
+      {state.saved && (
+        <div className="notice notice-success" role="status">
+          {state.saved}
+        </div>
+      )}
+
+      <div className={styles.addGrid}>
+        <label className="field">
+          <span className="label">Name</span>
+          <input
+            className="input"
+            name="name"
+            defaultValue={client.name}
+            required
+            maxLength={100}
+          />
+        </label>
+        <label className="field">
+          <span className="label">Phone</span>
+          <input
+            className="input"
+            name="phone"
+            type="tel"
+            defaultValue={client.phone}
+          />
+        </label>
+        <label className="field">
+          <span className="label">Email</span>
+          <input
+            className="input"
+            name="email"
+            type="email"
+            defaultValue={client.email}
+          />
+        </label>
+      </div>
+
+      <label className="field">
+        <span className="label">Notes</span>
+        <textarea
+          className="textarea"
+          name="notes"
+          defaultValue={client.notes ?? ""}
+          maxLength={1000}
+          placeholder="Allergies, preferred shape, what they usually book…"
+        />
+      </label>
+
+      <button
+        type="submit"
+        className="btn btn-outline btn-sm"
+        disabled={pending}
+      >
+        {pending ? "Saving…" : "Save Details"}
+      </button>
+    </form>
   );
 }
 

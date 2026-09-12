@@ -14,7 +14,7 @@ import {
   deleteClient,
   rescheduleBooking,
   setBookingStatus,
-  updateClientNotes,
+  updateClient,
   unblockPeriod,
   type BookingStatus,
 } from "@/lib/bookings";
@@ -162,16 +162,32 @@ export async function addClient(
   return { added: `${name} saved to contacts.` };
 }
 
-/** Free-text notes she keeps about a client. */
-export async function saveClientNotes(formData: FormData): Promise<void> {
+export type SaveClientState = { error?: string; saved?: string };
+
+/** Edits a contact's name, phone, email and notes. */
+export async function saveClientDetails(
+  _prev: SaveClientState,
+  formData: FormData,
+): Promise<SaveClientState> {
   await requireAdmin();
 
   const id = Number(formData.get("id"));
+  const name = String(formData.get("name") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+  const phone = String(formData.get("phone") ?? "").trim();
   const notes = String(formData.get("notes") ?? "").trim();
-  if (!Number.isInteger(id) || id <= 0) throw new Error("Invalid contact.");
 
-  updateClientNotes(id, notes || null);
+  if (!Number.isInteger(id) || id <= 0) return { error: "Invalid contact." };
+  if (!name) return { error: "Add a name." };
+  if (!email && !phone) {
+    return { error: "Add an email or a phone number so you can reach them." };
+  }
+
+  const result = updateClient(id, name, email, phone, notes || null);
+  if (!result.ok) return { error: result.error };
+
   revalidatePath("/admin");
+  return { saved: "Details saved." };
 }
 
 /** Removes the contact. Their past bookings are kept. */
