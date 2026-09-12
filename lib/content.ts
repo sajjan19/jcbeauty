@@ -177,19 +177,17 @@ export function getService(slug: string): Service | undefined {
  *
  * Times are 24-hour "HH:MM" in the studio's local timezone.
  * Set a day to `null` to close it entirely.
- *
- * TODO: replace with her real working hours.
  */
 export type DayHours = { open: string; close: string } | null;
 
 export const hours: Record<number, DayHours> = {
-  0: null, // Sunday — closed
-  1: null, // Monday — closed
+  0: { open: "10:00", close: "18:00" }, // Sunday
+  1: { open: "10:00", close: "18:00" }, // Monday
   2: { open: "10:00", close: "18:00" }, // Tuesday
   3: { open: "10:00", close: "18:00" }, // Wednesday
-  4: { open: "10:00", close: "20:00" }, // Thursday
+  4: { open: "10:00", close: "18:00" }, // Thursday
   5: { open: "10:00", close: "18:00" }, // Friday
-  6: { open: "09:00", close: "16:00" }, // Saturday
+  6: { open: "10:00", close: "18:00" }, // Saturday
 };
 
 export const dayNames = [

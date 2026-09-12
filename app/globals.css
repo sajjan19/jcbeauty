@@ -283,6 +283,43 @@ img {
   border-color: transparent;
 }
 
+/* Green for confirming, red for cancelling, matching the status badges so a
+   booking reads the same colour wherever it appears. */
+.btn-success {
+  background: #2f6b45;
+  border-color: #2f6b45;
+  color: var(--white);
+}
+
+.btn-success:hover:not(:disabled) {
+  background: #27593a;
+  border-color: #27593a;
+}
+
+.btn-danger {
+  background: transparent;
+  color: #9b3b32;
+  border-color: #d9b4b0;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #9b3b32;
+  border-color: #9b3b32;
+  color: var(--white);
+}
+
+/* The filled version is only for the final "yes, cancel it" step. */
+.btn-danger-solid {
+  background: #9b3b32;
+  border-color: #9b3b32;
+  color: var(--white);
+}
+
+.btn-danger-solid:hover:not(:disabled) {
+  background: #85302a;
+  border-color: #85302a;
+}
+
 .btn-sm {
   padding: var(--sp-2) var(--sp-4);
   font-size: 0.6875rem;

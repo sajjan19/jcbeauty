@@ -13,10 +13,11 @@ import {
   createBookingAsAdmin,
   createClient,
   deleteClient,
-  rescheduleBooking,
   setBookingStatus,
+  updateBooking,
   updateClient,
-  unblockPeriod,
+  replaceBlockedGroup,
+  unblockPeriods,
   updateBlockedPeriod,
   type BookingStatus,
 } from "@/lib/bookings";
@@ -115,28 +116,44 @@ export async function addBooking(
   return { added: `${name} booked in for ${date} at ${time}.` };
 }
 
-export type RescheduleState = { error?: string; moved?: string };
+export type EditBookingState = { error?: string; saved?: string };
 
-/** Moves an appointment to a new date and time. */
-export async function rescheduleAppointment(
-  _prev: RescheduleState,
+/** Changes an appointment's date, start time, price and notes. */
+export async function editAppointment(
+  _prev: EditBookingState,
   formData: FormData,
-): Promise<RescheduleState> {
+): Promise<EditBookingState> {
   await requireAdmin();
 
   const id = Number(formData.get("id"));
   const date = String(formData.get("date") ?? "");
   const time = String(formData.get("time") ?? "");
+  const duration = Number(formData.get("duration"));
+  const price = Number(formData.get("price"));
+  const notes = String(formData.get("notes") ?? "").trim();
 
   if (!Number.isInteger(id) || id <= 0) return { error: "Invalid appointment." };
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: "Pick a date." };
   if (!/^\d{2}:\d{2}$/.test(time)) return { error: "Pick a start time." };
+  if (!Number.isInteger(duration) || duration < 5) {
+    return { error: "Length has to be at least 5 minutes." };
+  }
+  // A whole day is the most an appointment can sensibly run.
+  if (duration > 480) return { error: "That length is over eight hours." };
+  if (!Number.isInteger(price) || price < 0) {
+    return { error: "Price has to be a whole number of dollars." };
+  }
+  // Guards a slipped decimal point, which would skew what she's owed.
+  if (price > 10000) return { error: "That price looks too high." };
+  if (notes.length > 1000) return { error: "That note is too long." };
 
-  const result = rescheduleBooking(id, date, time);
+  const result = updateBooking(id, date, time, duration, price, notes || null);
   if (!result.ok) return { error: result.error };
 
   revalidatePath("/admin");
-  return { moved: `Moved to ${date} at ${time}.` };
+  return {
+    saved: `Saved. ${formatDateLong(date)} at ${formatTime12(parseTime(time))}, ${duration} min, $${price}.`,
+  };
 }
 
 export type AddClientState = { error?: string; added?: string };
@@ -273,33 +290,65 @@ export async function blockTime(
   return { done: `Blocked ${window} on ${formatDateLong(date)}.` };
 }
 
-/** Corrects a blocked period that was entered wrong. */
+/** The ids behind one line on the time off page: a day, or a run of them. */
+function readIds(formData: FormData): number[] {
+  return String(formData.get("ids") ?? "")
+    .split(",")
+    .map((part) => Number(part.trim()))
+    .filter((id) => Number.isInteger(id) && id > 0);
+}
+
+/** Corrects time off that was entered wrong, a single day or a whole run. */
 export async function editBlockedTime(
   _prev: BlockTimeState,
   formData: FormData,
 ): Promise<BlockTimeState> {
   await requireAdmin();
 
-  const id = Number(formData.get("id"));
-  if (!Number.isInteger(id) || id <= 0) return { error: "Invalid time off." };
+  const ids = readIds(formData);
+  if (ids.length === 0) return { error: "Invalid time off." };
 
   const fields = readBlockFields(formData);
   if (!fields.ok) return { error: fields.error };
 
   const { date, start, end, reason, window } = fields;
-  const result = updateBlockedPeriod(id, date, start, end, reason);
+  const until = String(formData.get("until") ?? "");
+  const spansDays = until && /^\d{4}-\d{2}-\d{2}$/.test(until) && until !== date;
+
+  // One day staying one day is a straight update, which keeps its row. Any
+  // other shape is rewritten, since the number of days may change.
+  if (ids.length === 1 && !spansDays) {
+    const result = updateBlockedPeriod(ids[0], date, start, end, reason);
+    if (!result.ok) return { error: result.error };
+    revalidatePath("/admin");
+    return { done: `Now blocking ${window} on ${formatDateLong(date)}.` };
+  }
+
+  const result = replaceBlockedGroup(
+    ids,
+    date,
+    spansDays ? until : date,
+    start,
+    end,
+    reason,
+  );
   if (!result.ok) return { error: result.error };
 
   revalidatePath("/admin");
-  return { done: `Now blocking ${window} on ${formatDateLong(date)}.` };
+  return {
+    done: `Now blocking ${window} across ${result.days} day${
+      result.days === 1 ? "" : "s"
+    }, from ${formatDateLong(date)}.`,
+  };
 }
 
 export async function removeBlockedTime(formData: FormData): Promise<void> {
   await requireAdmin();
 
-  const id = Number(formData.get("id"));
-  if (!Number.isInteger(id) || id <= 0) throw new Error("Invalid entry.");
+  // One line on the page can stand for a run of days, so this frees them all.
+  const ids = readIds(formData);
+  if (ids.length === 0) throw new Error("Invalid entry.");
 
-  unblockPeriod(id);
+  unblockPeriods(ids);
   revalidatePath("/admin");
 }

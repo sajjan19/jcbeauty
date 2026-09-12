@@ -3,6 +3,7 @@ import Link from "next/link";
 import { isAdmin } from "@/lib/auth";
 import {
   getStats,
+  groupBlockedPeriods,
   listBlockedPeriods,
   listBookings,
   listBookingsForClient,
@@ -21,6 +22,7 @@ import { LoginForm } from "./login-form";
 import { AdminCalendar } from "./admin-calendar";
 import { AddClientButton } from "./add-client-form";
 import { BlockTimeButton, EditBlockTimeButton } from "./block-time-form";
+import { CancelBookingButton } from "./cancel-button";
 import { ContactsList } from "./contacts-list";
 import { logout, removeBlockedTime, updateBookingStatus } from "./actions";
 import styles from "./page.module.css";
@@ -66,7 +68,8 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
     0,
     20,
   );
-  const blocked = listBlockedPeriods(today);
+  // A holiday is stored a day at a time, but reads better as one line.
+  const blockedGroups = groupBlockedPeriods(listBlockedPeriods(today));
   // The calendar can be paged back through past months, so it gets everything.
   const allBookings = listBookings({});
   const allBlocked = listBlockedPeriods();
@@ -140,8 +143,8 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
             className={`${styles.tab} ${tab === "timeoff" ? styles.tabActive : ""}`}
           >
             Time off
-            {blocked.length > 0 && (
-              <span className={styles.tabCount}>{blocked.length}</span>
+            {blockedGroups.length > 0 && (
+              <span className={styles.tabCount}>{blockedGroups.length}</span>
             )}
           </Link>
         </nav>
@@ -213,31 +216,43 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
               <BlockTimeButton today={today} />
             </div>
 
-            {blocked.length === 0 ? (
+            {blockedGroups.length === 0 ? (
               <p className="muted" style={{ marginTop: "1.5rem" }}>
                 Nothing blocked off yet.
               </p>
             ) : (
               <ul className={styles.blockedList}>
-                {blocked.map((entry) => (
-                  <li key={entry.id} className={styles.blockedItem}>
+                {blockedGroups.map((group) => (
+                  <li
+                    key={group.ids.join("-")}
+                    className={styles.blockedItem}
+                  >
                     <span>
-                      <strong>{formatDateLong(entry.date)}</strong>
+                      <strong>
+                        {group.from === group.to
+                          ? formatDateLong(group.from)
+                          : `${formatDateLong(group.from)} to ${formatDateLong(group.to)}`}
+                      </strong>
                       <span className="muted">
                         {" · "}
-                        {entry.start_minutes === null ||
-                        entry.end_minutes === null
+                        {group.start_minutes === null ||
+                        group.end_minutes === null
                           ? "whole day"
-                          : `${formatTime12(entry.start_minutes)} to ${formatTime12(entry.end_minutes)}`}
+                          : `${formatTime12(group.start_minutes)} to ${formatTime12(group.end_minutes)}`}
+                        {group.ids.length > 1 && ` · ${group.ids.length} days`}
                       </span>
-                      {entry.reason && (
-                        <span className="muted"> ({entry.reason})</span>
+                      {group.reason && (
+                        <span className="muted"> ({group.reason})</span>
                       )}
                     </span>
                     <span className={styles.blockedActions}>
-                      <EditBlockTimeButton entry={entry} />
+                      <EditBlockTimeButton group={group} />
                       <form action={removeBlockedTime}>
-                        <input type="hidden" name="id" value={entry.id} />
+                        <input
+                          type="hidden"
+                          name="ids"
+                          value={group.ids.join(",")}
+                        />
                         <button type="submit" className="btn btn-ghost btn-sm">
                           Unblock
                         </button>
@@ -350,19 +365,16 @@ function BookingCard({
             <form action={updateBookingStatus}>
               <input type="hidden" name="id" value={booking.id} />
               <input type="hidden" name="status" value="confirmed" />
-              <button type="submit" className="btn btn-sm">
+              <button type="submit" className="btn btn-success btn-sm">
                 Confirm
               </button>
             </form>
           )}
           {booking.status !== "cancelled" && (
-            <form action={updateBookingStatus}>
-              <input type="hidden" name="id" value={booking.id} />
-              <input type="hidden" name="status" value="cancelled" />
-              <button type="submit" className="btn btn-outline btn-sm">
-                Cancel
-              </button>
-            </form>
+            <CancelBookingButton
+              id={booking.id}
+              clientName={booking.client_name}
+            />
           )}
           {booking.status === "cancelled" && (
             <form action={updateBookingStatus}>

@@ -445,14 +445,17 @@ export function createBookingAsAdmin(input: {
 }
 
 /**
- * Moves an existing appointment. Keeps its service and length, so only the
- * date and start time change, and refuses a move that would collide with
- * something else already booked.
+ * Edits an existing appointment: when it starts, how long it runs, what it
+ * costs and the note against it. Keeps its service, and refuses a change
+ * that would collide with something else already booked.
  */
-export function rescheduleBooking(
+export function updateBooking(
   id: number,
   date: string,
   time: string,
+  durationMinutes: number,
+  price: number,
+  notes: string | null,
 ): { ok: true } | { ok: false; error: string } {
   const booking = db.prepare(`SELECT * FROM bookings WHERE id = ?`).get(id) as
     | Booking
@@ -463,7 +466,7 @@ export function rescheduleBooking(
   if (Number.isNaN(start)) {
     return { ok: false, error: "That start time isn't valid." };
   }
-  const end = start + booking.duration_minutes;
+  const end = start + durationMinutes;
 
   const transaction = db.transaction(
     (): { ok: true } | { ok: false; error: string } => {
@@ -476,9 +479,11 @@ export function rescheduleBooking(
       }
 
       db.prepare(
-        `UPDATE bookings SET date = ?, start_minutes = ?, end_minutes = ?
+        `UPDATE bookings
+         SET date = ?, start_minutes = ?, end_minutes = ?,
+             duration_minutes = ?, price = ?, notes = ?
          WHERE id = ?`,
-      ).run(date, start, end, id);
+      ).run(date, start, end, durationMinutes, price, notes, id);
 
       return { ok: true };
     },
@@ -560,6 +565,102 @@ export function updateBlockedPeriod(
   ).run(date, start, end, reason, id);
 
   return { ok: true };
+}
+
+/**
+ * A run of consecutive days blocked the same way, shown as one line. A
+ * holiday is stored a day at a time, which is right for the calendar but
+ * reads as noise in a list.
+ */
+export type BlockedGroup = {
+  ids: number[];
+  from: string;
+  to: string;
+  start_minutes: number | null;
+  end_minutes: number | null;
+  reason: string | null;
+};
+
+export function groupBlockedPeriods(periods: BlockedPeriod[]): BlockedGroup[] {
+  const sorted = [...periods].sort(
+    (a, b) =>
+      a.date.localeCompare(b.date) ||
+      (a.start_minutes ?? -1) - (b.start_minutes ?? -1),
+  );
+
+  const groups: BlockedGroup[] = [];
+
+  for (const period of sorted) {
+    const last = groups[groups.length - 1];
+    // Only merge the next day along, blocked over the same hours for the
+    // same reason. Two rows on one date never merge, since the day after
+    // `last.to` can't be `last.to` itself.
+    const continues =
+      last &&
+      last.start_minutes === period.start_minutes &&
+      last.end_minutes === period.end_minutes &&
+      (last.reason ?? "") === (period.reason ?? "") &&
+      addDays(last.to, 1) === period.date;
+
+    if (continues) {
+      last.ids.push(period.id);
+      last.to = period.date;
+    } else {
+      groups.push({
+        ids: [period.id],
+        from: period.date,
+        to: period.date,
+        start_minutes: period.start_minutes,
+        end_minutes: period.end_minutes,
+        reason: period.reason,
+      });
+    }
+  }
+
+  return groups;
+}
+
+/** Frees a whole run of blocked days at once. */
+export function unblockPeriods(ids: number[]): void {
+  const remove = db.prepare(`DELETE FROM blocked_periods WHERE id = ?`);
+  const transaction = db.transaction(() => {
+    for (const id of ids) remove.run(id);
+  });
+  transaction();
+}
+
+/**
+ * Rewrites a run of blocked days: the old rows go and the new span is
+ * written in their place, so a holiday can be moved or shortened as a whole.
+ */
+export function replaceBlockedGroup(
+  ids: number[],
+  fromDate: string,
+  toDate: string,
+  start: number | null,
+  end: number | null,
+  reason: string | null,
+): { ok: true; days: number } | { ok: false; error: string } {
+  const span = dateToIndex(toDate) - dateToIndex(fromDate);
+  if (span < 0) return { ok: false, error: "The end date is before the start." };
+  if (span > 365) return { ok: false, error: "That range is over a year long." };
+
+  const remove = db.prepare(`DELETE FROM blocked_periods WHERE id = ?`);
+  const insert = db.prepare(
+    `INSERT INTO blocked_periods (date, start_minutes, end_minutes, reason, created_at)
+     VALUES (?, ?, ?, ?, ?)`,
+  );
+
+  const transaction = db.transaction(() => {
+    for (const id of ids) remove.run(id);
+    const now = new Date().toISOString();
+    for (let i = 0; i <= span; i++) {
+      insert.run(addDays(fromDate, i), start, end, reason, now);
+    }
+  });
+
+  transaction();
+  return { ok: true, days: span + 1 };
 }
 
 export function unblockPeriod(id: number): void {

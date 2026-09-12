@@ -120,7 +120,7 @@ export default function ContactPage() {
             <aside className={styles.hoursPanel}>
               <p className="eyebrow">Studio hours</p>
               <ul className={styles.hoursList}>
-                {[2, 3, 4, 5, 6, 0, 1].map((day) => {
+                {[0, 1, 2, 3, 4, 5, 6].map((day) => {
                   const h = hours[day];
                   return (
                     <li key={day} className={styles.hoursRow}>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import type { BlockedPeriod } from "@/lib/bookings";
+import type { BlockedGroup } from "@/lib/bookings";
 import { formatTime24 } from "@/lib/time";
 import { blockTime, editBlockedTime, type BlockTimeState } from "./actions";
 import styles from "./page.module.css";
@@ -21,7 +21,7 @@ export function BlockTimeButton({ today }: { today: string }) {
       {open && (
         <BlockTimeDialog
           today={today}
-          entry={null}
+          group={null}
           onClose={() => setOpen(false)}
         />
       )}
@@ -30,7 +30,7 @@ export function BlockTimeButton({ today }: { today: string }) {
 }
 
 /** Reopens the same pop-up filled in, to fix a day or time entered wrong. */
-export function EditBlockTimeButton({ entry }: { entry: BlockedPeriod }) {
+export function EditBlockTimeButton({ group }: { group: BlockedGroup }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -39,14 +39,14 @@ export function EditBlockTimeButton({ entry }: { entry: BlockedPeriod }) {
         type="button"
         className="btn btn-ghost btn-sm"
         onClick={() => setOpen(true)}
-        aria-label={`Edit the time blocked on ${entry.date}`}
+        aria-label={`Edit the time blocked from ${group.from}`}
       >
         Edit
       </button>
       {open && (
         <BlockTimeDialog
           today={null}
-          entry={entry}
+          group={group}
           onClose={() => setOpen(false)}
         />
       )}
@@ -56,23 +56,23 @@ export function EditBlockTimeButton({ entry }: { entry: BlockedPeriod }) {
 
 function BlockTimeDialog({
   today,
-  entry,
+  group,
   onClose,
 }: {
   /** Earliest date that can be picked. Null when editing, so a block that has
       already started can still be corrected. */
   today: string | null;
-  entry: BlockedPeriod | null;
+  group: BlockedGroup | null;
   onClose: () => void;
 }) {
-  const editing = entry !== null;
+  const editing = group !== null;
   const [state, action, pending] = useActionState<BlockTimeState, FormData>(
     editing ? editBlockedTime : blockTime,
     {},
   );
   // Whole day is the common case, so the hours only appear when they matter.
   const [mode, setMode] = useState(
-    entry && entry.start_minutes !== null ? "time" : "day",
+    group && group.start_minutes !== null ? "time" : "day",
   );
 
   // Close on Escape, and stop the page behind the pop-up scrolling.
@@ -125,7 +125,9 @@ function BlockTimeDialog({
 
         <div className={styles.dialogBody}>
           <form action={action}>
-            {entry && <input type="hidden" name="id" value={entry.id} />}
+            {group && (
+              <input type="hidden" name="ids" value={group.ids.join(",")} />
+            )}
 
             {state.error && (
               <div className="notice notice-error" role="alert">
@@ -146,21 +148,20 @@ function BlockTimeDialog({
                   type="date"
                   name="date"
                   min={today ?? undefined}
-                  defaultValue={entry?.date}
+                  defaultValue={group?.from}
                   required
                 />
               </label>
-              {!editing && (
-                <label className="field">
-                  <span className="label">To (optional)</span>
-                  <input
-                    className="input"
-                    type="date"
-                    name="until"
-                    min={today ?? undefined}
-                  />
-                </label>
-              )}
+              <label className="field">
+                <span className="label">To (optional)</span>
+                <input
+                  className="input"
+                  type="date"
+                  name="until"
+                  min={today ?? undefined}
+                  defaultValue={group && group.to !== group.from ? group.to : ""}
+                />
+              </label>
               <label className="field">
                 <span className="label">Block</span>
                 <select
@@ -179,7 +180,7 @@ function BlockTimeDialog({
                   className="input"
                   name="reason"
                   placeholder="Holiday, school run…"
-                  defaultValue={entry?.reason ?? ""}
+                  defaultValue={group?.reason ?? ""}
                   maxLength={120}
                 />
               </label>
@@ -192,8 +193,8 @@ function BlockTimeDialog({
                       type="time"
                       name="from"
                       defaultValue={
-                        entry?.start_minutes != null
-                          ? formatTime24(entry.start_minutes)
+                        group?.start_minutes != null
+                          ? formatTime24(group.start_minutes)
                           : ""
                       }
                       required
@@ -206,8 +207,8 @@ function BlockTimeDialog({
                       type="time"
                       name="to"
                       defaultValue={
-                        entry?.end_minutes != null
-                          ? formatTime24(entry.end_minutes)
+                        group?.end_minutes != null
+                          ? formatTime24(group.end_minutes)
                           : ""
                       }
                       required
@@ -219,7 +220,7 @@ function BlockTimeDialog({
 
             <p className={styles.blockHint}>
               {editing
-                ? "A run of days is stored a day at a time, so this changes only this one."
+                ? "Changing the dates rewrites the whole run."
                 : "Add a To date to block a run of days, such as a holiday."}{" "}
               Appointments already booked are not cancelled, so handle those
               from the Upcoming tab.

@@ -15,10 +15,11 @@ import {
   weekday,
 } from "@/lib/time";
 import { AddBookingForm, type KnownClient } from "./add-booking-form";
+import { CancelBookingButton } from "./cancel-button";
 import {
-  rescheduleAppointment,
+  editAppointment,
   updateBookingStatus,
-  type RescheduleState,
+  type EditBookingState,
 } from "./actions";
 import styles from "./admin-calendar.module.css";
 
@@ -414,9 +415,9 @@ function BookingDialog({
   booking: Booking;
   onClose: () => void;
 }) {
-  const [rescheduling, setRescheduling] = useState(false);
-  const [state, action, pending] = useActionState<RescheduleState, FormData>(
-    rescheduleAppointment,
+  const [editing, setEditing] = useState(false);
+  const [state, action, pending] = useActionState<EditBookingState, FormData>(
+    editAppointment,
     {},
   );
 
@@ -498,7 +499,7 @@ function BookingDialog({
             </div>
           )}
 
-          {rescheduling && (
+          {editing && (
             <form action={action} className={styles.rescheduleForm}>
               <input type="hidden" name="id" value={booking.id} />
               {state.error && (
@@ -506,14 +507,14 @@ function BookingDialog({
                   {state.error}
                 </div>
               )}
-              {state.moved && (
+              {state.saved && (
                 <div className="notice notice-success" role="status">
-                  {state.moved}
+                  {state.saved}
                 </div>
               )}
               <div className={styles.rescheduleRow}>
                 <label className="field">
-                  <span className="label">New date</span>
+                  <span className="label">Date</span>
                   <input
                     className="input"
                     type="date"
@@ -523,7 +524,7 @@ function BookingDialog({
                   />
                 </label>
                 <label className="field">
-                  <span className="label">New start time</span>
+                  <span className="label">Start time</span>
                   <input
                     className="input"
                     type="time"
@@ -532,12 +533,48 @@ function BookingDialog({
                     required
                   />
                 </label>
+                <label className="field">
+                  <span className="label">Length (min)</span>
+                  <input
+                    className="input"
+                    type="number"
+                    name="duration"
+                    min={5}
+                    max={480}
+                    step={5}
+                    defaultValue={booking.duration_minutes}
+                    required
+                  />
+                </label>
+                <label className="field">
+                  <span className="label">Price ($)</span>
+                  <input
+                    className="input"
+                    type="number"
+                    name="price"
+                    min={0}
+                    step={1}
+                    defaultValue={booking.price}
+                    required
+                  />
+                </label>
               </div>
+              <label className="field">
+                <span className="label">Notes</span>
+                <textarea
+                  className="textarea"
+                  name="notes"
+                  defaultValue={booking.notes ?? ""}
+                  maxLength={1000}
+                  placeholder="Anything to remember about this appointment…"
+                />
+              </label>
               <p className={styles.createHint}>
-                Keeps the same service and length, so only the start moves.
+                Keeps the same service. Give a client more or less time than
+                usual by changing the length, and the finish time follows.
               </p>
               <button type="submit" className="btn btn-sm" disabled={pending}>
-                {pending ? "Moving…" : "Save New Time"}
+                {pending ? "Saving…" : "Save Changes"}
               </button>
             </form>
           )}
@@ -547,31 +584,29 @@ function BookingDialog({
           <button
             type="button"
             className="btn btn-outline btn-sm"
-            onClick={() => setRescheduling((v) => !v)}
+            onClick={() => setEditing((v) => !v)}
           >
-            {rescheduling ? "Cancel reschedule" : "Reschedule"}
+            {editing ? "Cancel edit" : "Edit"}
           </button>
           {booking.status !== "confirmed" && (
             <form action={updateBookingStatus}>
               <input type="hidden" name="id" value={booking.id} />
               <input type="hidden" name="status" value="confirmed" />
-              <button type="submit" className="btn btn-sm" onClick={onClose}>
+              <button
+                type="submit"
+                className="btn btn-success btn-sm"
+                onClick={onClose}
+              >
                 Confirm
               </button>
             </form>
           )}
           {booking.status !== "cancelled" && (
-            <form action={updateBookingStatus}>
-              <input type="hidden" name="id" value={booking.id} />
-              <input type="hidden" name="status" value="cancelled" />
-              <button
-                type="submit"
-                className="btn btn-outline btn-sm"
-                onClick={onClose}
-              >
-                Cancel appointment
-              </button>
-            </form>
+            <CancelBookingButton
+              id={booking.id}
+              clientName={booking.client_name}
+              onDone={onClose}
+            />
           )}
           {booking.status === "cancelled" && (
             <form action={updateBookingStatus}>

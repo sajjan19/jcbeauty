@@ -180,6 +180,28 @@
   margin-bottom: 0;
 }
 
+/* The two-step cancel: the question, then the two ways out of it. */
+.confirmCancel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  border: 1px solid #d9b4b0;
+  border-radius: var(--radius);
+  background: #fdf6f5;
+}
+
+.confirmCancelText {
+  font-size: 0.8125rem;
+  color: var(--char);
+}
+
+.confirmCancelActions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
 .blockedActions {
   display: flex;
   align-items: center;
