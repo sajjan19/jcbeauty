@@ -16,50 +16,6 @@
   margin: 0;
 }
 
-/* ── Stats ───────────────────────────────── */
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: var(--sp-4);
-  margin-bottom: var(--sp-8);
-}
-
-.stat {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--sp-5);
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-1);
-}
-
-.statLink {
-  text-decoration: none;
-  color: inherit;
-  transition: border-color 0.18s ease, transform 0.18s ease;
-}
-
-.statLink:hover {
-  border-color: var(--taupe);
-  transform: translateY(-2px);
-}
-
-.statValue {
-  font-family: var(--font-display);
-  font-size: 2.25rem;
-  line-height: 1;
-  color: var(--char);
-}
-
-.statLabel {
-  font-size: 0.625rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--stone);
-}
-
 /* ── Sections ────────────────────────────── */
 
 .section {
@@ -376,14 +332,44 @@
 
 /* ── Contacts ────────────────────────────── */
 
+.contactSearch {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-4);
+}
+
+.contactSearch .input {
+  max-width: 380px;
+}
+
+.contactCount {
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone);
+  white-space: nowrap;
+}
+
 .contactList {
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
 }
 
-.contactsHeading {
-  margin-top: var(--sp-7);
+.contactsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-4);
+}
+
+.contactsHeader .sectionTitle {
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
 
 .contactNameBtn {

@@ -20,7 +20,7 @@ import {
 import { LoginForm } from "./login-form";
 import { AdminCalendar } from "./admin-calendar";
 import { AddBookingForm } from "./add-booking-form";
-import { AddClientForm } from "./add-client-form";
+import { AddClientButton } from "./add-client-form";
 import { ContactsList } from "./contacts-list";
 import {
   addBlockedTime,
@@ -112,27 +112,6 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
           </form>
         </header>
 
-        <div className={styles.stats}>
-          <Link
-            href="/admin?tab=pending"
-            className={`${styles.stat} ${styles.statLink}`}
-          >
-            <span className={styles.statValue}>{stats.pending}</span>
-            <span className={styles.statLabel}>Awaiting confirmation</span>
-          </Link>
-          <div className={styles.stat}>
-            <span className={styles.statValue}>{stats.thisWeek}</span>
-            <span className={styles.statLabel}>Next 7 days</span>
-          </div>
-          <Link
-            href="/admin?tab=upcoming"
-            className={`${styles.stat} ${styles.statLink}`}
-          >
-            <span className={styles.statValue}>{stats.upcoming}</span>
-            <span className={styles.statLabel}>Upcoming total</span>
-          </Link>
-        </div>
-
         <nav className={styles.tabs}>
           <Link
             href="/admin"
@@ -216,11 +195,10 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
               Removing a contact keeps their past appointments.
             </p>
 
-            <AddClientForm />
-
-            <h2 className={`${styles.sectionTitle} ${styles.contactsHeading}`}>
-              Saved contacts
-            </h2>
+            <div className={styles.contactsHeader}>
+              <h2 className={styles.sectionTitle}>Saved contacts</h2>
+              <AddClientButton />
+            </div>
             <ContactsList contacts={contactsWithHistory} today={today} />
           </section>
         )}

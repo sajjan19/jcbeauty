@@ -45,6 +45,7 @@ export function ContactsList({
   today: string;
 }) {
   const [open, setOpen] = useState<Contact | null>(null);
+  const [search, setSearch] = useState("");
 
   // Close on Escape, and stop the page behind the pop-up scrolling.
   useEffect(() => {
@@ -61,14 +62,47 @@ export function ContactsList({
     };
   }, [open]);
 
+  // Matches name, email or phone, so typing digits finds someone by number.
+  const query = search.trim().toLowerCase();
+  const digits = query.replace(/\D/g, "");
+  const filtered = query
+    ? contacts.filter((c) => {
+        const byName = c.name.toLowerCase().includes(query);
+        const byEmail = c.email.toLowerCase().includes(query);
+        const byPhone =
+          digits.length >= 2 && c.phone.replace(/\D/g, "").includes(digits);
+        return byName || byEmail || byPhone;
+      })
+    : contacts;
+
   if (contacts.length === 0) {
     return <p className="muted">No contacts yet.</p>;
   }
 
   return (
     <>
+      <div className={styles.contactSearch}>
+        <input
+          type="search"
+          className="input"
+          placeholder="Search by name, phone or email"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          aria-label="Search contacts"
+        />
+        <span className={styles.contactCount}>
+          {query
+            ? `${filtered.length} of ${contacts.length}`
+            : `${contacts.length} contact${contacts.length === 1 ? "" : "s"}`}
+        </span>
+      </div>
+
+      {filtered.length === 0 && (
+        <p className="muted">No contacts match “{search.trim()}”.</p>
+      )}
+
       <div className={styles.contactList}>
-        {contacts.map((client) => (
+        {filtered.map((client) => (
           <article key={client.id} className={styles.contact}>
             <div>
               <p className={styles.contactName}>
