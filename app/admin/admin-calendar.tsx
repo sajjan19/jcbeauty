@@ -16,6 +16,7 @@ import {
 } from "@/lib/time";
 import { AddBookingForm, type KnownClient } from "./add-booking-form";
 import { CancelBookingButton } from "./cancel-button";
+import { EditBookingFields } from "./edit-booking-form";
 import {
   editAppointment,
   updateBookingStatus,
@@ -501,7 +502,6 @@ function BookingDialog({
 
           {editing && (
             <form action={action} className={styles.rescheduleForm}>
-              <input type="hidden" name="id" value={booking.id} />
               {state.error && (
                 <div className="notice notice-error" role="alert">
                   {state.error}
@@ -512,63 +512,7 @@ function BookingDialog({
                   {state.saved}
                 </div>
               )}
-              <div className={styles.rescheduleRow}>
-                <label className="field">
-                  <span className="label">Date</span>
-                  <input
-                    className="input"
-                    type="date"
-                    name="date"
-                    defaultValue={booking.date}
-                    required
-                  />
-                </label>
-                <label className="field">
-                  <span className="label">Start time</span>
-                  <input
-                    className="input"
-                    type="time"
-                    name="time"
-                    defaultValue={formatTime24(booking.start_minutes)}
-                    required
-                  />
-                </label>
-                <label className="field">
-                  <span className="label">Length (min)</span>
-                  <input
-                    className="input"
-                    type="number"
-                    name="duration"
-                    min={5}
-                    max={480}
-                    step={5}
-                    defaultValue={booking.duration_minutes}
-                    required
-                  />
-                </label>
-                <label className="field">
-                  <span className="label">Price ($)</span>
-                  <input
-                    className="input"
-                    type="number"
-                    name="price"
-                    min={0}
-                    step={1}
-                    defaultValue={booking.price}
-                    required
-                  />
-                </label>
-              </div>
-              <label className="field">
-                <span className="label">Notes</span>
-                <textarea
-                  className="textarea"
-                  name="notes"
-                  defaultValue={booking.notes ?? ""}
-                  maxLength={1000}
-                  placeholder="Anything to remember about this appointment…"
-                />
-              </label>
+              <EditBookingFields booking={booking} />
               <p className={styles.createHint}>
                 Keeps the same service. Give a client more or less time than
                 usual by changing the length, and the finish time follows.

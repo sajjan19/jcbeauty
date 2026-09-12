@@ -23,6 +23,7 @@ import { AdminCalendar } from "./admin-calendar";
 import { AddClientButton } from "./add-client-form";
 import { BlockTimeButton, EditBlockTimeButton } from "./block-time-form";
 import { CancelBookingButton } from "./cancel-button";
+import { EditBookingButton } from "./edit-booking-form";
 import { ContactsList } from "./contacts-list";
 import { logout, removeBlockedTime, updateBookingStatus } from "./actions";
 import styles from "./page.module.css";
@@ -35,12 +36,19 @@ export const metadata: Metadata = {
 // Bookings change constantly — never serve this from a cache.
 export const dynamic = "force-dynamic";
 
-type Tab = "bookings" | "upcoming" | "pending" | "contacts" | "timeoff";
+type Tab =
+  | "bookings"
+  | "upcoming"
+  | "pending"
+  | "cancelled"
+  | "contacts"
+  | "timeoff";
 
 const TAB_TITLES: Record<Tab, string> = {
   bookings: "Calendar",
   upcoming: "Upcoming appointments",
   pending: "Awaiting confirmation",
+  cancelled: "Cancelled appointments",
   contacts: "Contacts",
   timeoff: "Time off",
 };
@@ -56,14 +64,27 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
     raw === "pending" ||
     raw === "contacts" ||
     raw === "upcoming" ||
+    raw === "cancelled" ||
     raw === "timeoff"
       ? raw
       : "bookings";
 
   const today = studioNow().date;
   const stats = getStats();
-  const upcoming = listBookings({ from: today });
+  // Cancelled ones have their own tab, so they don't belong in what's coming up.
+  const upcoming = listBookings({ from: today }).filter(
+    (b) => b.status !== "cancelled",
+  );
   const pending = upcoming.filter((b) => b.status === "pending");
+
+  const cancelled = listBookings({ status: "cancelled", order: "desc" });
+  const cancelledToCome = cancelled
+    .filter((b) => b.date >= today)
+    .sort(
+      (a, b) =>
+        a.date.localeCompare(b.date) || a.start_minutes - b.start_minutes,
+    );
+  const cancelledPast = cancelled.filter((b) => b.date < today);
   const past = listBookings({ to: addDays(today, -1), order: "desc" }).slice(
     0,
     20,
@@ -133,6 +154,15 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
             <span className={styles.tabCount}>{stats.pending}</span>
           </Link>
           <Link
+            href="/admin?tab=cancelled"
+            className={`${styles.tab} ${tab === "cancelled" ? styles.tabActive : ""}`}
+          >
+            Cancelled
+            {cancelled.length > 0 && (
+              <span className={styles.tabCount}>{cancelled.length}</span>
+            )}
+          </Link>
+          <Link
             href="/admin?tab=contacts"
             className={`${styles.tab} ${tab === "contacts" ? styles.tabActive : ""}`}
           >
@@ -181,6 +211,42 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
                   <BookingCard key={booking.id} booking={booking} />
                 ))}
               </div>
+            )}
+          </section>
+        )}
+
+        {/* ── Cancelled ─────────────────────── */}
+        {tab === "cancelled" && (
+          <section className={styles.section}>
+            <p className={styles.sectionHint}>
+              Appointments that were called off. The time they held is free
+              again, and reinstating one puts it back as unconfirmed.
+            </p>
+            {cancelled.length === 0 ? (
+              <p className="muted">Nothing cancelled.</p>
+            ) : (
+              <>
+                {cancelledToCome.length > 0 && (
+                  <>
+                    <h2 className={styles.sectionTitle}>Still to come</h2>
+                    <div className={styles.bookingList}>
+                      {cancelledToCome.map((booking) => (
+                        <BookingCard key={booking.id} booking={booking} />
+                      ))}
+                    </div>
+                  </>
+                )}
+                {cancelledPast.length > 0 && (
+                  <>
+                    <h2 className={styles.sectionTitle}>Already passed</h2>
+                    <div className={styles.bookingList}>
+                      {cancelledPast.map((booking) => (
+                        <BookingCard key={booking.id} booking={booking} past />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </>
             )}
           </section>
         )}
@@ -361,6 +427,7 @@ function BookingCard({
 
       {!past && (
         <div className={styles.bookingActions}>
+          <EditBookingButton booking={booking} />
           {booking.status !== "confirmed" && (
             <form action={updateBookingStatus}>
               <input type="hidden" name="id" value={booking.id} />

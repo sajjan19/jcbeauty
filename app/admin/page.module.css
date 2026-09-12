@@ -180,6 +180,17 @@
   margin-bottom: 0;
 }
 
+/* The editable fields of an appointment, wherever they're shown. */
+.editRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: var(--sp-4);
+}
+
+.editRow .field {
+  margin-bottom: 0;
+}
+
 /* The two-step cancel: the question, then the two ways out of it. */
 .confirmCancel {
   display: flex;
