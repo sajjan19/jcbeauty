@@ -121,15 +121,15 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
     <div className={styles.wrap}>
       <div className="container">
         <header className={styles.header}>
-          <div>
+          <div className={styles.headerTop}>
             <p className="eyebrow">Studio admin</p>
-            <h1 className={styles.title}>{TAB_TITLES[tab]}</h1>
+            <form action={logout}>
+              <button type="submit" className="btn btn-outline btn-sm">
+                Sign out
+              </button>
+            </form>
           </div>
-          <form action={logout}>
-            <button type="submit" className="btn btn-outline btn-sm">
-              Sign out
-            </button>
-          </form>
+          <h1 className={styles.title}>{TAB_TITLES[tab]}</h1>
         </header>
 
         <nav className={styles.tabs}>
