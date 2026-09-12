@@ -149,7 +149,7 @@ export function ContactsList({
 
             <div className={styles.contactActions}>
               <Link
-                href={`/admin?client=${client.id}#add-appointment`}
+                href={`/admin?client=${client.id}`}
                 className="btn btn-outline btn-sm"
               >
                 Book
@@ -314,7 +314,7 @@ function ContactDialog({
 
         <div className={styles.dialogFoot}>
           <Link
-            href={`/admin?client=${client.id}#add-appointment`}
+            href={`/admin?client=${client.id}`}
             className="btn btn-sm"
           >
             Book Appointment

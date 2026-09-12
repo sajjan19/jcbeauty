@@ -121,12 +121,15 @@ export function AdminCalendar({
   today,
   nowMinutes,
   clients,
+  prefillClient,
 }: {
   bookings: Booking[];
   today: string;
   /** Studio-local time of day, for the current-time line. */
   nowMinutes: number;
   clients: KnownClient[];
+  /** Set when arriving from a contact's Book button: opens the form filled in. */
+  prefillClient?: KnownClient | null;
 }) {
   const [view, setView] = useState<View>("week");
   const [cursor, setCursor] = useState(today);
@@ -134,7 +137,16 @@ export function AdminCalendar({
   const [creating, setCreating] = useState<{
     date: string;
     time: string;
-  } | null>(null);
+    client?: KnownClient | null;
+  } | null>(
+    prefillClient
+      ? {
+          date: today,
+          time: formatTime24(DEFAULT_START),
+          client: prefillClient,
+        }
+      : null,
+  );
 
   const byDate = useMemo(() => {
     const map = new Map<string, Booking[]>();
@@ -308,6 +320,7 @@ export function AdminCalendar({
           time={creating.time}
           today={today}
           clients={clients}
+          prefill={creating.client ?? null}
           onClose={() => setCreating(null)}
         />
       )}
@@ -322,12 +335,14 @@ function CreateDialog({
   time,
   today,
   clients,
+  prefill,
   onClose,
 }: {
   date: string;
   time: string;
   today: string;
   clients: KnownClient[];
+  prefill: KnownClient | null;
   onClose: () => void;
 }) {
   return (
@@ -364,6 +379,7 @@ function CreateDialog({
           <AddBookingForm
             today={today}
             clients={clients}
+            prefill={prefill}
             defaultDate={date}
             defaultTime={time}
           />

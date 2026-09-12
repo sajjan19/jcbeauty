@@ -19,7 +19,6 @@ import {
 } from "@/lib/time";
 import { LoginForm } from "./login-form";
 import { AdminCalendar } from "./admin-calendar";
-import { AddBookingForm } from "./add-booking-form";
 import { AddClientButton } from "./add-client-form";
 import { ContactsList } from "./contacts-list";
 import {
@@ -291,37 +290,23 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
         {tab === "bookings" && (
           <>
             <AdminCalendar
+              // Remounts when a different contact is picked, so arriving from
+              // their Book button reopens the form with their details.
+              key={prefill ? `client-${prefill.id}` : "calendar"}
               bookings={allBookings}
               today={today}
               nowMinutes={studioNow().minutes}
               clients={knownClients}
+              prefillClient={
+                prefill
+                  ? {
+                      name: prefill.name,
+                      email: prefill.email,
+                      phone: prefill.phone,
+                    }
+                  : null
+              }
             />
-
-            <section className={styles.section} id="add-appointment">
-              <h2 className={styles.sectionTitle}>Add an appointment</h2>
-              <p className={styles.sectionHint}>
-                For bookings taken by DM, phone or in person. Any date and time
-                is allowed, as long as it doesn&apos;t overlap something already
-                in the book. Start typing a name or number to pull up someone
-                who has booked before.
-              </p>
-              <AddBookingForm
-                // Remounts when a different contact is picked, so their
-                // details actually replace what's in the fields.
-                key={prefill ? `client-${prefill.id}` : "new"}
-                today={today}
-                prefill={
-                  prefill
-                    ? {
-                        name: prefill.name,
-                        email: prefill.email,
-                        phone: prefill.phone,
-                      }
-                    : null
-                }
-                clients={knownClients}
-              />
-            </section>
 
             {past.length > 0 && (
               <section className={styles.section}>
