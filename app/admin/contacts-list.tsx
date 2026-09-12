@@ -50,13 +50,18 @@ export function ContactsList({
   today: string;
 }) {
   const [open, setOpen] = useState<Contact | null>(null);
+  const [editing, setEditing] = useState<Contact | null>(null);
   const [search, setSearch] = useState("");
 
   // Close on Escape, and stop the page behind the pop-up scrolling.
+  const anyDialogOpen = Boolean(open || editing);
+
   useEffect(() => {
-    if (!open) return;
+    if (!anyDialogOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(null);
+      if (e.key !== "Escape") return;
+      setOpen(null);
+      setEditing(null);
     };
     document.addEventListener("keydown", onKey);
     const previous = document.body.style.overflow;
@@ -65,7 +70,7 @@ export function ContactsList({
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = previous;
     };
-  }, [open]);
+  }, [anyDialogOpen]);
 
   // Matches name, email or phone, so typing digits finds someone by number.
   const query = search.trim().toLowerCase();
@@ -110,15 +115,25 @@ export function ContactsList({
         {filtered.map((client) => (
           <article key={client.id} className={styles.contact}>
             <div>
-              <p className={styles.contactName}>
+              <div className={styles.contactNameRow}>
+                <p className={styles.contactName}>
+                  <button
+                    type="button"
+                    className={styles.contactNameBtn}
+                    onClick={() => setOpen(client)}
+                  >
+                    {client.name}
+                  </button>
+                </p>
                 <button
                   type="button"
-                  className={styles.contactNameBtn}
-                  onClick={() => setOpen(client)}
+                  className={styles.editBtn}
+                  onClick={() => setEditing(client)}
+                  aria-label={`Edit ${client.name}`}
                 >
-                  {client.name}
+                  Edit
                 </button>
-              </p>
+              </div>
               <span className={styles.contactSince}>
                 {client.firstVisit
                   ? `Since ${formatDateShort(client.firstVisit)}`
@@ -173,6 +188,13 @@ export function ContactsList({
           client={open}
           today={today}
           onClose={() => setOpen(null)}
+        />
+      )}
+
+      {editing && (
+        <EditClientDialog
+          client={editing}
+          onClose={() => setEditing(null)}
         />
       )}
     </>
@@ -235,6 +257,26 @@ function ContactDialog({
           <h3 className={styles.dialogSection}>About</h3>
           <div className={styles.aboutGrid}>
             <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Phone</span>
+              <span className={styles.detailValue}>
+                {client.phone ? (
+                  <a href={`tel:${client.phone}`}>{client.phone}</a>
+                ) : (
+                  <span className="muted">Not recorded</span>
+                )}
+              </span>
+            </div>
+            <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Email</span>
+              <span className={styles.detailValue}>
+                {client.email ? (
+                  <a href={`mailto:${client.email}`}>{client.email}</a>
+                ) : (
+                  <span className="muted">Not recorded</span>
+                )}
+              </span>
+            </div>
+            <div className={styles.detailRow}>
               <span className={styles.detailLabel}>First visit</span>
               <span className={styles.detailValue}>
                 {client.firstVisit ? (
@@ -268,7 +310,12 @@ function ContactDialog({
             </div>
           </div>
 
-          <ClientDetailsForm client={client} />
+          {client.notes && (
+            <>
+              <h3 className={styles.dialogSection}>Notes</h3>
+              <p className={styles.detailNotes}>{client.notes}</p>
+            </>
+          )}
 
           <h3 className={styles.dialogSection}>Upcoming</h3>
           {upcoming.length === 0 ? (
@@ -300,6 +347,48 @@ function ContactDialog({
           >
             Book Appointment
           </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EditClientDialog({
+  client,
+  onClose,
+}: {
+  client: Contact;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className={styles.overlay}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Edit ${client.name}`}
+      onClick={onClose}
+    >
+      <div
+        className={styles.contactDialog}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className={styles.dialogHead}>
+          <div>
+            <p className={styles.dialogTitle}>Edit contact</p>
+            <span className={styles.dialogSub}>{client.name}</span>
+          </div>
+          <button
+            type="button"
+            className={styles.closeBtn}
+            onClick={onClose}
+            aria-label="Close"
+            autoFocus
+          >
+            ✕
+          </button>
+        </div>
+        <div className={styles.dialogBody}>
+          <ClientDetailsForm client={client} />
         </div>
       </div>
     </div>

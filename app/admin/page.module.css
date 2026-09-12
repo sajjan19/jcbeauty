@@ -372,6 +372,30 @@
   border: 0;
 }
 
+.contactNameRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+}
+
+.editBtn {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.editBtn:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .contactNameBtn {
   font: inherit;
   color: inherit;
