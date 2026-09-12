@@ -20,13 +20,9 @@ import {
 import { LoginForm } from "./login-form";
 import { AdminCalendar } from "./admin-calendar";
 import { AddClientButton } from "./add-client-form";
+import { BlockTimeButton, EditBlockTimeButton } from "./block-time-form";
 import { ContactsList } from "./contacts-list";
-import {
-  addBlockedTime,
-  logout,
-  removeBlockedTime,
-  updateBookingStatus,
-} from "./actions";
+import { logout, removeBlockedTime, updateBookingStatus } from "./actions";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -73,6 +69,7 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
   const blocked = listBlockedPeriods(today);
   // The calendar can be paged back through past months, so it gets everything.
   const allBookings = listBookings({});
+  const allBlocked = listBlockedPeriods();
   // Needed by the contacts tab and by both booking forms' type-ahead.
   const clients = listClients();
   const knownClients = clients.map((c) => ({
@@ -207,50 +204,14 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
           <section className={styles.section}>
             <p className={styles.sectionHint}>
               Block a whole day, or just part of one when you can work the rest.
-              Blocked time disappears from the booking calendar straight away.
-              Appointments already booked are not cancelled, so handle those
-              from the Upcoming tab.
+              Blocked time disappears from the booking calendar straight away
+              and is shaded on your own calendar.
             </p>
 
-            <form action={addBlockedTime} className={styles.blockForm}>
-              <label className="field">
-                <span className="label">Date</span>
-                <input
-                  className="input"
-                  type="date"
-                  name="date"
-                  min={today}
-                  required
-                />
-              </label>
-              <label className="field">
-                <span className="label">Block</span>
-                <select className="select" name="mode" defaultValue="day">
-                  <option value="day">The whole day</option>
-                  <option value="time">Just these hours</option>
-                </select>
-              </label>
-              <label className="field">
-                <span className="label">From</span>
-                <input className="input" type="time" name="from" />
-              </label>
-              <label className="field">
-                <span className="label">To</span>
-                <input className="input" type="time" name="to" />
-              </label>
-              <label className="field">
-                <span className="label">Reason (optional)</span>
-                <input
-                  className="input"
-                  name="reason"
-                  placeholder="Holiday, school run…"
-                  maxLength={120}
-                />
-              </label>
-              <button type="submit" className="btn">
-                Block Time
-              </button>
-            </form>
+            <div className={styles.contactsHeader}>
+              <h2 className={styles.sectionTitle}>Blocked off</h2>
+              <BlockTimeButton today={today} />
+            </div>
 
             {blocked.length === 0 ? (
               <p className="muted" style={{ marginTop: "1.5rem" }}>
@@ -273,12 +234,15 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
                         <span className="muted"> ({entry.reason})</span>
                       )}
                     </span>
-                    <form action={removeBlockedTime}>
-                      <input type="hidden" name="id" value={entry.id} />
-                      <button type="submit" className="btn btn-ghost btn-sm">
-                        Unblock
-                      </button>
-                    </form>
+                    <span className={styles.blockedActions}>
+                      <EditBlockTimeButton entry={entry} />
+                      <form action={removeBlockedTime}>
+                        <input type="hidden" name="id" value={entry.id} />
+                        <button type="submit" className="btn btn-ghost btn-sm">
+                          Unblock
+                        </button>
+                      </form>
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -294,6 +258,7 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
               // their Book button reopens the form with their details.
               key={prefill ? `client-${prefill.id}` : "calendar"}
               bookings={allBookings}
+              blocked={allBlocked}
               today={today}
               nowMinutes={studioNow().minutes}
               clients={knownClients}

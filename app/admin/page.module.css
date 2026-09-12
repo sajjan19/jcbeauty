@@ -180,6 +180,19 @@
   margin-bottom: 0;
 }
 
+.blockedActions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex: none;
+}
+
+.blockHint {
+  font-size: 0.8125rem;
+  color: var(--muted);
+  margin: var(--sp-4) 0 0;
+}
+
 .blockedList {
   list-style: none;
   padding: 0;

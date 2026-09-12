@@ -531,6 +531,58 @@
   text-decoration: line-through;
 }
 
+/* ── Time off ────────────────────────────── */
+
+/* Diagonal hatching reads as "unavailable" without competing with the
+   appointment blocks drawn on top of it. */
+.blocked {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  overflow: hidden;
+  background-color: rgba(134, 134, 139, 0.13);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0 6px,
+    rgba(134, 134, 139, 0.22) 6px 12px
+  );
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+  pointer-events: none;
+}
+
+.blockedLabel {
+  display: block;
+  padding: 2px var(--sp-2);
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: #6e6e73;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Month view has no hour axis, so time off is a chip instead of a band. */
+.monthBlocked {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: rgba(134, 134, 139, 0.16);
+  font-size: 0.625rem;
+  line-height: 1.4;
+  color: #6e6e73;
+  min-width: 0;
+}
+
+.monthBlockedText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ── Weekend ─────────────────────────────── */
 
 /* Applied to the day header, the day/week column and the month cell, so

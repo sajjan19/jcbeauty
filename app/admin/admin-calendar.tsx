@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useMemo, useRef, useState } from "react";
-import type { Booking } from "@/lib/bookings";
+import type { BlockedPeriod, Booking } from "@/lib/bookings";
 import { hours as businessHours, scheduling } from "@/lib/content";
 import {
   addDays,
@@ -118,12 +118,15 @@ function timeAtPointer(clientY: number, element: HTMLElement): number {
 
 export function AdminCalendar({
   bookings,
+  blocked,
   today,
   nowMinutes,
   clients,
   prefillClient,
 }: {
   bookings: Booking[];
+  /** Time off, shaded behind the appointments. */
+  blocked: BlockedPeriod[];
   today: string;
   /** Studio-local time of day, for the current-time line. */
   nowMinutes: number;
@@ -161,6 +164,16 @@ export function AdminCalendar({
     return map;
   }, [bookings]);
 
+  const blockedByDate = useMemo(() => {
+    const map = new Map<string, BlockedPeriod[]>();
+    for (const period of blocked) {
+      const list = map.get(period.date);
+      if (list) list.push(period);
+      else map.set(period.date, [period]);
+    }
+    return map;
+  }, [blocked]);
+
   const anyDialogOpen = Boolean(selected || creating);
 
   // Close whichever panel is open on Escape, and stop the page behind it
@@ -182,6 +195,7 @@ export function AdminCalendar({
   }, [anyDialogOpen]);
 
   const onDate = (date: string) => byDate.get(date) ?? [];
+  const onBlocked = (date: string) => blockedByDate.get(date) ?? [];
 
   function step(direction: number) {
     if (view === "day") return setCursor(addDays(cursor, direction));
@@ -278,6 +292,7 @@ export function AdminCalendar({
           month={cursorMonth}
           today={today}
           onDate={onDate}
+          onBlocked={onBlocked}
           openDay={openDay}
           onSelect={setSelected}
           onCreate={(date) =>
@@ -291,6 +306,7 @@ export function AdminCalendar({
           today={today}
           nowMinutes={nowMinutes}
           onDate={onDate}
+          onBlocked={onBlocked}
           openDay={openDay}
           onSelect={setSelected}
           onCreate={(date, minutes) =>
@@ -617,6 +633,7 @@ function TimeGrid({
   today,
   nowMinutes,
   onDate,
+  onBlocked,
   openDay,
   onSelect,
   onCreate,
@@ -627,6 +644,7 @@ function TimeGrid({
   today: string;
   nowMinutes: number;
   onDate: (d: string) => Booking[];
+  onBlocked: (d: string) => BlockedPeriod[];
   openDay: (d: string) => void;
   onSelect: (b: Booking) => void;
   onCreate: (date: string, minutes: number) => void;
@@ -692,6 +710,7 @@ function TimeGrid({
               today={today}
               nowMinutes={nowMinutes}
               items={onDate(date)}
+              blocked={onBlocked(date)}
               onSelect={onSelect}
               onCreate={onCreate}
               singleDay={singleDay}
@@ -709,6 +728,7 @@ function DayColumn({
   today,
   nowMinutes,
   items,
+  blocked,
   onSelect,
   onCreate,
   singleDay,
@@ -718,6 +738,7 @@ function DayColumn({
   today: string;
   nowMinutes: number;
   items: Booking[];
+  blocked: BlockedPeriod[];
   onSelect: (b: Booking) => void;
   onCreate: (date: string, minutes: number) => void;
   singleDay: boolean;
@@ -747,6 +768,28 @@ function DayColumn({
           style={{ height: HOUR_HEIGHT }}
         />
       ))}
+
+      {blocked.map((period) => {
+        // A whole day off has no hours of its own, so it fills the grid.
+        const from = Math.max(period.start_minutes ?? GRID_START, GRID_START);
+        const to = Math.min(period.end_minutes ?? GRID_END, GRID_END);
+        if (to <= from) return null;
+        return (
+          <span
+            key={period.id}
+            className={styles.blocked}
+            style={{
+              top: ((from - GRID_START) / 60) * HOUR_HEIGHT,
+              height: ((to - from) / 60) * HOUR_HEIGHT,
+            }}
+            aria-hidden
+          >
+            <span className={styles.blockedLabel}>
+              {period.reason || "Time off"}
+            </span>
+          </span>
+        );
+      })}
 
       {items.map((booking) => {
         const lane = placement.get(booking.id) ?? 0;
@@ -823,6 +866,7 @@ function MonthGrid({
   month,
   today,
   onDate,
+  onBlocked,
   openDay,
   onSelect,
   onCreate,
@@ -832,6 +876,7 @@ function MonthGrid({
   month: number;
   today: string;
   onDate: (d: string) => Booking[];
+  onBlocked: (d: string) => BlockedPeriod[];
   openDay: (d: string) => void;
   onSelect: (b: Booking) => void;
   onCreate: (date: string) => void;
@@ -863,6 +908,7 @@ function MonthGrid({
             today={today}
             inMonth={Number(date.slice(5, 7)) === month}
             items={onDate(date)}
+            blocked={onBlocked(date)}
             openDay={openDay}
             onSelect={onSelect}
             onCreate={onCreate}
@@ -879,6 +925,7 @@ function MonthCell({
   today,
   inMonth,
   items,
+  blocked,
   openDay,
   onSelect,
   onCreate,
@@ -888,6 +935,7 @@ function MonthCell({
   today: string;
   inMonth: boolean;
   items: Booking[];
+  blocked: BlockedPeriod[];
   openDay: (d: string) => void;
   onSelect: (b: Booking) => void;
   onCreate: (date: string) => void;
@@ -916,6 +964,17 @@ function MonthCell({
         {Number(date.slice(-2))}
       </button>
       <span className={styles.monthEvents}>
+        {blocked.map((period) => (
+          <span key={period.id} className={styles.monthBlocked}>
+            <span className={styles.monthBlockedText}>
+              {period.start_minutes === null
+                ? period.reason || "Time off"
+                : `${formatTime12(period.start_minutes).replace(":00", "")} ${
+                    period.reason || "Time off"
+                  }`}
+            </span>
+          </span>
+        ))}
         {items.slice(0, 3).map((booking) => (
           <button
             key={booking.id}

@@ -9,6 +9,7 @@ import {
 } from "@/lib/auth";
 import {
   blockPeriod,
+  blockPeriodRange,
   createBookingAsAdmin,
   createClient,
   deleteClient,
@@ -16,9 +17,10 @@ import {
   setBookingStatus,
   updateClient,
   unblockPeriod,
+  updateBlockedPeriod,
   type BookingStatus,
 } from "@/lib/bookings";
-import { parseTime } from "@/lib/time";
+import { formatDateLong, formatTime12, parseTime } from "@/lib/time";
 
 export type LoginState = { error?: string };
 
@@ -201,31 +203,95 @@ export async function removeClient(formData: FormData): Promise<void> {
   revalidatePath("/admin");
 }
 
-/** Blocks either a whole day or a window within one. */
-export async function addBlockedTime(formData: FormData): Promise<void> {
-  await requireAdmin();
+export type BlockTimeState = { error?: string; done?: string };
 
+/** The date, hours and reason shared by blocking time and editing it. */
+function readBlockFields(formData: FormData):
+  | { ok: true; date: string; start: number | null; end: number | null; reason: string | null; window: string }
+  | { ok: false; error: string } {
   const date = String(formData.get("date") ?? "");
   const mode = String(formData.get("mode") ?? "day");
   const reason = String(formData.get("reason") ?? "").trim();
 
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error("Invalid date.");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { ok: false, error: "Pick a date." };
 
-  if (mode === "day") {
-    blockPeriod(date, null, null, reason || null);
-  } else {
-    const from = String(formData.get("from") ?? "");
-    const to = String(formData.get("to") ?? "");
-    if (!/^\d{2}:\d{2}$/.test(from) || !/^\d{2}:\d{2}$/.test(to)) {
-      throw new Error("Pick a start and end time.");
-    }
-    const start = parseTime(from);
-    const end = parseTime(to);
-    if (end <= start) throw new Error("The end time must be after the start.");
-    blockPeriod(date, start, end, reason || null);
+  if (mode !== "time") {
+    return { ok: true, date, start: null, end: null, reason: reason || null, window: "the whole day" };
   }
 
+  const from = String(formData.get("from") ?? "");
+  const to = String(formData.get("to") ?? "");
+  if (!/^\d{2}:\d{2}$/.test(from) || !/^\d{2}:\d{2}$/.test(to)) {
+    return { ok: false, error: "Pick a start and end time." };
+  }
+
+  const start = parseTime(from);
+  const end = parseTime(to);
+  if (end <= start) return { ok: false, error: "The end time must be after the start." };
+
+  return {
+    ok: true,
+    date,
+    start,
+    end,
+    reason: reason || null,
+    window: `${formatTime12(start)} to ${formatTime12(end)}`,
+  };
+}
+
+/**
+ * Blocks a whole day, a window within one, or a run of days. Lives in a
+ * pop-up, so problems come back as a message rather than an error page.
+ */
+export async function blockTime(
+  _prev: BlockTimeState,
+  formData: FormData,
+): Promise<BlockTimeState> {
+  await requireAdmin();
+
+  const fields = readBlockFields(formData);
+  if (!fields.ok) return { error: fields.error };
+
+  const { date, start, end, reason, window } = fields;
+  const until = String(formData.get("until") ?? "");
+
+  // An end date turns this into a run of days, for holidays. The hours, when
+  // given, apply to every day in the range.
+  if (until && /^\d{4}-\d{2}-\d{2}$/.test(until) && until !== date) {
+    const range = blockPeriodRange(date, until, start, end, reason);
+    if (!range.ok) return { error: range.error };
+    revalidatePath("/admin");
+    return {
+      done: `Blocked ${window} across ${range.days} day${
+        range.days === 1 ? "" : "s"
+      }, from ${formatDateLong(date)}.`,
+    };
+  }
+
+  blockPeriod(date, start, end, reason);
   revalidatePath("/admin");
+  return { done: `Blocked ${window} on ${formatDateLong(date)}.` };
+}
+
+/** Corrects a blocked period that was entered wrong. */
+export async function editBlockedTime(
+  _prev: BlockTimeState,
+  formData: FormData,
+): Promise<BlockTimeState> {
+  await requireAdmin();
+
+  const id = Number(formData.get("id"));
+  if (!Number.isInteger(id) || id <= 0) return { error: "Invalid time off." };
+
+  const fields = readBlockFields(formData);
+  if (!fields.ok) return { error: fields.error };
+
+  const { date, start, end, reason, window } = fields;
+  const result = updateBlockedPeriod(id, date, start, end, reason);
+  if (!result.ok) return { error: result.error };
+
+  revalidatePath("/admin");
+  return { done: `Now blocking ${window} on ${formatDateLong(date)}.` };
 }
 
 export async function removeBlockedTime(formData: FormData): Promise<void> {

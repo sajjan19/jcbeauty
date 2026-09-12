@@ -504,6 +504,64 @@ export function blockPeriod(
   ).run(date, start, end, reason, new Date().toISOString());
 }
 
+/**
+ * Blocks every day from `fromDate` to `toDate` inclusive, for holidays and
+ * the like. One row per day, so any single day can be freed again on its own.
+ */
+export function blockPeriodRange(
+  fromDate: string,
+  toDate: string,
+  start: number | null,
+  end: number | null,
+  reason: string | null,
+): { ok: true; days: number } | { ok: false; error: string } {
+  const span = dateToIndex(toDate) - dateToIndex(fromDate);
+
+  if (span < 0) return { ok: false, error: "The end date is before the start." };
+  // A mistyped year shouldn't quietly write thousands of rows.
+  if (span > 365) return { ok: false, error: "That range is over a year long." };
+
+  const insert = db.prepare(
+    `INSERT INTO blocked_periods (date, start_minutes, end_minutes, reason, created_at)
+     VALUES (?, ?, ?, ?, ?)`,
+  );
+
+  const transaction = db.transaction(() => {
+    const now = new Date().toISOString();
+    for (let i = 0; i <= span; i++) {
+      insert.run(addDays(fromDate, i), start, end, reason, now);
+    }
+  });
+
+  transaction();
+  return { ok: true, days: span + 1 };
+}
+
+/**
+ * Corrects one blocked period. Ranges are stored a row per day, so this
+ * changes the single day it was called on, not the whole holiday.
+ */
+export function updateBlockedPeriod(
+  id: number,
+  date: string,
+  start: number | null,
+  end: number | null,
+  reason: string | null,
+): { ok: true } | { ok: false; error: string } {
+  const exists = db
+    .prepare(`SELECT id FROM blocked_periods WHERE id = ?`)
+    .get(id);
+  if (!exists) return { ok: false, error: "That time off no longer exists." };
+
+  db.prepare(
+    `UPDATE blocked_periods
+     SET date = ?, start_minutes = ?, end_minutes = ?, reason = ?
+     WHERE id = ?`,
+  ).run(date, start, end, reason, id);
+
+  return { ok: true };
+}
+
 export function unblockPeriod(id: number): void {
   db.prepare(`DELETE FROM blocked_periods WHERE id = ?`).run(id);
 }
