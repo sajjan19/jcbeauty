@@ -343,11 +343,28 @@
 /* ── Tabs ────────────────────────────────── */
 
 .tabs {
-  display: inline-flex;
+  display: flex;
+  /* Six tabs run wider than a phone. Without wrapping they're clipped by the
+     page's overflow-x, which puts the last ones out of reach entirely. */
+  flex-wrap: wrap;
   gap: var(--sp-1);
   margin-bottom: var(--sp-6);
   border-bottom: 1px solid var(--border);
   width: 100%;
+}
+
+@media (max-width: 700px) {
+  .tabs {
+    gap: 0;
+    row-gap: var(--sp-1);
+  }
+
+  .tab {
+    flex: 1 0 auto;
+    text-align: center;
+    padding: var(--sp-3) var(--sp-3);
+    letter-spacing: 0.08em;
+  }
 }
 
 .tab {
