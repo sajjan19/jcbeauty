@@ -53,6 +53,12 @@ function startOfWeek(date: string): string {
   return indexToDate(dateToIndex(date) - weekday(date));
 }
 
+/** Saturday or Sunday, shaded so the weekend is easy to pick out. */
+function isWeekend(date: string): boolean {
+  const day = weekday(date);
+  return day === 0 || day === 6;
+}
+
 /**
  * The visible hour range, derived from her opening hours with an hour of
  * padding either side, so the grid isn't mostly empty space.
@@ -192,50 +198,51 @@ export function AdminCalendar({
   return (
     <section className={styles.wrap} aria-label="Appointment calendar">
       <header className={styles.toolbar}>
-        <div className={styles.nav}>
-          <button
-            type="button"
-            className={styles.navBtn}
-            onClick={() => step(-1)}
-            aria-label="Previous"
-          >
-            ‹
-          </button>
-          <button
-            type="button"
-            className={styles.todayBtn}
-            onClick={() => setCursor(today)}
-          >
-            Today
-          </button>
-          <button
-            type="button"
-            className={styles.navBtn}
-            onClick={() => step(1)}
-            aria-label="Next"
-          >
-            ›
-          </button>
-          <h2 className={styles.title} aria-live="polite">
-            {title}
-          </h2>
+        <h2 className={styles.title} aria-live="polite">
+          {title}
+        </h2>
+
+        <div className={styles.segmented} role="group" aria-label="View">
+          {(["day", "week", "month"] as View[]).map((v) => (
+            <button
+              key={v}
+              type="button"
+              className={`${styles.segBtn} ${
+                view === v ? styles.segBtnActive : ""
+              }`}
+              aria-pressed={view === v}
+              onClick={() => setView(v)}
+            >
+              {v[0].toUpperCase() + v.slice(1)}
+            </button>
+          ))}
         </div>
 
         <div className={styles.toolbarRight}>
-          <div className={styles.segmented} role="group" aria-label="View">
-            {(["day", "week", "month"] as View[]).map((v) => (
-              <button
-                key={v}
-                type="button"
-                className={`${styles.segBtn} ${
-                  view === v ? styles.segBtnActive : ""
-                }`}
-                aria-pressed={view === v}
-                onClick={() => setView(v)}
-              >
-                {v[0].toUpperCase() + v.slice(1)}
-              </button>
-            ))}
+          <div className={styles.nav}>
+            <button
+              type="button"
+              className={styles.navBtn}
+              onClick={() => step(-1)}
+              aria-label="Previous"
+            >
+              ‹
+            </button>
+            <button
+              type="button"
+              className={styles.todayBtn}
+              onClick={() => setCursor(today)}
+            >
+              Today
+            </button>
+            <button
+              type="button"
+              className={styles.navBtn}
+              onClick={() => step(1)}
+              aria-label="Next"
+            >
+              ›
+            </button>
           </div>
 
           <button
@@ -625,7 +632,9 @@ function TimeGrid({
             <button
               key={date}
               type="button"
-              className={styles.dayHead}
+              className={`${styles.dayHead} ${
+                isWeekend(date) ? styles.weekend : ""
+              }`}
               onClick={() => openDay(date)}
             >
               <span className={styles.dayName}>
@@ -711,7 +720,7 @@ function DayColumn({
   return (
     <div
       ref={columnRef}
-      className={styles.col}
+      className={`${styles.col} ${isWeekend(date) ? styles.weekend : ""}`}
       onDoubleClick={(e) => createAt(e.clientY)}
       {...longPress}
     >
@@ -873,8 +882,8 @@ function MonthCell({
   return (
     <div
       className={`${styles.monthCell} ${!inMonth ? styles.monthCellOutside : ""} ${
-        selected ? styles.monthCellSelected : ""
-      }`}
+        isWeekend(date) ? styles.weekend : ""
+      } ${selected ? styles.monthCellSelected : ""}`}
       onDoubleClick={() => onCreate(date)}
       {...longPress}
     >
