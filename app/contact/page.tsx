@@ -37,54 +37,99 @@ export default function ContactPage() {
         <div className="container">
           <div className={styles.grid}>
             <div className={styles.column}>
-              <div className={styles.cards}>
-                <a
-                  href={business.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.card}
-                >
-                  <span className="eyebrow">Instagram</span>
-                  <span className={styles.cardValue}>
-                    @{business.instagram}
-                  </span>
-                  <span className={styles.cardNote}>
-                    Best for questions and shade advice
-                  </span>
-                </a>
-
-                {hasEmail && (
-                  <a href={`mailto:${business.email}`} className={styles.card}>
-                    <span className="eyebrow">Email</span>
-                    <span className={styles.cardValue}>{business.email}</span>
-                    <span className={styles.cardNote}>
-                      For anything that needs a paper trail
+              <ul className={styles.cards}>
+                <li>
+                  <a
+                    href={business.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.card}
+                  >
+                    <span className={`eyebrow ${styles.cardLabel}`}>
+                      Instagram
+                    </span>
+                    <span className={styles.cardBody}>
+                      <span className={styles.cardValue}>
+                        @{business.instagram}
+                      </span>
+                      <span className={styles.cardNote}>
+                        Best for questions and shade advice
+                      </span>
+                    </span>
+                    <span className={styles.cardGo} aria-hidden>
+                      ↗
                     </span>
                   </a>
+                </li>
+
+                {hasEmail && (
+                  <li>
+                    <a
+                      href={`mailto:${business.email}`}
+                      className={styles.card}
+                    >
+                      <span className={`eyebrow ${styles.cardLabel}`}>
+                        Email
+                      </span>
+                      <span className={styles.cardBody}>
+                        <span
+                          className={`${styles.cardValue} ${styles.cardValueAddress}`}
+                        >
+                          {business.email}
+                        </span>
+                        <span className={styles.cardNote}>
+                          For anything that needs a paper trail
+                        </span>
+                      </span>
+                      <span className={styles.cardGo} aria-hidden>
+                        ›
+                      </span>
+                    </a>
+                  </li>
                 )}
 
                 {business.phone && telHref && (
-                  <a href={telHref} className={styles.card}>
-                    <span className="eyebrow">Phone</span>
-                    <span className={styles.cardValue}>{business.phone}</span>
-                    <span className={styles.cardNote}>
-                      Calls and texts during studio hours
-                    </span>
-                  </a>
+                  <li>
+                    <a href={telHref} className={styles.card}>
+                      <span className={`eyebrow ${styles.cardLabel}`}>
+                        Phone
+                      </span>
+                      <span className={styles.cardBody}>
+                        <span className={styles.cardValue}>
+                          {business.phone}
+                        </span>
+                        <span className={styles.cardNote}>
+                          Calls and texts during studio hours
+                        </span>
+                      </span>
+                      <span className={styles.cardGo} aria-hidden>
+                        ›
+                      </span>
+                    </a>
+                  </li>
                 )}
 
                 {/* With the address public the map carries it, so there's no
-                    separate Studio card. Hidden addresses still need one. */}
+                    separate Studio row. Hidden addresses still need one. */}
                 {!business.showAddress && (
-                  <div className={styles.card}>
-                    <span className="eyebrow">Studio</span>
-                    <span className={styles.cardValue}>{business.city}</span>
-                    <span className={styles.cardNote}>
-                      {business.addressNote}
-                    </span>
-                  </div>
+                  <li>
+                    <div className={styles.card}>
+                      <span className={`eyebrow ${styles.cardLabel}`}>
+                        Studio
+                      </span>
+                      <span className={styles.cardBody}>
+                        <span className={styles.cardValue}>
+                          {business.city}
+                        </span>
+                        <span className={styles.cardNote}>
+                          {business.addressNote}
+                        </span>
+                      </span>
+                      <span />
+                    </div>
+                  </li>
                 )}
-              </div>
+              </ul>
 
               {business.showAddress && (
                 <div className={styles.mapBlock}>
