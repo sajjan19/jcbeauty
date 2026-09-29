@@ -52,9 +52,6 @@ export default function ContactPage() {
                       <span className={styles.cardValue}>
                         @{business.instagram}
                       </span>
-                      <span className={styles.cardNote}>
-                        Best for questions and shade advice
-                      </span>
                     </span>
                     <span className={styles.cardGo} aria-hidden>
                       ↗
@@ -77,9 +74,6 @@ export default function ContactPage() {
                         >
                           {business.email}
                         </span>
-                        <span className={styles.cardNote}>
-                          For anything that needs a paper trail
-                        </span>
                       </span>
                       <span className={styles.cardGo} aria-hidden>
                         ›
@@ -97,9 +91,6 @@ export default function ContactPage() {
                       <span className={styles.cardBody}>
                         <span className={styles.cardValue}>
                           {business.phone}
-                        </span>
-                        <span className={styles.cardNote}>
-                          Calls and texts during studio hours
                         </span>
                       </span>
                       <span className={styles.cardGo} aria-hidden>
