@@ -3,6 +3,7 @@
 import { getService } from "@/lib/content";
 import {
   createBooking,
+  findClientByContact,
   getAvailableSlots,
   getMonthAvailability,
 } from "@/lib/bookings";
@@ -22,6 +23,18 @@ export async function fetchMonthAvailability(
   if (!Number.isInteger(year) || year < 2000 || year > 2100) return {};
   if (!Number.isInteger(month) || month < 1 || month > 12) return {};
   return getMonthAvailability(serviceSlug, year, month);
+}
+
+/**
+ * Looks up a returning client so the last step arrives already filled in.
+ * Returns null rather than an error when there's no match, so the page never
+ * reports whether a given address is on file.
+ */
+export async function lookupReturningClient(
+  value: string,
+): Promise<{ name: string; email: string; phone: string } | null> {
+  if (typeof value !== "string" || value.length > 120) return null;
+  return findClientByContact(value);
 }
 
 export async function fetchSlots(

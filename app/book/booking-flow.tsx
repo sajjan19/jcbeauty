@@ -20,12 +20,15 @@ import { AddToCalendar } from "@/components/add-to-calendar";
 import {
   fetchMonthAvailability,
   fetchSlots,
+  lookupReturningClient,
   submitBooking,
   type BookingFormState,
 } from "./actions";
 import styles from "./booking-flow.module.css";
 
-const STEPS = ["Service", "Date", "Time", "Details"] as const;
+const STEPS = ["You", "Service", "Date", "Time", "Details"] as const;
+
+type SavedClient = { name: string; email: string; phone: string };
 
 export function BookingFlow({
   initialService,
@@ -36,12 +39,20 @@ export function BookingFlow({
   minDate: string;
   maxDate: string;
 }) {
-  const [step, setStep] = useState(initialService ? 1 : 0);
+  // Always opens on the new-or-returning question, even when a service link
+  // picked the service already.
+  const [step, setStep] = useState(0);
   const [service, setService] = useState<Service | null>(
     services.find((s) => s.slug === initialService) ?? null,
   );
   const [date, setDate] = useState<string | null>(null);
   const [time, setTime] = useState<string | null>(null);
+
+  // null until they answer; false = new here, true = has booked before.
+  const [returning, setReturning] = useState<boolean | null>(null);
+  const [prefill, setPrefill] = useState<SavedClient | null>(null);
+  const [lookupValue, setLookupValue] = useState("");
+  const [looking, startLookup] = useTransition();
 
   const [cursor, setCursor] = useState(() => {
     const [y, m] = minDate.split("-").map(Number);
@@ -91,31 +102,50 @@ export function BookingFlow({
     );
   }
 
+  // A service link lands them on the date step once the intro is answered.
+  const afterIntro = () => setStep(service ? 2 : 1);
+
+  function startAsNew() {
+    setReturning(false);
+    setPrefill(null);
+    afterIntro();
+  }
+
+  /* Looks them up and moves on either way. No "we found you" or "we didn't":
+     the page shouldn't tell a stranger whether an address is on file. */
+  function continueAsReturning() {
+    startLookup(async () => {
+      setPrefill(await lookupReturningClient(lookupValue));
+      afterIntro();
+    });
+  }
+
   function chooseService(next: Service) {
     setService(next);
     // A different duration changes which slots fit, so start the time over.
     setDate(null);
     setTime(null);
     setSlots([]);
-    setStep(1);
+    setStep(2);
   }
 
   function chooseDate(next: string) {
     setDate(next);
     setTime(null);
     setSlots([]);
-    setStep(2);
+    setStep(3);
   }
 
   function chooseTime(next: string) {
     setTime(next);
-    setStep(3);
+    setStep(4);
   }
 
   const canReachStep = (i: number) => {
     if (i === 0) return true;
-    if (i === 1) return Boolean(service);
-    if (i === 2) return Boolean(service && date);
+    if (i === 1) return returning !== null;
+    if (i === 2) return Boolean(returning !== null && service);
+    if (i === 3) return Boolean(service && date);
     return Boolean(service && date && time);
   };
 
@@ -145,8 +175,85 @@ export function BookingFlow({
       </ol>
 
       <div className={styles.panel}>
-        {/* ── Step 1 — service ──────────── */}
+        {/* ── Step 1 — new or returning ── */}
         {step === 0 && (
+          <section>
+            <h2 className={styles.stepTitle}>Have you been before?</h2>
+            <p className={styles.stepHint}>
+              Returning clients don&apos;t have to retype anything.
+            </p>
+
+            <div className={styles.choiceGrid}>
+              <button
+                type="button"
+                className={`${styles.choice} ${
+                  returning === false ? styles.choiceSelected : ""
+                }`}
+                onClick={startAsNew}
+              >
+                <span className={styles.choiceTitle}>First time here</span>
+                <span className={styles.choiceSub}>
+                  I haven&apos;t had an appointment with JC Beauty before.
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className={`${styles.choice} ${
+                  returning === true ? styles.choiceSelected : ""
+                }`}
+                onClick={() => setReturning(true)}
+              >
+                <span className={styles.choiceTitle}>
+                  I&apos;ve booked before
+                </span>
+                <span className={styles.choiceSub}>
+                  Fill my details in from last time.
+                </span>
+              </button>
+            </div>
+
+            {returning === true && (
+              <div className={styles.lookup}>
+                <div className={styles.lookupRow}>
+                  <label className="field">
+                    <span className="label">Email or phone number</span>
+                    <input
+                      className="input"
+                      id="lookup"
+                      value={lookupValue}
+                      onChange={(e) => setLookupValue(e.target.value)}
+                      placeholder="you@example.com or 604 555 0123"
+                      autoComplete="email"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          continueAsReturning();
+                        }
+                      }}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={continueAsReturning}
+                    disabled={looking}
+                  >
+                    {looking ? "Checking…" : "Continue"}
+                  </button>
+                </div>
+                <p className={styles.stepHint}>
+                  Anything on file gets filled in at the last step, where you
+                  can change it. Carry on without it if you&apos;d rather type
+                  it fresh.
+                </p>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* ── Step 2 — service ──────────── */}
+        {step === 1 && (
           <section>
             <h2 className={styles.stepTitle}>Which service?</h2>
             <p className={styles.stepHint}>
@@ -180,7 +287,7 @@ export function BookingFlow({
         )}
 
         {/* ── Step 2 — date ─────────────── */}
-        {step === 1 && service && (
+        {step === 2 && service && (
           <section>
             <h2 className={styles.stepTitle}>Pick a date</h2>
             <p className={styles.stepHint}>
@@ -202,7 +309,7 @@ export function BookingFlow({
               <button
                 type="button"
                 className="btn btn-ghost btn-sm"
-                onClick={() => setStep(0)}
+                onClick={() => setStep(1)}
               >
                 ← Change service
               </button>
@@ -211,7 +318,7 @@ export function BookingFlow({
         )}
 
         {/* ── Step 3 — time ─────────────── */}
-        {step === 2 && service && date && (
+        {step === 3 && service && date && (
           <section>
             <h2 className={styles.stepTitle}>Pick a time</h2>
             <p className={styles.stepHint}>{formatDateLong(date)}</p>
@@ -243,7 +350,7 @@ export function BookingFlow({
               <button
                 type="button"
                 className="btn btn-ghost btn-sm"
-                onClick={() => setStep(1)}
+                onClick={() => setStep(2)}
               >
                 ← Change date
               </button>
@@ -252,7 +359,7 @@ export function BookingFlow({
         )}
 
         {/* ── Step 4 — details ──────────── */}
-        {step === 3 && service && date && time && (
+        {step === 4 && service && date && time && (
           <section>
             <h2 className={styles.stepTitle}>Your details</h2>
             <p className={styles.stepHint}>
@@ -303,6 +410,7 @@ export function BookingFlow({
                   <input
                     className="input"
                     name="name"
+                    defaultValue={prefill?.name ?? ""}
                     required
                     maxLength={100}
                     autoComplete="name"
@@ -318,6 +426,7 @@ export function BookingFlow({
                     className="input"
                     name="phone"
                     type="tel"
+                    defaultValue={prefill?.phone ?? ""}
                     required
                     autoComplete="tel"
                   />
@@ -335,6 +444,7 @@ export function BookingFlow({
                   className="input"
                   name="email"
                   type="email"
+                  defaultValue={prefill?.email ?? ""}
                   required
                   autoComplete="email"
                 />
@@ -356,10 +466,10 @@ export function BookingFlow({
                 )}
               </label>
 
-              <label className={styles.check}>
-                <input type="checkbox" name="firstTime" />
-                <span>This is my first appointment with JC Beauty</span>
-              </label>
+              {/* Answered in step one, so it isn't asked twice. */}
+              {returning === false && (
+                <input type="hidden" name="firstTime" value="on" />
+              )}
 
               <div className={styles.policyBox}>
                 <p className={styles.policyHead}>Before you confirm</p>
@@ -393,7 +503,7 @@ export function BookingFlow({
                 <button
                   type="button"
                   className="btn btn-ghost btn-sm"
-                  onClick={() => setStep(2)}
+                  onClick={() => setStep(3)}
                   disabled={submitting}
                 >
                   ← Change time

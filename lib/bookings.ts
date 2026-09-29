@@ -730,6 +730,47 @@ export function listClients(): Client[] {
  * given its own query: a single studio's address book is small enough that
  * the extra SQL isn't worth maintaining.
  */
+/**
+ * Finds a saved client from what they type into the booking form, so a
+ * returning client doesn't retype details Japman already has.
+ *
+ * Matching is deliberately exact on a whole email or a whole phone number:
+ * this runs unauthenticated, so partial matching would turn it into a way to
+ * fish for other people's details. Only the fields the form itself needs
+ * come back.
+ */
+export function findClientByContact(
+  value: string,
+): { name: string; email: string; phone: string } | null {
+  const trimmed = value.trim();
+  if (trimmed.length < 5) return null;
+
+  const digits = trimmed.replace(/\D/g, "");
+
+  // A phone number only counts if they typed the whole thing.
+  if (digits.length >= 10) {
+    const byPhone = db
+      .prepare(
+        `SELECT name, email, phone FROM clients
+         WHERE REPLACE(REPLACE(REPLACE(REPLACE(phone, ' ', ''), '-', ''), '(', ''), ')', '') = ?
+         LIMIT 1`,
+      )
+      .get(digits) as { name: string; email: string; phone: string } | undefined;
+    if (byPhone) return byPhone;
+  }
+
+  if (!trimmed.includes("@")) return null;
+
+  const byEmail = db
+    .prepare(
+      `SELECT name, email, phone FROM clients
+       WHERE LOWER(email) = LOWER(?) AND email <> '' LIMIT 1`,
+    )
+    .get(trimmed) as { name: string; email: string; phone: string } | undefined;
+
+  return byEmail ?? null;
+}
+
 export function getClient(id: number): Client | undefined {
   return listClients().find((c) => c.id === id);
 }
