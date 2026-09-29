@@ -31,8 +31,7 @@ export const business = {
   instagram: "jcbeauty.van",
   instagramUrl: "https://www.instagram.com/jcbeauty.van/",
 
-  // TODO: replace with her real business email
-  email: "TODO@example.com",
+  email: "jap_chera@hotmail.com",
   /** Display format. The tel: link is derived from the digits. */
   phone: "(604) 396-3072" as string | null,
 };
