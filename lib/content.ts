@@ -34,7 +34,7 @@ export const business = {
   // TODO: replace with her real business email
   email: "TODO@example.com",
   /** Display format. The tel: link is derived from the digits. */
-  phone: "(778) 994-8138" as string | null,
+  phone: "(604) 396-3072" as string | null,
 };
 
 /** A `tel:` href built from whatever digits are in `business.phone`. */
