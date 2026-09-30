@@ -82,7 +82,7 @@ export function SiteFooter() {
                 const h = hours[day];
                 return (
                   <li key={day} className={styles.hoursRow}>
-                    <strong>{dayNames[day].slice(0, 3)}</strong>
+                    <strong>{dayNames[day]}</strong>
                     {h ? (
                       <span>
                         {formatTime12(parseTime(h.open))} to{" "}
