@@ -179,15 +179,17 @@ export default function HomePage() {
 
       {/* ── Closing CTA ──────────────────────── */}
       <section className={styles.cta}>
-        <div className="container-narrow">
-          <h2 className={styles.ctaTitle}>Ready when you are.</h2>
-          <p className={styles.ctaBody}>
-            Pick your service, choose a time that works and I&apos;ll confirm
-            your appointment. New clients welcome.
-          </p>
-          <Link href="/book" className={`btn ${styles.ctaBtn}`}>
-            Book an Appointment
-          </Link>
+        <div className="container">
+          <div className={styles.ctaPanel}>
+            <h2 className={styles.ctaTitle}>Ready when you are.</h2>
+            <p className={styles.ctaBody}>
+              Pick your service, choose a time that works and I&apos;ll confirm
+              your appointment. New clients welcome.
+            </p>
+            <Link href="/book" className={`btn ${styles.ctaBtn}`}>
+              Book an Appointment
+            </Link>
+          </div>
         </div>
       </section>
     </>

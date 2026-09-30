@@ -226,11 +226,18 @@
 
 /* ── Closing CTA ─────────────────────────── */
 
+/* An inset panel, not a full-bleed band. The footer is the same charcoal,
+   so a full-width dark CTA ran straight into it with no seam between them. */
 .cta {
+  padding: var(--sp-8) 0 var(--sp-9);
+}
+
+.ctaPanel {
   background: var(--char);
   color: var(--shell);
   text-align: center;
-  padding: var(--sp-9) 0;
+  padding: var(--sp-8) var(--sp-5);
+  border-radius: var(--radius-lg);
 }
 
 .ctaTitle {
