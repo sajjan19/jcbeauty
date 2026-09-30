@@ -3,7 +3,7 @@ import Link from "next/link";
 import { business, gallery, home, services } from "@/lib/content";
 import { formatDuration } from "@/lib/time";
 import { LogoLockup } from "@/components/logo";
-import { GalleryTile } from "@/components/gallery-tile";
+import { GalleryGrid } from "@/components/gallery-grid";
 import styles from "./page.module.css";
 
 export default function HomePage() {
@@ -168,11 +168,12 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className={styles.galleryStrip}>
-            {gallery.slice(0, 4).map((item) => (
-              <GalleryTile key={item.src} item={item} />
-            ))}
-          </div>
+          {/* Same tiles as the gallery page, so a paired one opens the
+              before and after slider here too. */}
+          <GalleryGrid
+            items={gallery.slice(0, 4)}
+            className={styles.galleryStrip}
+          />
         </div>
       </section>
 

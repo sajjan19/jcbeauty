@@ -7,7 +7,14 @@ import { BeforeAfter } from "./before-after";
 import styles from "./gallery-grid.module.css";
 import tileStyles from "./gallery-tile.module.css";
 
-export function GalleryGrid({ items }: { items: GalleryItem[] }) {
+export function GalleryGrid({
+  items,
+  className,
+}: {
+  items: GalleryItem[];
+  /** Lets the home page lay the same tiles out as a tighter strip. */
+  className?: string;
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const open = openIndex === null ? null : items[openIndex];
 
@@ -33,7 +40,7 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
 
   return (
     <>
-      <div className={styles.grid}>
+      <div className={className ?? styles.grid}>
         {items.map((item, i) => {
           // Only paired items have anything more to show, so only those
           // become buttons — the rest stay plain figures.
