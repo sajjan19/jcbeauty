@@ -30,11 +30,12 @@
   gap: var(--sp-5);
   padding: var(--sp-5) var(--sp-3);
   text-decoration: none;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 a.card:hover {
   background: var(--surface);
+  transform: translateY(-2px);
 }
 
 a.card:hover .cardGo {

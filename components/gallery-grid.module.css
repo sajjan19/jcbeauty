@@ -11,6 +11,14 @@
   font: inherit;
   text-align: left;
   display: block;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Only the paired tiles lift: the plain ones aren't clickable, and a lift
+   would promise something that doesn't happen. */
+.tileButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
 }
 
 .viewHint {
