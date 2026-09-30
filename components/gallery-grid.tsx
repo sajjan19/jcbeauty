@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import type { GalleryItem } from "@/lib/content";
+import { BeforeAfter } from "./before-after";
 import styles from "./gallery-grid.module.css";
 import tileStyles from "./gallery-tile.module.css";
 
@@ -104,35 +105,14 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
               </button>
             </div>
 
-            <div className={styles.pair}>
-              <figure className={styles.pane}>
-                <span className={styles.paneLabel}>Before</span>
-                <div className={styles.paneImage}>
-                  <Image
-                    src={open.pair.before.src}
-                    alt={open.pair.before.alt}
-                    fill
-                    sizes="(max-width: 760px) 90vw, 45vw"
-                    className={styles.paneImg}
-                  />
-                </div>
-              </figure>
-
-              <figure className={styles.pane}>
-                <span className={`${styles.paneLabel} ${styles.paneLabelAfter}`}>
-                  After
-                </span>
-                <div className={styles.paneImage}>
-                  <Image
-                    src={open.pair.after.src}
-                    alt={open.pair.after.alt}
-                    fill
-                    sizes="(max-width: 760px) 90vw, 45vw"
-                    className={styles.paneImg}
-                  />
-                </div>
-              </figure>
-            </div>
+            <BeforeAfter
+              before={open.pair.before}
+              after={open.pair.after}
+              label={open.caption}
+            />
+            <p className={styles.compareHint}>
+              Drag the handle across the photo to compare.
+            </p>
           </div>
         </div>
       )}

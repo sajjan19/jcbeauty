@@ -45,7 +45,9 @@
 
 .dialog {
   width: 100%;
-  max-width: 1000px;
+  /* One square image now, not two side by side, so it no longer needs the
+     full thousand pixels. */
+  max-width: 620px;
   max-height: 100%;
   overflow-y: auto;
   background: var(--bone);
@@ -91,55 +93,11 @@
   color: var(--white);
 }
 
-.pair {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--sp-4);
-}
-
-.pane {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-3);
-}
-
-.paneLabel {
-  align-self: flex-start;
-  font-size: 0.625rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  font-weight: 500;
-  color: var(--stone);
-  border: 1px solid var(--sand);
-  border-radius: var(--radius);
-  padding: 3px var(--sp-3);
-  background: var(--surface);
-}
-
-.paneLabelAfter {
-  color: var(--accent);
-  border-color: var(--accent-soft);
-}
-
-.paneImage {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: var(--radius);
-  overflow: hidden;
-  border: 1px solid var(--border);
-  background: var(--shell);
-}
-
-.paneImg {
-  object-fit: cover;
-}
-
-@media (max-width: 760px) {
-  .pair {
-    grid-template-columns: 1fr;
-  }
+.compareHint {
+  margin: var(--sp-3) 0 0;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
 }
 
 @media (max-width: 560px) {
