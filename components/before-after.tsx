@@ -17,17 +17,22 @@ export function BeforeAfter({
   before,
   after,
   label,
+  aspect = 1,
 }: {
   before: { src: string; alt: string };
   after: { src: string; alt: string };
   label: string;
+  /** Width over height of the two shots. Square unless told otherwise. */
+  aspect?: number;
 }) {
   const [pos, setPos] = useState(50);
 
   return (
     <div
       className={styles.compare}
-      style={{ "--pos": `${pos}%` } as CSSProperties}
+      style={
+        { "--pos": `${pos}%`, "--ratio": String(aspect) } as CSSProperties
+      }
     >
       <Image
         src={after.src}

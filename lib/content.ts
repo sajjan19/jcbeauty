@@ -82,6 +82,22 @@ export type Service = {
 // them, because they decide how much time each booking blocks off.
 export const services: Service[] = [
   {
+    slug: "brow-threading",
+    name: "Brow Threading",
+    price: 25,
+    // TODO: confirm the length with Japman. Set to match Brow Shape & Wax
+    // for now; this decides how much of her day each booking takes, so it's
+    // better to trim it than to find two clients overlapping.
+    durationMinutes: 30,
+    summary:
+      "Brow mapping and threading, for a clean shape without any wax.",
+    details: [
+      "Brows mapped to your facial proportions",
+      "Threaded rather than waxed, which suits more sensitive skin",
+      "Great as a standalone maintenance visit",
+    ],
+  },
+  {
     slug: "brow-shape-wax",
     name: "Brow Shape & Wax",
     price: 35,
@@ -278,7 +294,16 @@ export type GalleryItem = {
    * When present, tapping the tile opens both shots full size with
    * before/after labels.
    */
-  pair?: { before: GalleryImage; after: GalleryImage };
+  pair?: {
+    before: GalleryImage;
+    after: GalleryImage;
+    /**
+     * Width over height, when the pair isn't square. The comparison box is
+     * one fixed shape for both shots, so a portrait pair needs telling or
+     * it gets cropped top and bottom.
+     */
+    aspect?: number;
+  };
 };
 
 export const gallery: GalleryItem[] = [
@@ -298,6 +323,23 @@ export const gallery: GalleryItem[] = [
       after: {
         src: "/gallery/brow-shape-wax-after.jpeg",
         alt: "The same client's brow after shaping and waxing, with a clean arch and a defined edge",
+      },
+    },
+  },
+  {
+    src: "/gallery/brow-threading-after.jpg",
+    alt: "A client's brow after threading, with a clean arch and a defined edge",
+    caption: "Brow Threading",
+    pair: {
+      // Portrait shots, unlike the near-square pair above.
+      aspect: 3 / 4,
+      before: {
+        src: "/gallery/brow-threading-before.jpg",
+        alt: "A client's brow before threading, fuller and softer with stray hairs above and below the arch",
+      },
+      after: {
+        src: "/gallery/brow-threading-after.jpg",
+        alt: "The same client's brow after threading, with a clean arch and a defined edge",
       },
     },
   },

@@ -115,6 +115,7 @@ export function GalleryGrid({
             <BeforeAfter
               before={open.pair.before}
               after={open.pair.after}
+              aspect={open.pair.aspect}
               label={open.caption}
             />
             <p className={styles.compareHint}>

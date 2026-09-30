@@ -1,9 +1,9 @@
 .compare {
   position: relative;
   width: 100%;
-  /* The two photos are near square and differ slightly in height, so a fixed
-     square box with object-fit keeps them aligned under the wipe. */
-  aspect-ratio: 1;
+  /* Both shots share one fixed box so they stay aligned under the wipe.
+     Square by default; a portrait pair passes its own ratio. */
+  aspect-ratio: var(--ratio, 1);
   overflow: hidden;
   border-radius: var(--radius);
   border: 1px solid var(--border);
