@@ -53,13 +53,16 @@
 
 .hoursRow {
   display: flex;
-  justify-content: space-between;
   gap: var(--sp-4);
   font-size: 0.875rem;
   color: var(--taupe);
 }
 
+/* The times sit right after the day rather than pushed to the far edge,
+   with the day names on one measure so the times still line up. */
 .hoursRow strong {
+  flex: none;
+  min-width: 10ch;
   color: var(--shell);
   font-weight: 400;
 }
