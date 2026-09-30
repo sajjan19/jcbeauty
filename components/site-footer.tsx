@@ -1,20 +1,54 @@
 import Link from "next/link";
-import { business, dayNames, hours } from "@/lib/content";
+import { business, dayNames, hours, mapsUrl, phoneHref } from "@/lib/content";
 import { formatTime12, parseTime } from "@/lib/time";
 import styles from "./site-footer.module.css";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
+  const telHref = phoneHref();
+  const hasEmail = !business.email.startsWith("TODO");
 
   return (
     <footer className={styles.footer}>
       <div className="container">
         <div className={styles.grid}>
           <div>
-            <p className={styles.heading}>{business.name}</p>
-            <p className={styles.blurb}>
-              {business.tagline}. {business.city}.
-            </p>
+            <p className={styles.colTitle}>Contact</p>
+            <ul className={styles.list}>
+              {business.phone && telHref && (
+                <li>
+                  <a href={telHref}>{business.phone}</a>
+                </li>
+              )}
+              {hasEmail && (
+                <li>
+                  <a className={styles.wrap} href={`mailto:${business.email}`}>
+                    {business.email}
+                  </a>
+                </li>
+              )}
+              <li>
+                <a
+                  href={business.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  @{business.instagram}
+                </a>
+              </li>
+              {business.showAddress && (
+                <li>
+                  <a
+                    className={styles.wrap}
+                    href={mapsUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {business.street}, {business.city}
+                  </a>
+                </li>
+              )}
+            </ul>
           </div>
 
           <div>
@@ -44,7 +78,7 @@ export function SiteFooter() {
           <div>
             <p className={styles.colTitle}>Hours</p>
             <ul className={styles.list}>
-              {[2, 3, 4, 5, 6, 0, 1].map((day) => {
+              {[0, 1, 2, 3, 4, 5, 6].map((day) => {
                 const h = hours[day];
                 return (
                   <li key={day} className={styles.hoursRow}>
@@ -68,15 +102,8 @@ export function SiteFooter() {
           <span>
             © {year} {business.name}. All rights reserved.
           </span>
-          <span>
-            <a
-              href={business.instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              @{business.instagram}
-            </a>
-          </span>
+          {/* The handle moved up into Contact, so it isn't said twice. */}
+          <span>{business.tagline}</span>
         </div>
       </div>
     </footer>
