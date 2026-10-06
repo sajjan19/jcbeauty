@@ -14,8 +14,13 @@ export const business = {
   name: "JC Beauty",
   artist: "Japman Chera",
   tagline: "Vancouver Brow and Lash Artist",
-  /** Shown in the hero. One or two sentences. */
-  intro:
+  /** Shown in the hero, under the headline. */
+  intro: "Brow lamination, shaping, tinting and lash lifts in Vancouver.",
+  /**
+   * The longer version, for search results and link previews only. Those
+   * want a fuller sentence than the page itself does.
+   */
+  description:
     "Brow lamination, shaping, tinting and lash lifts in Vancouver. Fuller, softer, more defined brows, tailored to your face.",
   city: "Vancouver, BC",
 

@@ -62,25 +62,64 @@ function isWeekend(date: string): boolean {
 }
 
 /**
- * The visible hour range, derived from her opening hours with an hour of
- * padding either side, so the grid isn't mostly empty space.
+ * The hours the grid shows by default: her opening hours with an hour of
+ * padding either side, so it isn't mostly empty space.
  */
 const openDays = Object.values(businessHours).filter(Boolean) as {
   open: string;
   close: string;
 }[];
-const GRID_START = Math.max(
+const BASE_START = Math.max(
   0,
   Math.min(...openDays.map((h) => parseTime(h.open))) - 60,
 );
-const GRID_END = Math.min(
+const BASE_END = Math.min(
   24 * 60,
   Math.max(...openDays.map((h) => parseTime(h.close))) + 60,
 );
-const HOUR_MARKS = Array.from(
-  { length: Math.ceil((GRID_END - GRID_START) / 60) + 1 },
-  (_, i) => GRID_START + i * 60,
-);
+
+/**
+ * She can book outside opening hours by hand, so the grid stretches to take
+ * in anything on the days being shown. Without this an early or late
+ * appointment would sit off the top or bottom of the column and simply not
+ * be there when she looked.
+ */
+function gridRangeFor(
+  days: string[],
+  bookingsOn: (d: string) => Booking[],
+  blockedOn: (d: string) => BlockedPeriod[],
+): { start: number; end: number } {
+  let start = BASE_START;
+  let end = BASE_END;
+
+  for (const date of days) {
+    for (const booking of bookingsOn(date)) {
+      start = Math.min(start, booking.start_minutes);
+      end = Math.max(end, booking.end_minutes);
+    }
+    for (const period of blockedOn(date)) {
+      if (period.start_minutes !== null) {
+        start = Math.min(start, period.start_minutes);
+      }
+      if (period.end_minutes !== null) {
+        end = Math.max(end, period.end_minutes);
+      }
+    }
+  }
+
+  // Whole hours, so the gutter labels stay on the hour.
+  return {
+    start: Math.max(0, Math.floor(start / 60) * 60),
+    end: Math.min(24 * 60, Math.ceil(end / 60) * 60),
+  };
+}
+
+function hourMarksFor(start: number, end: number): number[] {
+  return Array.from(
+    { length: Math.ceil((end - start) / 60) + 1 },
+    (_, i) => start + i * 60,
+  );
+}
 
 /** Where a whole-day slot starts when no time was pointed at. */
 const DEFAULT_START = Math.min(...openDays.map((h) => parseTime(h.open)));
@@ -110,12 +149,17 @@ function assignLanes(items: Booking[]) {
 }
 
 /** Turns a pointer position inside a day column into a snapped start time. */
-function timeAtPointer(clientY: number, element: HTMLElement): number {
+function timeAtPointer(
+  clientY: number,
+  element: HTMLElement,
+  gridStart: number,
+  gridEnd: number,
+): number {
   const rect = element.getBoundingClientRect();
-  const raw = GRID_START + ((clientY - rect.top) / HOUR_HEIGHT) * 60;
+  const raw = gridStart + ((clientY - rect.top) / HOUR_HEIGHT) * 60;
   const step = scheduling.slotIntervalMinutes;
   const snapped = Math.round(raw / step) * step;
-  return Math.min(Math.max(snapped, GRID_START), GRID_END - step);
+  return Math.min(Math.max(snapped, gridStart), gridEnd - step);
 }
 
 export function AdminCalendar({
@@ -223,6 +267,13 @@ export function AdminCalendar({
       ? [cursor]
       : Array.from({ length: 7 }, (_, i) => addDays(startOfWeek(cursor), i));
 
+  // Widens past opening hours when something is booked outside them.
+  const { start: gridStart, end: gridEnd } = gridRangeFor(
+    days,
+    onDate,
+    onBlocked,
+  );
+
   return (
     <section className={styles.wrap} aria-label="Appointment calendar">
       <header className={styles.toolbar}>
@@ -307,6 +358,8 @@ export function AdminCalendar({
           days={days}
           today={today}
           nowMinutes={nowMinutes}
+          gridStart={gridStart}
+          gridEnd={gridEnd}
           onDate={onDate}
           onBlocked={onBlocked}
           openDay={openDay}
@@ -611,6 +664,8 @@ function TimeGrid({
   days,
   today,
   nowMinutes,
+  gridStart,
+  gridEnd,
   onDate,
   onBlocked,
   openDay,
@@ -622,6 +677,8 @@ function TimeGrid({
   days: string[];
   today: string;
   nowMinutes: number;
+  gridStart: number;
+  gridEnd: number;
   onDate: (d: string) => Booking[];
   onBlocked: (d: string) => BlockedPeriod[];
   openDay: (d: string) => void;
@@ -631,7 +688,8 @@ function TimeGrid({
   /** The spot picked for a new appointment, marked in blue. */
   ghost: { date: string; minutes: number } | null;
 }) {
-  const bodyHeight = ((GRID_END - GRID_START) / 60) * HOUR_HEIGHT;
+  const hourMarks = hourMarksFor(gridStart, gridEnd);
+  const bodyHeight = ((gridEnd - gridStart) / 60) * HOUR_HEIGHT;
 
   return (
     <div className={styles.timeWrap}>
@@ -667,7 +725,7 @@ function TimeGrid({
 
       <div className={styles.timeBody} style={{ height: bodyHeight }}>
         <div className={styles.gutter}>
-          {HOUR_MARKS.slice(0, -1).map((minutes) => (
+          {hourMarks.slice(0, -1).map((minutes) => (
             <span
               key={minutes}
               className={styles.gutterLabel}
@@ -688,6 +746,9 @@ function TimeGrid({
               date={date}
               today={today}
               nowMinutes={nowMinutes}
+              gridStart={gridStart}
+              gridEnd={gridEnd}
+              hourMarks={hourMarks}
               items={onDate(date)}
               blocked={onBlocked(date)}
               onSelect={onSelect}
@@ -706,6 +767,9 @@ function DayColumn({
   date,
   today,
   nowMinutes,
+  gridStart,
+  gridEnd,
+  hourMarks,
   items,
   blocked,
   onSelect,
@@ -716,6 +780,9 @@ function DayColumn({
   date: string;
   today: string;
   nowMinutes: number;
+  gridStart: number;
+  gridEnd: number;
+  hourMarks: number[];
   items: Booking[];
   blocked: BlockedPeriod[];
   onSelect: (b: Booking) => void;
@@ -728,7 +795,7 @@ function DayColumn({
 
   const createAt = (clientY: number) => {
     if (!columnRef.current) return;
-    onCreate(date, timeAtPointer(clientY, columnRef.current));
+    onCreate(date, timeAtPointer(clientY, columnRef.current, gridStart, gridEnd));
   };
 
   const longPress = useLongPress(createAt);
@@ -740,7 +807,7 @@ function DayColumn({
       onDoubleClick={(e) => createAt(e.clientY)}
       {...longPress}
     >
-      {HOUR_MARKS.slice(0, -1).map((minutes) => (
+      {hourMarks.slice(0, -1).map((minutes) => (
         <span
           key={minutes}
           className={styles.hourLine}
@@ -750,15 +817,15 @@ function DayColumn({
 
       {blocked.map((period) => {
         // A whole day off has no hours of its own, so it fills the grid.
-        const from = Math.max(period.start_minutes ?? GRID_START, GRID_START);
-        const to = Math.min(period.end_minutes ?? GRID_END, GRID_END);
+        const from = Math.max(period.start_minutes ?? gridStart, gridStart);
+        const to = Math.min(period.end_minutes ?? gridEnd, gridEnd);
         if (to <= from) return null;
         return (
           <span
             key={period.id}
             className={styles.blocked}
             style={{
-              top: ((from - GRID_START) / 60) * HOUR_HEIGHT,
+              top: ((from - gridStart) / 60) * HOUR_HEIGHT,
               height: ((to - from) / 60) * HOUR_HEIGHT,
             }}
             aria-hidden
@@ -772,7 +839,7 @@ function DayColumn({
 
       {items.map((booking) => {
         const lane = placement.get(booking.id) ?? 0;
-        const top = ((booking.start_minutes - GRID_START) / 60) * HOUR_HEIGHT;
+        const top = ((booking.start_minutes - gridStart) / 60) * HOUR_HEIGHT;
         const height = Math.max(
           22,
           (booking.duration_minutes / 60) * HOUR_HEIGHT - 2,
@@ -814,7 +881,7 @@ function DayColumn({
         <span
           className={styles.ghost}
           style={{
-            top: ((ghostMinutes - GRID_START) / 60) * HOUR_HEIGHT,
+            top: ((ghostMinutes - gridStart) / 60) * HOUR_HEIGHT,
             height: HOUR_HEIGHT,
           }}
           aria-hidden
@@ -826,11 +893,11 @@ function DayColumn({
       )}
 
       {date === today &&
-        nowMinutes >= GRID_START &&
-        nowMinutes <= GRID_END && (
+        nowMinutes >= gridStart &&
+        nowMinutes <= gridEnd && (
           <span
             className={styles.nowLine}
-            style={{ top: ((nowMinutes - GRID_START) / 60) * HOUR_HEIGHT }}
+            style={{ top: ((nowMinutes - gridStart) / 60) * HOUR_HEIGHT }}
             aria-hidden
           />
         )}

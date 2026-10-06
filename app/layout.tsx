@@ -24,10 +24,10 @@ export const metadata: Metadata = {
     default: `${business.name} | ${business.tagline}`,
     template: `%s | ${business.name}`,
   },
-  description: business.intro,
+  description: business.description,
   openGraph: {
     title: `${business.name} | ${business.tagline}`,
-    description: business.intro,
+    description: business.description,
     type: "website",
     locale: "en_CA",
   },
