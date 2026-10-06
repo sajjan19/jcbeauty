@@ -180,6 +180,25 @@ export const services: Service[] = [
   },
 ];
 
+/**
+ * Announced, but not bookable yet. Deliberately separate from `services`:
+ * that array feeds the booking engine, so everything in it needs a real
+ * price and length. Move an entry across once those are settled.
+ */
+export type UpcomingService = {
+  name: string;
+  summary: string;
+};
+
+export const comingSoon: UpcomingService[] = [
+  {
+    name: "Microneedling",
+    // TODO: price and appointment length, once Japman has set them.
+    summary:
+      "Coming soon. Message me on Instagram and I'll let you know as soon as it opens for booking.",
+  },
+];
+
 export function getService(slug: string): Service | undefined {
   return services.find((s) => s.slug === slug);
 }

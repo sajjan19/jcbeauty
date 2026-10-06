@@ -45,6 +45,29 @@
   border-color: var(--taupe);
 }
 
+/* Announced but not bookable: no price column, and no lift, since a lift
+   would promise something to click. */
+.rowSoon {
+  grid-template-columns: 1fr;
+  background: transparent;
+  border-style: dashed;
+}
+
+.rowSoon:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--border);
+}
+
+.rowSoon .summary {
+  margin-bottom: 0;
+}
+
+.flagSoon {
+  background: var(--accent);
+  color: var(--white);
+}
+
 .head {
   display: flex;
   align-items: center;

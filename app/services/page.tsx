@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { deposit, services } from "@/lib/content";
+import { comingSoon, deposit, services } from "@/lib/content";
 import { formatDuration } from "@/lib/time";
 import { PageHeader } from "@/components/page-header";
 import styles from "./page.module.css";
@@ -62,6 +62,24 @@ export default function ServicesPage() {
                   >
                     Book
                   </Link>
+                </div>
+              </article>
+            ))}
+
+            {/* No price, no length, nothing to click: it isn't bookable yet. */}
+            {comingSoon.map((item) => (
+              <article
+                key={item.name}
+                className={`${styles.row} ${styles.rowSoon}`}
+              >
+                <div>
+                  <div className={styles.head}>
+                    <h2 className={styles.name}>{item.name}</h2>
+                    <span className={`${styles.flag} ${styles.flagSoon}`}>
+                      Coming Soon
+                    </span>
+                  </div>
+                  <p className={styles.summary}>{item.summary}</p>
                 </div>
               </article>
             ))}
