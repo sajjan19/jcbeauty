@@ -20,13 +20,16 @@ export const business = {
   city: "Vancouver, BC",
 
   /**
-   * Set `showAddress` back to false to hide the street address everywhere —
-   * the site then falls back to `addressNote` and only the city is public.
+   * Set `showAddress` back to true to publish the street address again —
+   * the contact page swaps the area note for the address and a map, and the
+   * calendar invite carries the full address rather than the area.
    */
-  showAddress: true,
+  showAddress: false,
+  /** How far the public location goes: enough to place her, no doorstep. */
+  area: "South Vancouver, BC",
   street: "8138 Prince Edward Street",
   address: "8138 Prince Edward Street, Vancouver, BC",
-  addressNote: "Exact address is sent once your appointment is confirmed.",
+  addressNote: "The exact address is sent once your appointment is confirmed.",
 
   instagram: "jcbeauty.van",
   instagramUrl: "https://www.instagram.com/jcbeauty.van/",

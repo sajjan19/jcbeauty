@@ -36,8 +36,8 @@ export function SiteFooter() {
                   @{business.instagram}
                 </a>
               </li>
-              {business.showAddress && (
-                <li>
+              <li>
+                {business.showAddress ? (
                   <a
                     className={styles.wrap}
                     href={mapsUrl()}
@@ -46,8 +46,11 @@ export function SiteFooter() {
                   >
                     {business.street}, {business.city}
                   </a>
-                </li>
-              )}
+                ) : (
+                  /* No map link: there's nowhere specific to send them yet. */
+                  <span className={styles.wrap}>{business.area}</span>
+                )}
+              </li>
             </ul>
           </div>
 

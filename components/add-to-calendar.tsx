@@ -27,7 +27,7 @@ export function AddToCalendar({
       "",
       `Questions: instagram.com/${business.instagram}`,
     ].join("\n"),
-    location: business.showAddress ? business.address : business.city,
+    location: business.showAddress ? business.address : business.area,
     date,
     startMinutes: parseTime(time),
     durationMinutes: service.durationMinutes,

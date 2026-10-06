@@ -110,7 +110,7 @@ export default function ContactPage() {
                       </span>
                       <span className={styles.cardBody}>
                         <span className={styles.cardValue}>
-                          {business.city}
+                          {business.area}
                         </span>
                         <span className={styles.cardNote}>
                           {business.addressNote}
