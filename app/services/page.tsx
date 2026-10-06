@@ -57,7 +57,8 @@ export default function ServicesPage() {
                   </span>
                   <Link
                     href={`/book?service=${service.slug}`}
-                    className="btn btn-outline btn-sm"
+                    className={`btn btn-outline btn-sm ${styles.bookLink}`}
+                    aria-label={`Book ${service.name}`}
                   >
                     Book
                   </Link>

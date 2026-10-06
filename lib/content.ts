@@ -84,7 +84,7 @@ export const services: Service[] = [
   {
     slug: "brow-threading",
     name: "Brow Threading",
-    price: 25,
+    price: 12,
     // TODO: confirm the length with Japman. Set to match Brow Shape & Wax
     // for now; this decides how much of her day each booking takes, so it's
     // better to trim it than to find two clients overlapping.

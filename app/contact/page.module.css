@@ -127,8 +127,10 @@ a.card:hover .cardGo {
   color: var(--taupe);
 }
 
-.hoursNote {
+/* Typed as a tag plus class so it beats the global .hint colour. */
+p.hoursNote {
   margin-top: var(--sp-4);
+  color: var(--danger);
 }
 
 /* ── Map ─────────────────────────────────── */

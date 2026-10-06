@@ -5,6 +5,7 @@
 }
 
 .row {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr auto;
   gap: var(--sp-6);
@@ -21,6 +22,22 @@
 .row:hover {
   border-color: var(--taupe);
   transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+/* The Book link stretches over the whole row, so the card is clickable
+   without nesting one link inside another. */
+.bookLink::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+}
+
+/* The visible focus ring lands on the small button, so mark the whole row
+   as well when a keyboard lands on it. */
+.row:focus-within {
+  border-color: var(--taupe);
   box-shadow: var(--shadow);
 }
 
