@@ -794,6 +794,26 @@ export function listBookingsForClient(email: string): Booking[] {
  * them off from their own history. Their bookings are updated in the same
  * transaction to keep the two in step.
  */
+/**
+ * Notes on their own, for the quick save after an appointment. Separate from
+ * updateClient so saving notes can't disturb the name, email or phone, and
+ * so it never touches the bookings those fields are mirrored onto.
+ */
+export function updateClientNotes(
+  id: number,
+  notes: string | null,
+): { ok: true } | { ok: false; error: string } {
+  const result = db
+    .prepare(`UPDATE clients SET notes = ? WHERE id = ?`)
+    .run(notes, id);
+
+  if (result.changes === 0) {
+    return { ok: false, error: "That contact no longer exists." };
+  }
+
+  return { ok: true };
+}
+
 export function updateClient(
   id: number,
   name: string,

@@ -13,6 +13,8 @@ import {
   createBookingAsAdmin,
   createClient,
   deleteClient,
+  getClient,
+  updateClientNotes,
   setBookingStatus,
   updateBooking,
   updateClient,
@@ -181,6 +183,30 @@ export async function addClient(
   return { added: `${name} saved to contacts.` };
 }
 
+export type SaveNotesState = { error?: string; saved?: string };
+
+/** Notes on a contact, saved from their pop-up after an appointment. */
+export async function saveClientNotes(
+  _prev: SaveNotesState,
+  formData: FormData,
+): Promise<SaveNotesState> {
+  await requireAdmin();
+
+  const id = Number(formData.get("id"));
+  const notes = String(formData.get("notes") ?? "").trim();
+
+  if (!Number.isInteger(id) || id <= 0) return { error: "Invalid contact." };
+  if (notes.length > 4000) {
+    return { error: "These notes are too long to save." };
+  }
+
+  const result = updateClientNotes(id, notes || null);
+  if (!result.ok) return { error: result.error };
+
+  revalidatePath("/admin");
+  return { saved: "Notes saved." };
+}
+
 export type SaveClientState = { error?: string; saved?: string };
 
 /** Edits a contact's name, phone, email and notes. */
@@ -194,7 +220,9 @@ export async function saveClientDetails(
   const name = String(formData.get("name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim();
   const phone = String(formData.get("phone") ?? "").trim();
-  const notes = String(formData.get("notes") ?? "").trim();
+  // Notes have their own form now. When this one doesn't carry the field,
+  // keep what's stored rather than blanking it.
+  const rawNotes = formData.get("notes");
 
   if (!Number.isInteger(id) || id <= 0) return { error: "Invalid contact." };
   if (!name) return { error: "Add a name." };
@@ -202,7 +230,12 @@ export async function saveClientDetails(
     return { error: "Add an email or a phone number so you can reach them." };
   }
 
-  const result = updateClient(id, name, email, phone, notes || null);
+  const notes =
+    rawNotes === null
+      ? (getClient(id)?.notes ?? null)
+      : String(rawNotes).trim() || null;
+
+  const result = updateClient(id, name, email, phone, notes);
   if (!result.ok) return { error: result.error };
 
   revalidatePath("/admin");

@@ -11,7 +11,9 @@ import {
 import {
   removeClient,
   saveClientDetails,
+  saveClientNotes,
   type SaveClientState,
+  type SaveNotesState,
 } from "./actions";
 import styles from "./page.module.css";
 
@@ -310,12 +312,8 @@ function ContactDialog({
             </div>
           </div>
 
-          {client.notes && (
-            <>
-              <h3 className={styles.dialogSection}>Notes</h3>
-              <p className={styles.detailNotes}>{client.notes}</p>
-            </>
-          )}
+          <h3 className={styles.dialogSection}>Notes</h3>
+          <ClientNotesForm client={client} />
 
           <h3 className={styles.dialogSection}>Upcoming</h3>
           {upcoming.length === 0 ? (
@@ -395,7 +393,51 @@ function EditClientDialog({
   );
 }
 
-/** Editable name, phone, email and notes for one contact. */
+/**
+ * Notes live here rather than in the edit form: they change after every
+ * appointment, while a name or number almost never does.
+ */
+function ClientNotesForm({ client }: { client: Contact }) {
+  const [state, action, pending] = useActionState<SaveNotesState, FormData>(
+    saveClientNotes,
+    {},
+  );
+
+  return (
+    <form action={action} className={styles.notesForm} key={client.id}>
+      <input type="hidden" name="id" value={client.id} />
+
+      {state.error && (
+        <div className="notice notice-error" role="alert">
+          {state.error}
+        </div>
+      )}
+      {state.saved && (
+        <div className="notice notice-success" role="status">
+          {state.saved}
+        </div>
+      )}
+
+      <label className="field">
+        <span className="label">What to remember for next time</span>
+        <textarea
+          className="textarea"
+          name="notes"
+          rows={5}
+          defaultValue={client.notes ?? ""}
+          maxLength={4000}
+          placeholder="Shape and tint used, skin sensitivities, how the last set healed, what they asked for…"
+        />
+      </label>
+
+      <button type="submit" className="btn btn-sm" disabled={pending}>
+        {pending ? "Saving…" : "Save Notes"}
+      </button>
+    </form>
+  );
+}
+
+/** Editable name, phone and email for one contact. */
 function ClientDetailsForm({ client }: { client: Contact }) {
   const [state, action, pending] = useActionState<SaveClientState, FormData>(
     saveClientDetails,
@@ -447,17 +489,6 @@ function ClientDetailsForm({ client }: { client: Contact }) {
           />
         </label>
       </div>
-
-      <label className="field">
-        <span className="label">Notes</span>
-        <textarea
-          className="textarea"
-          name="notes"
-          defaultValue={client.notes ?? ""}
-          maxLength={1000}
-          placeholder="Allergies, preferred shape, what they usually book…"
-        />
-      </label>
 
       <button
         type="submit"
