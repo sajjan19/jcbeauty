@@ -267,6 +267,8 @@ export const aftercare = [
 export const deposit = {
   amount: 25,
   refundable: false,
+  /** Where the deposit is sent. Follows her contact address unless changed. */
+  etransferEmail: business.email,
 };
 
 /** Shown on the info page and at the final booking step. */
@@ -285,7 +287,7 @@ export const policies = [
   },
   {
     title: "Payment",
-    body: "Payments may be made by e-transfer or cash. Payment must be completed before leaving your appointment.",
+    body: `Payments may be made by e-transfer to ${business.email}, or by cash. Payment must be completed before leaving your appointment.`,
   },
 ];
 

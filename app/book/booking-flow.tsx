@@ -601,8 +601,12 @@ function Confirmation({
       )}
       <p className={styles.confirmBody}>
         Your appointment is <strong>pending confirmation</strong>. I&apos;ll
-        email you shortly to confirm the time and send deposit details. It
-        isn&apos;t locked in until you hear back from me.
+        email you shortly to confirm the time. It isn&apos;t locked in until
+        you hear back from me.
+      </p>
+      <p className={styles.confirmBody}>
+        The ${deposit.amount} deposit goes by e-transfer to{" "}
+        <strong>{deposit.etransferEmail}</strong>.
       </p>
 
       <div className={styles.confirmCard}>

@@ -87,8 +87,9 @@ export default function ServicesPage() {
 
           <div className={`notice notice-warn ${styles.note}`}>
             <strong>Booking a deposit:</strong> a non-refundable $
-            {deposit.amount} deposit secures your appointment. Payment is by
-            e-transfer or cash, completed before you leave. Full{" "}
+            {deposit.amount} deposit secures your appointment. Pay by
+            e-transfer to <strong>{deposit.etransferEmail}</strong>, or by cash
+            before you leave. Full{" "}
             <Link href="/info#policies">booking policies</Link> are worth a read
             before you book.
           </div>
