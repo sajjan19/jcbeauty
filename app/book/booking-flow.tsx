@@ -98,6 +98,7 @@ export function BookingFlow({
         service={service}
         date={date}
         time={time}
+        needsIntake={Boolean(state.needsIntake)}
       />
     );
   }
@@ -532,16 +533,33 @@ function Confirmation({
   service,
   date,
   time,
+  needsIntake,
 }: {
   reference: string;
   service: Service | null;
   date: string | null;
   time: string | null;
+  /** Nothing on file for this client and this service yet. */
+  needsIntake: boolean;
 }) {
   return (
     <div className={styles.confirmation}>
       <p className="eyebrow">Request received</p>
       <h2 className={styles.confirmTitle}>Thank you. You&apos;re on my list.</h2>
+
+      {needsIntake && service && (
+        <div className={styles.intakeCallout}>
+          <p className={styles.intakeTitle}>One thing left to do</p>
+          <p className={styles.intakeBody}>
+            {service.name} needs its own health and consent form signed before
+            your appointment. Each service has a different one, so having
+            signed for something else before doesn&apos;t cover this.
+          </p>
+          <Link href={`/intake?service=${service.slug}`} className="btn btn-sm">
+            Fill in the form
+          </Link>
+        </div>
+      )}
       <p className={styles.confirmBody}>
         Your appointment is <strong>pending confirmation</strong>. I&apos;ll
         email you shortly to confirm the time and send deposit details. It

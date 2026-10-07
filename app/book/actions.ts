@@ -7,6 +7,7 @@ import {
   getAvailableSlots,
   getMonthAvailability,
 } from "@/lib/bookings";
+import { hasSignedIntake } from "@/lib/intake-store";
 
 /**
  * Read-side helpers the booking client calls as the user moves through the
@@ -52,6 +53,9 @@ export type BookingFormState = {
   message?: string;
   fieldErrors?: Record<string, string>;
   reference?: string;
+  /** True when nothing is on file for this client and this service. */
+  needsIntake?: boolean;
+  serviceSlug?: string;
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -121,8 +125,16 @@ export async function submitBooking(
     return { status: "error", message: result.error };
   }
 
+  /*
+   * A form is signed per service, not per client, so a regular booking
+   * something new needs one again. Checked after the booking is made rather
+   * than before: the appointment is worth holding while they sign, and she
+   * can see who still owes her a form.
+   */
   return {
     status: "success",
     reference: result.booking.reference,
+    needsIntake: !hasSignedIntake(email, serviceSlug),
+    serviceSlug,
   };
 }

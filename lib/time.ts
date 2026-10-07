@@ -92,6 +92,20 @@ export function formatDateLong(date: string): string {
   });
 }
 
+/**
+ * "2026-08-14" → "August 14, 2026". No weekday: for a date long past, which
+ * day of the week it fell on is noise, and the year is what's missing.
+ */
+export function formatDatePlain(date: string): string {
+  const [y, m, d] = date.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString("en-US", {
+    timeZone: "UTC",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 /** "2026-08-14" → "Fri, Aug 14" */
 export function formatDateShort(date: string): string {
   const [y, m, d] = date.split("-").map(Number);

@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   formatDateLong,
+  formatDatePlain,
   formatDateShort,
   formatDuration,
   formatTime12,
@@ -126,7 +127,13 @@ export function ContactsList({
 
       <div className={styles.contactList}>
         {filtered.map((client) => (
-          <article key={client.id} className={styles.contact}>
+          /* The whole card opens the contact. The buttons inside it stop the
+             click travelling, so Edit and Remove still do their own thing. */
+          <article
+            key={client.id}
+            className={styles.contact}
+            onClick={() => setOpen(client)}
+          >
             <div>
               <div className={styles.contactNameRow}>
                 <p className={styles.contactName}>
@@ -141,7 +148,10 @@ export function ContactsList({
                 <button
                   type="button"
                   className={styles.editBtn}
-                  onClick={() => setEditing(client)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditing(client);
+                  }}
                   aria-label={`Edit ${client.name}`}
                 >
                   Edit
@@ -149,16 +159,9 @@ export function ContactsList({
               </div>
               <span className={styles.contactSince}>
                 {client.firstVisit
-                  ? `Since ${formatDateShort(client.firstVisit)}`
+                  ? `Since ${formatDatePlain(client.firstVisit)}`
                   : "No bookings yet"}
               </span>
-            </div>
-
-            <div className={styles.contactLinks}>
-              {client.email && (
-                <a href={`mailto:${client.email}`}>{client.email}</a>
-              )}
-              {client.phone && <a href={`tel:${client.phone}`}>{client.phone}</a>}
             </div>
 
             <div className={styles.contactStats}>
@@ -174,23 +177,16 @@ export function ContactsList({
               </div>
             </div>
 
-            <div className={styles.contactActions}>
+            <div
+              className={styles.contactActions}
+              onClick={(e) => e.stopPropagation()}
+            >
               <Link
                 href={`/admin?client=${client.id}`}
                 className="btn btn-outline btn-sm"
               >
                 Book
               </Link>
-              <form action={removeClient}>
-                <input type="hidden" name="id" value={client.id} />
-                <button
-                  type="submit"
-                  className={`btn btn-ghost btn-sm ${styles.removeBtn}`}
-                  aria-label={`Remove ${client.name} from contacts`}
-                >
-                  Remove
-                </button>
-              </form>
             </div>
           </article>
         ))}
@@ -310,6 +306,15 @@ function ContactDialog({
               </span>
             </div>
             <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Total visits</span>
+              <span className={styles.detailValue}>
+                {client.visits}
+                {client.upcoming > 0 && (
+                  <span className="muted"> ({client.upcoming} still to come)</span>
+                )}
+              </span>
+            </div>
+            <div className={styles.detailRow}>
               <span className={styles.detailLabel}>Total spent</span>
               <span className={styles.detailValue}>
                 ${client.spent}
@@ -323,11 +328,43 @@ function ContactDialog({
             </div>
           </div>
 
-          <h3 className={styles.dialogSection}>Signed forms</h3>
+          <h3 className={styles.dialogSection}>Notes</h3>
+          <ClientNotesForm client={client} />
+
+          <h3 className={styles.dialogSection}>
+            Upcoming <span className={styles.sectionCount}>{upcoming.length}</span>
+          </h3>
+          {upcoming.length === 0 ? (
+            <p className="muted">Nothing booked.</p>
+          ) : (
+            <ul className={styles.historyList}>
+              {upcoming.map((b) => (
+                <HistoryRow key={b.id} booking={b} />
+              ))}
+            </ul>
+          )}
+
+          <h3 className={styles.dialogSection}>
+            History <span className={styles.sectionCount}>{previous.length}</span>
+          </h3>
+          {previous.length === 0 ? (
+            <p className="muted">No past appointments yet.</p>
+          ) : (
+            <ul className={styles.historyList}>
+              {previous.map((b) => (
+                <HistoryRow key={b.id} booking={b} />
+              ))}
+            </ul>
+          )}
+
+          <h3 className={styles.dialogSection}>
+            Signed forms{" "}
+            <span className={styles.sectionCount}>{client.intake.length}</span>
+          </h3>
           {client.intake.length === 0 ? (
             <p className="muted">
               Nothing signed yet. Each service is signed for separately, so a
-              returning client books something new and signs again.
+              returning client booking something new signs again.
             </p>
           ) : (
             <ul className={styles.intakeList}>
@@ -368,34 +405,17 @@ function ContactDialog({
                         Agreed to all {form.consents.length} terms and signed{" "}
                         <strong>{form.signature}</strong>.
                       </p>
+
+                      <Link
+                        href={`/admin/forms/${form.id}`}
+                        className="btn btn-outline btn-sm"
+                        target="_blank"
+                      >
+                        Open as PDF
+                      </Link>
                     </div>
                   </details>
                 </li>
-              ))}
-            </ul>
-          )}
-
-          <h3 className={styles.dialogSection}>Notes</h3>
-          <ClientNotesForm client={client} />
-
-          <h3 className={styles.dialogSection}>Upcoming</h3>
-          {upcoming.length === 0 ? (
-            <p className="muted">Nothing booked.</p>
-          ) : (
-            <ul className={styles.historyList}>
-              {upcoming.map((b) => (
-                <HistoryRow key={b.id} booking={b} />
-              ))}
-            </ul>
-          )}
-
-          <h3 className={styles.dialogSection}>History</h3>
-          {previous.length === 0 ? (
-            <p className="muted">No past appointments yet.</p>
-          ) : (
-            <ul className={styles.historyList}>
-              {previous.map((b) => (
-                <HistoryRow key={b.id} booking={b} />
               ))}
             </ul>
           )}
@@ -450,6 +470,24 @@ function EditClientDialog({
         </div>
         <div className={styles.dialogBody}>
           <ClientDetailsForm client={client} />
+
+          {/* Tucked in here rather than on the card, where it sat one slip
+              away from the Book button. */}
+          <div className={styles.removeRow}>
+            <form action={removeClient}>
+              <input type="hidden" name="id" value={client.id} />
+              <button
+                type="submit"
+                className={`btn btn-ghost btn-sm ${styles.removeBtn}`}
+                aria-label={`Remove ${client.name} from contacts`}
+              >
+                Remove this contact
+              </button>
+            </form>
+            <span className={styles.removeNote}>
+              Their appointments and signed forms are kept.
+            </span>
+          </div>
         </div>
       </div>
     </div>

@@ -97,6 +97,24 @@ export function saveIntakeForm(input: {
   return { ok: true, id: Number(info.lastInsertRowid) };
 }
 
+/** One signed form, for the printable copy. */
+export function getIntakeForm(
+  id: number,
+): (SignedIntakeForm & { clientName: string; email: string; phone: string }) | null {
+  const row = db.prepare(`SELECT * FROM intake_forms WHERE id = ?`).get(id) as
+    | IntakeFormRow
+    | undefined;
+
+  if (!row) return null;
+
+  return {
+    ...parse(row),
+    clientName: row.client_name,
+    email: row.email,
+    phone: row.phone,
+  };
+}
+
 /** Everything this client has signed, newest first. */
 export function listIntakeFormsForClient(email: string): SignedIntakeForm[] {
   if (!email) return [];

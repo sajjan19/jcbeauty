@@ -5,6 +5,31 @@
   align-items: start;
 }
 
+/* The form still owed after booking. Warm rather than alarming: the
+   appointment is held, this is just the next thing to do. */
+.intakeCallout {
+  margin: var(--sp-5) auto;
+  max-width: 44ch;
+  padding: var(--sp-5);
+  background: var(--warn-bg);
+  border: 1px solid #d8c49a;
+  border-radius: var(--radius-lg);
+  text-align: left;
+}
+
+.intakeTitle {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  color: var(--char);
+  margin: 0 0 var(--sp-2);
+}
+
+.intakeBody {
+  font-size: 0.9375rem;
+  color: var(--slate);
+  margin: 0 0 var(--sp-4);
+}
+
 /* ── Step 1: new or returning ─────────────── */
 
 .choiceGrid {

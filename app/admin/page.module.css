@@ -186,6 +186,29 @@
   margin-bottom: 0;
 }
 
+.removeRow {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  margin-top: var(--sp-5);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--border);
+}
+
+.removeNote {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+/* How many rows sit under each heading in a contact's pop-up. */
+.sectionCount {
+  margin-left: var(--sp-2);
+  font-size: 0.75rem;
+  letter-spacing: 0;
+  color: var(--text-muted);
+}
+
 /* ── Signed intake forms ─────────────────── */
 
 .intakeList {
@@ -780,15 +803,25 @@
   }
 }
 
+/* Email and phone moved into the pop-up: the list is for finding someone,
+   not for reading their details off. */
 .contact {
   display: grid;
-  grid-template-columns: 1.2fr 1.4fr auto auto;
+  grid-template-columns: 1fr auto auto;
   gap: var(--sp-5);
   align-items: center;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--sp-5);
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact:hover {
+  border-color: var(--taupe);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
 }
 
 .contactName {
@@ -803,26 +836,6 @@
   color: var(--stone);
 }
 
-.contactLinks {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: 0.875rem;
-  min-width: 0;
-}
-
-.contactLinks a {
-  color: var(--slate);
-  text-decoration: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.contactLinks a:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
 
 .contactStats {
   display: flex;
