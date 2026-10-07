@@ -265,7 +265,8 @@ export const aftercare = [
  * Set to null if she ever stops taking deposits.
  */
 export const deposit = {
-  amount: 25,
+  /** The same on every service, including the $15 sculpt. */
+  amount: 10,
   refundable: false,
   /** Where the deposit is sent. Follows her contact address unless changed. */
   etransferEmail: business.email,
@@ -275,7 +276,7 @@ export const deposit = {
 export const policies = [
   {
     title: "Deposit",
-    body: "A non-refundable $25 deposit is required to secure your appointment.",
+    body: `A non-refundable $${deposit.amount} deposit is required to secure your appointment.`,
   },
   {
     title: "Late policy",
@@ -459,7 +460,7 @@ export const faqs = [
   },
   {
     q: "Is a deposit required?",
-    a: "Yes, a non-refundable $25 deposit secures your appointment. I'll send the details once your requested time is confirmed.",
+    a: `Yes, a non-refundable $${deposit.amount} deposit secures your appointment, sent by e-transfer to ${deposit.etransferEmail}.`,
   },
   {
     q: "Do you do men's brows?",
