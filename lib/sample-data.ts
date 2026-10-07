@@ -116,6 +116,24 @@ const PEOPLE: Person[] = [
   },
 ];
 
+/**
+ * What a client types into "anything I should know?" when booking. Not
+ * everyone writes one, so these are spread across roughly half the
+ * appointments rather than all of them.
+ */
+const CLIENT_NOTES = [
+  "First time having a lamination, so go as gentle as you can.",
+  "Would like them a little fuller at the front than last time.",
+  "Happy with the shape last visit, same again please.",
+  "I have an event the next evening, so nothing too dramatic.",
+  "Running straight from work, might be five minutes late.",
+  "The tint faded quite fast last time, could we go a shade darker?",
+  "Please avoid the small mole above my left brow.",
+  "I've been using a retinol serum, stopped a week ago as you said.",
+  "Could you check the gap on the right, it never grows back evenly.",
+  "Bringing a photo of the shape I'm after.",
+];
+
 /** A few yes answers each, so the sample forms don't all read the same. */
 const FLAGS: Record<string, Record<string, string>> = {
   "Gary Singh": {
@@ -197,7 +215,7 @@ export function loadSampleData(): {
     `INSERT INTO bookings (reference, service_slug, service_name, price,
        duration_minutes, date, start_minutes, end_minutes, client_name,
        email, phone, notes, first_time, status, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, 0, ?, ?)`,
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)`,
   );
   const insertForm = db.prepare(
     `INSERT INTO intake_forms (client_name, email, phone, service_slug,
@@ -278,6 +296,12 @@ export function loadSampleData(): {
           person.name,
           email,
           person.phone,
+          // Roughly every other booking carries a note, which is about how
+          // often people actually write one. Dividing before the modulo so
+          // every note in the list gets used, not only the even ones.
+          placed % 2 === 0
+            ? CLIENT_NOTES[Math.floor(placed / 2) % CLIENT_NOTES.length]
+            : null,
           status,
           now,
         );
