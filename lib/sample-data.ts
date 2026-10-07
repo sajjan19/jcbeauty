@@ -138,8 +138,29 @@ const FLAGS: Record<string, Record<string, string>> = {
   "Gagan Chera": { goal: "Lifted but still natural." },
 };
 
-/** Times of day used in order, so two on one day never overlap. */
-const SLOTS = [10 * 60, 13 * 60, 15 * 60 + 30];
+const OPEN = 10 * 60;
+const CLOSE = 18 * 60;
+const STEP = 15;
+/** Matches scheduling.bufferMinutes: she needs a gap between clients. */
+const BUFFER = 15;
+
+/**
+ * Preferred start times, spread across the day. Walked in a stride of three
+ * rather than in order, so consecutive appointments don't march neatly down
+ * the morning and the calendar looks like a real week.
+ */
+const START_TIMES = [
+  10 * 60,
+  10 * 60 + 45,
+  11 * 60 + 30,
+  12 * 60 + 15,
+  13 * 60,
+  13 * 60 + 45,
+  14 * 60 + 30,
+  15 * 60 + 15,
+  16 * 60,
+  16 * 60 + 45,
+];
 
 const emailFor = (name: string) =>
   `${name.split(" ")[0].toLowerCase()}.sample${DOMAIN}`;
@@ -188,6 +209,23 @@ export function loadSampleData(): {
   let bookings = 0;
   let forms = 0;
 
+  /*
+   * What's already on each date, across everybody. This has to live outside
+   * the loop over people: two different clients booked on the same day are
+   * exactly the case that would otherwise overlap, which the rest of the app
+   * refuses to allow.
+   */
+  const taken = new Map<string, [number, number][]>();
+  let placed = 0;
+
+  const fits = (date: string, start: number, duration: number) => {
+    const end = start + duration;
+    if (start < OPEN || end > CLOSE) return false;
+    return !(taken.get(date) ?? []).some(
+      ([s, e]) => start < e + BUFFER && s - BUFFER < end,
+    );
+  };
+
   const run = db.transaction(() => {
     for (const person of PEOPLE) {
       const email = emailFor(person.name);
@@ -196,16 +234,37 @@ export function loadSampleData(): {
       insertClient.run(person.name, email, person.phone, person.notes ?? null, now);
       clients++;
 
-      // Count how many are already on a date, so a second one that day
-      // starts later instead of landing on top.
-      const perDay = new Map<string, number>();
       const place = (offset: number, slug: string, status: string) => {
         const service = getService(slug);
         if (!service) return;
         const date = addDays(today, offset);
-        const used = perDay.get(date) ?? 0;
-        perDay.set(date, used + 1);
-        const start = SLOTS[Math.min(used, SLOTS.length - 1)];
+
+        // Start from a different preferred time each go, then slide later in
+        // quarter hours until it genuinely fits.
+        const preferred = START_TIMES[(placed * 3) % START_TIMES.length];
+        placed++;
+
+        let start: number | null = null;
+        for (let t = preferred; t + service.durationMinutes <= CLOSE; t += STEP) {
+          if (fits(date, t, service.durationMinutes)) {
+            start = t;
+            break;
+          }
+        }
+        // Nothing later that day worked, so try from opening time instead.
+        if (start === null) {
+          for (let t = OPEN; t < preferred; t += STEP) {
+            if (fits(date, t, service.durationMinutes)) {
+              start = t;
+              break;
+            }
+          }
+        }
+        if (start === null) return;
+
+        const slots = taken.get(date) ?? [];
+        slots.push([start, start + service.durationMinutes]);
+        taken.set(date, slots);
 
         insertBooking.run(
           reference(),
