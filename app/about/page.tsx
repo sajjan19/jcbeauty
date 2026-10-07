@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { about, business } from "@/lib/content";
+import { InstagramIcon } from "@/components/instagram-icon";
 import { PageHeader } from "@/components/page-header";
 import { LogoLockup } from "@/components/logo";
 import styles from "./page.module.css";
@@ -56,7 +57,7 @@ export default function AboutPage() {
                   rel="noopener noreferrer"
                   className="btn btn-outline"
                 >
-                  @{business.instagram}
+                  <InstagramIcon size={15} />@{business.instagram}
                 </a>
               </div>
             </div>

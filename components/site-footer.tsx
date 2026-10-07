@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { business, dayNames, hours, mapsUrl, phoneHref } from "@/lib/content";
 import { formatTime12, parseTime } from "@/lib/time";
+import { InstagramIcon } from "./instagram-icon";
 import styles from "./site-footer.module.css";
 
 export function SiteFooter() {
@@ -32,8 +33,9 @@ export function SiteFooter() {
                   href={business.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className={styles.handle}
                 >
-                  @{business.instagram}
+                  <InstagramIcon />@{business.instagram}
                 </a>
               </li>
               <li>

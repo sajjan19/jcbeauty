@@ -12,6 +12,12 @@
   align-items: start;
 }
 
+.handle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
 /* An email or a street address is longer than a nav link. */
 .wrap {
   overflow-wrap: anywhere;
