@@ -168,6 +168,7 @@ export function AdminCalendar({
   today,
   nowMinutes,
   clients,
+  clientNotes,
   prefillClient,
 }: {
   bookings: Booking[];
@@ -177,6 +178,8 @@ export function AdminCalendar({
   /** Studio-local time of day, for the current-time line. */
   nowMinutes: number;
   clients: KnownClient[];
+  /** Her notes about each client, keyed by lowercased email. */
+  clientNotes: Record<string, string>;
   /** Set when arriving from a contact's Book button: opens the form filled in. */
   prefillClient?: KnownClient | null;
 }) {
@@ -382,7 +385,11 @@ export function AdminCalendar({
       </p>
 
       {selected && (
-        <BookingDialog booking={selected} onClose={() => setSelected(null)} />
+        <BookingDialog
+          booking={selected}
+          clientNote={clientNotes[selected.email.toLowerCase()] ?? null}
+          onClose={() => setSelected(null)}
+        />
       )}
 
       {creating && (
@@ -464,9 +471,12 @@ function CreateDialog({
 
 function BookingDialog({
   booking,
+  clientNote,
   onClose,
 }: {
   booking: Booking;
+  /** Her own note about this client, if she's written one. */
+  clientNote: string | null;
   onClose: () => void;
 }) {
   const [editing, setEditing] = useState(false);
@@ -546,9 +556,29 @@ function BookingDialog({
           </div>
           {booking.notes && (
             <div className={styles.detailRow}>
-              <span className={styles.detailLabel}>Notes</span>
+              <span className={styles.detailLabel}>Their note</span>
               <span className={`${styles.detailValue} ${styles.detailNotes}`}>
                 {booking.notes}
+              </span>
+            </div>
+          )}
+
+          {booking.status === "cancelled" && booking.cancel_reason && (
+            <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Cancelled</span>
+              <span className={styles.detailValue}>
+                {booking.cancel_reason}
+              </span>
+            </div>
+          )}
+
+          {/* What she's written about this client, which is where the useful
+              detail lives after a few visits. */}
+          {clientNote && (
+            <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Your note</span>
+              <span className={`${styles.detailValue} ${styles.detailNotes}`}>
+                {clientNote}
               </span>
             </div>
           )}

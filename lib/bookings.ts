@@ -30,6 +30,8 @@ export type Booking = {
   notes: string | null;
   first_time: number;
   status: BookingStatus;
+  /** Why it was called off, when she bothered to say. */
+  cancel_reason: string | null;
   created_at: string;
 };
 
@@ -492,8 +494,26 @@ export function updateBooking(
   return transaction();
 }
 
-export function setBookingStatus(id: number, status: BookingStatus): void {
-  db.prepare(`UPDATE bookings SET status = ? WHERE id = ?`).run(status, id);
+/**
+ * Changes an appointment's status. A cancellation can carry a reason, which
+ * is cleared again if the appointment is reinstated — keeping a stale "they
+ * were ill" on a live booking would be worse than having nothing.
+ */
+export function setBookingStatus(
+  id: number,
+  status: BookingStatus,
+  cancelReason?: string | null,
+): void {
+  if (status === "cancelled") {
+    db.prepare(
+      `UPDATE bookings SET status = ?, cancel_reason = ? WHERE id = ?`,
+    ).run(status, cancelReason?.trim() || null, id);
+    return;
+  }
+
+  db.prepare(
+    `UPDATE bookings SET status = ?, cancel_reason = NULL WHERE id = ?`,
+  ).run(status, id);
 }
 
 /** Pass start/end as null to block the whole day. */

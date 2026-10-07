@@ -353,10 +353,26 @@
   color: var(--char);
 }
 
+.confirmCancelForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.confirmCancelForm .field {
+  margin-bottom: 0;
+}
+
 .confirmCancelActions {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
+}
+
+/* Shown wherever a cancelled appointment turns up. */
+.cancelReason {
+  font-size: 0.8125rem;
+  color: var(--danger);
 }
 
 .blockedActions {

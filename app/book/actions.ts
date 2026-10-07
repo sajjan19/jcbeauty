@@ -7,7 +7,7 @@ import {
   getAvailableSlots,
   getMonthAvailability,
 } from "@/lib/bookings";
-import { hasSignedIntake } from "@/lib/intake-store";
+import { intakeStatusFor } from "@/lib/intake-store";
 
 /**
  * Read-side helpers the booking client calls as the user moves through the
@@ -53,8 +53,10 @@ export type BookingFormState = {
   message?: string;
   fieldErrors?: Record<string, string>;
   reference?: string;
-  /** True when nothing is on file for this client and this service. */
+  /** True when nothing usable is on file for this client and this service. */
   needsIntake?: boolean;
+  /** Why, so the confirmation can say something that makes sense. */
+  intakeReason?: "never" | "expired" | "changed";
   serviceSlug?: string;
 };
 
@@ -130,11 +132,29 @@ export async function submitBooking(
    * something new needs one again. Checked after the booking is made rather
    * than before: the appointment is worth holding while they sign, and she
    * can see who still owes her a form.
+   *
+   * Three ways to end up needing one: never signed, signed too long ago to
+   * be relied on, or they've just told us something changed. Only the
+   * client can answer that last one, which is why it's a question.
    */
+  const changed = formData.get("healthChanged") === "yes";
+  const status = intakeStatusFor(email, serviceSlug);
+
+  if (changed) {
+    return {
+      status: "success",
+      reference: result.booking.reference,
+      needsIntake: true,
+      intakeReason: "changed",
+      serviceSlug,
+    };
+  }
+
   return {
     status: "success",
     reference: result.booking.reference,
-    needsIntake: !hasSignedIntake(email, serviceSlug),
+    needsIntake: status.needed,
+    intakeReason: status.needed ? status.reason : undefined,
     serviceSlug,
   };
 }

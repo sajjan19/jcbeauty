@@ -5,6 +5,30 @@
   align-items: start;
 }
 
+/* Asked of returning clients only, in place of making them re-sign an
+   identical form every time. */
+.changed {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5);
+  margin: 0;
+  background: var(--surface);
+}
+
+.changedQ {
+  font-size: 0.9375rem;
+  color: var(--char);
+  padding: 0;
+  margin-bottom: var(--sp-4);
+  max-width: 56ch;
+}
+
+.changedOptions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
 /* The form still owed after booking. Warm rather than alarming: the
    appointment is held, this is just the next thing to do. */
 .intakeCallout {

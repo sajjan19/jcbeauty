@@ -71,13 +71,14 @@ export async function updateBookingStatus(formData: FormData): Promise<void> {
 
   const id = Number(formData.get("id"));
   const status = String(formData.get("status"));
+  const reason = String(formData.get("cancelReason") ?? "").slice(0, 300);
 
   if (!Number.isInteger(id) || id <= 0) throw new Error("Invalid booking.");
   if (!["pending", "confirmed", "cancelled"].includes(status)) {
     throw new Error("Invalid status.");
   }
 
-  setBookingStatus(id, status as BookingStatus);
+  setBookingStatus(id, status as BookingStatus, reason);
   revalidatePath("/admin");
 }
 

@@ -38,10 +38,21 @@ export function CancelBookingButton({
         Cancel {clientName}&apos;s appointment? They aren&apos;t told
         automatically, so let them know.
       </span>
-      <span className={styles.confirmCancelActions}>
-        <form action={updateBookingStatus}>
-          <input type="hidden" name="id" value={id} />
-          <input type="hidden" name="status" value="cancelled" />
+      <form action={updateBookingStatus} className={styles.confirmCancelForm}>
+        <input type="hidden" name="id" value={id} />
+        <input type="hidden" name="status" value="cancelled" />
+
+        <label className="field">
+          <span className="label">Why? (optional)</span>
+          <input
+            className="input"
+            name="cancelReason"
+            maxLength={300}
+            placeholder="Off sick, asked to move it, no-show…"
+          />
+        </label>
+
+        <span className={styles.confirmCancelActions}>
           <button
             type="submit"
             className="btn btn-danger-solid btn-sm"
@@ -49,15 +60,15 @@ export function CancelBookingButton({
           >
             Yes, cancel it
           </button>
-        </form>
-        <button
-          type="button"
-          className="btn btn-ghost btn-sm"
-          onClick={() => setConfirming(false)}
-        >
-          Keep it
-        </button>
-      </span>
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            onClick={() => setConfirming(false)}
+          >
+            Keep it
+          </button>
+        </span>
+      </form>
     </span>
   );
 }

@@ -99,6 +99,7 @@ export function BookingFlow({
         date={date}
         time={time}
         needsIntake={Boolean(state.needsIntake)}
+        intakeReason={state.intakeReason}
       />
     );
   }
@@ -472,6 +473,40 @@ export function BookingFlow({
                 <input type="hidden" name="firstTime" value="on" />
               )}
 
+              {/* Only a returning client has a "since last time" to speak of.
+                  A yes means the form gets filled in again. */}
+              {returning === true && (
+                <fieldset className={styles.changed}>
+                  <legend className={styles.changedQ}>
+                    Has anything changed about your health, medication or skin
+                    since your last visit?
+                  </legend>
+                  <div className={styles.changedOptions}>
+                    <label className={styles.check}>
+                      <input
+                        type="radio"
+                        name="healthChanged"
+                        value="no"
+                        required
+                      />
+                      <span>No, nothing has changed</span>
+                    </label>
+                    <label className={styles.check}>
+                      <input
+                        type="radio"
+                        name="healthChanged"
+                        value="yes"
+                        required
+                      />
+                      <span>
+                        Yes, something has changed. I&apos;ll fill the form in
+                        again
+                      </span>
+                    </label>
+                  </div>
+                </fieldset>
+              )}
+
               <div className={styles.policyBox}>
                 <p className={styles.policyHead}>Before you confirm</p>
                 <ul className={styles.policyList}>
@@ -534,13 +569,15 @@ function Confirmation({
   date,
   time,
   needsIntake,
+  intakeReason,
 }: {
   reference: string;
   service: Service | null;
   date: string | null;
   time: string | null;
-  /** Nothing on file for this client and this service yet. */
+  /** Nothing usable on file for this client and this service. */
   needsIntake: boolean;
+  intakeReason?: "never" | "expired" | "changed";
 }) {
   return (
     <div className={styles.confirmation}>
@@ -551,9 +588,11 @@ function Confirmation({
         <div className={styles.intakeCallout}>
           <p className={styles.intakeTitle}>One thing left to do</p>
           <p className={styles.intakeBody}>
-            {service.name} needs its own health and consent form signed before
-            your appointment. Each service has a different one, so having
-            signed for something else before doesn&apos;t cover this.
+            {intakeReason === "changed"
+              ? `Since something has changed, there's a fresh form to fill in for ${service.name} before your appointment. It only takes a couple of minutes.`
+              : intakeReason === "expired"
+                ? `It's been over a year since you last filled in the form for ${service.name}, so there's a new one to sign before your appointment.`
+                : `${service.name} needs its own health and consent form signed before your appointment. Each service has a different one, so having signed for something else doesn't cover this.`}
           </p>
           <Link href={`/intake?service=${service.slug}`} className="btn btn-sm">
             Fill in the form

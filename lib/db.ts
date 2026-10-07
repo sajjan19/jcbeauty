@@ -106,6 +106,16 @@ function connect(): Database.Database {
       ON intake_forms (LOWER(email));
   `);
 
+  // Added after the first release. SQLite has no "ADD COLUMN IF NOT EXISTS",
+  // so check before adding rather than letting it throw.
+  const bookingColumns = db
+    .prepare(`PRAGMA table_info(bookings)`)
+    .all() as { name: string }[];
+
+  if (!bookingColumns.some((c) => c.name === "cancel_reason")) {
+    db.exec(`ALTER TABLE bookings ADD COLUMN cancel_reason TEXT`);
+  }
+
   // First run after this table appeared: seed it from whoever has booked.
   const clientCount = db
     .prepare(`SELECT COUNT(*) AS n FROM clients`)

@@ -105,6 +105,14 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
     phone: c.phone,
   }));
 
+  // Her own notes, so an appointment can show them beside the client's.
+  const clientNotes: Record<string, string> = {};
+  for (const client of clients) {
+    if (client.email && client.notes) {
+      clientNotes[client.email.toLowerCase()] = client.notes;
+    }
+  }
+
   // Set when arriving from a contact's Book button.
   const clientParam = Array.isArray(params.client)
     ? params.client[0]
@@ -348,6 +356,7 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
               key={prefill ? `client-${prefill.id}` : "calendar"}
               bookings={allBookings}
               blocked={allBlocked}
+              clientNotes={clientNotes}
               today={today}
               nowMinutes={studioNow().minutes}
               clients={knownClients}
@@ -430,6 +439,12 @@ function BookingCard({
 
         {booking.notes && (
           <p className={styles.bookingNotes}>“{booking.notes}”</p>
+        )}
+
+        {booking.status === "cancelled" && booking.cancel_reason && (
+          <p className={styles.cancelReason}>
+            Cancelled: {booking.cancel_reason}
+          </p>
         )}
       </div>
 

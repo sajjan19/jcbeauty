@@ -130,6 +130,42 @@ export function listIntakeFormsForClient(email: string): SignedIntakeForm[] {
   return rows.map(parse);
 }
 
+/** A form older than this is treated as out of date and signed again. */
+export const INTAKE_VALID_DAYS = 365;
+
+export type IntakeStatus =
+  | { needed: true; reason: "never" | "expired" }
+  | { needed: false; signedAt: string };
+
+/**
+ * Whether this client needs to sign for this service: never signed, or
+ * signed so long ago that what they told her can't be relied on. A client
+ * saying something has changed is handled by the caller, since only they
+ * know the answer to that.
+ */
+export function intakeStatusFor(email: string, serviceSlug: string): IntakeStatus {
+  if (!email) return { needed: true, reason: "never" };
+
+  const row = db
+    .prepare(
+      `SELECT signed_at FROM intake_forms
+       WHERE LOWER(email) = LOWER(?) AND service_slug = ?
+       ORDER BY signed_at DESC LIMIT 1`,
+    )
+    .get(email, serviceSlug) as { signed_at: string } | undefined;
+
+  if (!row) return { needed: true, reason: "never" };
+
+  const signed = Date.parse(row.signed_at);
+  const ageDays = (Date.now() - signed) / 86_400_000;
+
+  if (!Number.isFinite(signed) || ageDays > INTAKE_VALID_DAYS) {
+    return { needed: true, reason: "expired" };
+  }
+
+  return { needed: false, signedAt: row.signed_at };
+}
+
 /**
  * Has this client signed for this particular service? The answer is what
  * decides whether a returning client has to fill one in again.
