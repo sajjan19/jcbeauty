@@ -431,6 +431,21 @@
   text-underline-offset: 3px;
 }
 
+/* Her own notes, bulleted so they never read as the client's words. */
+.ownNotes {
+  margin: 0;
+  padding-left: 1.1em;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #1d1d1f;
+  font-size: 0.875rem;
+}
+
+.ownNotes li::marker {
+  color: var(--accent, #a68763);
+}
+
 .detailNotes {
   font-style: italic;
   color: #3a3a3c;

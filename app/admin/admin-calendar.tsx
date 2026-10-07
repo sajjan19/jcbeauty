@@ -148,6 +148,27 @@ function assignLanes(items: Booking[]) {
   return { placement, laneCount: Math.max(1, lanes.length) };
 }
 
+/**
+ * Splits her note into bullet points. One per line is what the notes box
+ * asks for, but older notes are a paragraph, so those fall back to splitting
+ * on sentences rather than showing one long bullet.
+ */
+function notePoints(note: string): string[] {
+  const lines = note
+    .split("\n")
+    .map((line) => line.replace(/^[-•*]\s*/, "").trim())
+    .filter(Boolean);
+
+  if (lines.length > 1) return lines;
+
+  return (
+    note
+      .split(/(?<=\.)\s+/)
+      .map((part) => part.trim())
+      .filter(Boolean) || [note]
+  );
+}
+
 /** Turns a pointer position inside a day column into a snapped start time. */
 function timeAtPointer(
   clientY: number,
@@ -573,13 +594,16 @@ function BookingDialog({
           )}
 
           {/* What she's written about this client, which is where the useful
-              detail lives after a few visits. */}
+              detail lives after a few visits. Bulleted so there's no mistaking
+              it for what the client wrote. */}
           {clientNote && (
             <div className={styles.detailRow}>
               <span className={styles.detailLabel}>Your note</span>
-              <span className={`${styles.detailValue} ${styles.detailNotes}`}>
-                {clientNote}
-              </span>
+              <ul className={styles.ownNotes}>
+                {notePoints(clientNote).map((point, i) => (
+                  <li key={i}>{point}</li>
+                ))}
+              </ul>
             </div>
           )}
 

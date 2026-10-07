@@ -520,16 +520,24 @@ function ClientNotesForm({ client }: { client: Contact }) {
       )}
 
       <label className="field">
-        <span className="label">What to remember for next time</span>
+        <span className="label">
+          What to remember for next time — one point per line
+        </span>
         <textarea
           className="textarea"
           name="notes"
           rows={5}
           defaultValue={client.notes ?? ""}
           maxLength={4000}
-          placeholder="Shape and tint used, skin sensitivities, how the last set healed, what they asked for…"
+          placeholder={
+            "Sensitive skin, threading only\nLikes the tail kept long\nTint a shade warmer than it looks"
+          }
         />
       </label>
+      <p className={styles.notesHint}>
+        Each line shows as its own bullet on an appointment, so your notes
+        never read as something the client wrote.
+      </p>
 
       <button type="submit" className="btn btn-sm" disabled={pending}>
         {pending ? "Saving…" : "Save Notes"}

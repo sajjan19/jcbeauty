@@ -221,6 +221,12 @@
   flex-wrap: wrap;
 }
 
+.notesHint {
+  margin: calc(var(--sp-3) * -1) 0 var(--sp-4);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
 .removeRow {
   display: flex;
   align-items: center;

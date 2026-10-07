@@ -33,7 +33,7 @@ const PEOPLE: Person[] = [
     name: "Gary Singh",
     phone: "604-555-0142",
     notes:
-      "On blood thinners, so bruises easily around the arch. Work slower on the inner corners. Likes a strong, defined shape and always asks to keep the tail long. Tint one shade warmer than it looks like it should be.",
+      "On blood thinners, bruises easily around the arch\nWork slower on the inner corners\nLikes a strong, defined shape\nAlways asks to keep the tail long\nTint one shade warmer than it looks like it should be",
     past: [
       [-118, "brow-sculpt"],
       [-96, "brow-lamination-tint"],
@@ -53,7 +53,7 @@ const PEOPLE: Person[] = [
     name: "Darren Raj",
     phone: "604-555-0188",
     notes:
-      "Sensitive skin. Threading only, never wax: a wax years ago left him red for two days. Patch test anything new. Prefers a softer, straighter shape and no tint. Books roughly every four weeks.",
+      "Sensitive skin, threading only, never wax\nA wax years ago left him red for two days\nPatch test anything new\nPrefers a softer, straighter shape, no tint\nBooks roughly every four weeks",
     past: [
       [-112, "brow-lamination-tint"],
       [-83, "brow-sculpt"],
@@ -72,7 +72,7 @@ const PEOPLE: Person[] = [
     name: "Chani Sahota",
     phone: "778-555-0133",
     notes:
-      "Reacts to nickel, so keep tools clean and avoid anything plated. Wears contacts, takes them out before a lash lift. Wanted something soft last time and was pleased with it.",
+      "Reacts to nickel, avoid anything plated\nWears contacts, takes them out before a lash lift\nWants it soft rather than dramatic",
     past: [[-56, "korean-lash-lift"]],
     upcoming: [
       [1, "brow-sculpt"],
@@ -84,7 +84,7 @@ const PEOPLE: Person[] = [
     name: "Charan Randhawa",
     phone: "604-555-0175",
     notes:
-      "Gets cold sores around the brow area, so check before threading near the inner corner. Asks for a tidy-up rather than a change of shape. Usually runs five minutes late.",
+      "Gets cold sores around the brow area, check before threading the inner corner\nAsks for a tidy-up, not a change of shape\nUsually runs five minutes late",
     past: [[-18, "brow-lamination"]],
     upcoming: [
       [4, "korean-lash-lift"],
@@ -95,7 +95,7 @@ const PEOPLE: Person[] = [
     name: "Gagan Chera",
     phone: "778-555-0107",
     notes:
-      "Wants lifted but natural, nothing too done. Hasn't agreed to photos, so don't post hers. New to lamination as of this year and happy with how it sat.",
+      "Wants lifted but natural, nothing too done\nHas not agreed to photos, do not post hers\nNew to lamination this year, happy with how it sat",
     past: [[-24, "brow-sculpt"]],
     upcoming: [
       [1, "brow-lamination-tint"],
@@ -106,7 +106,7 @@ const PEOPLE: Person[] = [
     name: "Harpreet Saini",
     phone: "778-555-0190",
     notes:
-      "Mild eczema on the brow bone in winter, so check the skin before starting and keep an eye on redness afterwards. Wants more fullness through the front. Pays cash.",
+      "Mild eczema on the brow bone in winter, check the skin first\nKeep an eye on redness afterwards\nWants more fullness through the front\nPays cash",
     past: [[-17, "brow-sculpt-tint"]],
     upcoming: [
       [5, "brow-sculpt"],
