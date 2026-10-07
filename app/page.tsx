@@ -139,7 +139,7 @@ export default function HomePage() {
               <span className={styles.stepNumber}>03</span>
               <h3 className={styles.stepTitle}>The service</h3>
               <p className={styles.stepBody}>
-                Lamination, shaping, waxing, or tinting. Whichever you booked, it&apos;s
+                Lamination, sculpting, tinting or a lash lift. Whichever you booked, it&apos;s
                 done unhurried in a private studio.
               </p>
             </div>

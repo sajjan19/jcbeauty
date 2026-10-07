@@ -32,78 +32,87 @@ const PEOPLE: Person[] = [
   {
     name: "Gary Singh",
     phone: "604-555-0142",
+    notes:
+      "On blood thinners, so bruises easily around the arch. Work slower on the inner corners. Likes a strong, defined shape and always asks to keep the tail long. Tint one shade warmer than it looks like it should be.",
     past: [
-      [-118, "brow-shape-wax"],
-      [-96, "signature-brow-lamination"],
-      [-74, "brow-shape-tint"],
-      [-52, "signature-brow-lamination"],
-      [-30, "lash-lift"],
-      [-9, "brow-threading"],
+      [-118, "brow-sculpt"],
+      [-96, "brow-lamination-tint"],
+      [-74, "brow-sculpt-tint"],
+      [-52, "brow-lamination-tint"],
+      [-30, "korean-lash-lift"],
+      [-9, "brow-sculpt"],
     ],
     upcoming: [
-      [2, "signature-brow-lamination"],
-      [11, "brow-shape-tint"],
-      [23, "naked-brow-lamination"],
+      [2, "brow-lamination-tint"],
+      [11, "brow-sculpt-tint"],
+      [23, "brow-lamination"],
     ],
-    cancelled: [[-61, "brow-lamination-only"]],
+    cancelled: [[-61, "brow-lamination"]],
   },
   {
     name: "Darren Raj",
     phone: "604-555-0188",
     notes:
-      "Sensitive skin. Dislikes waxing, so thread or use the gentlest option and patch test anything new.",
+      "Sensitive skin. Threading only, never wax: a wax years ago left him red for two days. Patch test anything new. Prefers a softer, straighter shape and no tint. Books roughly every four weeks.",
     past: [
-      [-112, "signature-brow-lamination"],
-      [-83, "brow-shape-wax"],
-      [-55, "naked-brow-lamination"],
-      [-27, "brow-threading"],
-      [-6, "brow-lamination-only"],
+      [-112, "brow-lamination-tint"],
+      [-83, "brow-sculpt"],
+      [-55, "brow-lamination"],
+      [-27, "brow-sculpt"],
+      [-6, "brow-lamination"],
     ],
     upcoming: [
-      [3, "brow-shape-wax"],
-      [9, "signature-brow-lamination"],
-      [17, "brow-threading"],
+      [3, "brow-sculpt"],
+      [9, "brow-lamination-tint"],
+      [17, "brow-sculpt"],
     ],
-    cancelled: [[-40, "brow-shape-wax"]],
+    cancelled: [[-40, "brow-sculpt"]],
   },
   {
     name: "Chani Sahota",
     phone: "778-555-0133",
-    past: [[-56, "lash-lift"]],
+    notes:
+      "Reacts to nickel, so keep tools clean and avoid anything plated. Wears contacts, takes them out before a lash lift. Wanted something soft last time and was pleased with it.",
+    past: [[-56, "korean-lash-lift"]],
     upcoming: [
-      [1, "brow-threading"],
-      [8, "naked-brow-lamination"],
-      [19, "signature-brow-lamination"],
+      [1, "brow-sculpt"],
+      [8, "brow-lamination"],
+      [19, "brow-lamination-tint"],
     ],
   },
   {
     name: "Charan Randhawa",
     phone: "604-555-0175",
-    past: [[-18, "brow-lamination-only"]],
+    notes:
+      "Gets cold sores around the brow area, so check before threading near the inner corner. Asks for a tidy-up rather than a change of shape. Usually runs five minutes late.",
+    past: [[-18, "brow-lamination"]],
     upcoming: [
-      [4, "lash-lift"],
-      [15, "brow-shape-wax"],
+      [4, "korean-lash-lift"],
+      [15, "brow-sculpt"],
     ],
   },
   {
     name: "Gagan Chera",
     phone: "778-555-0107",
-    past: [[-24, "brow-shape-wax"]],
+    notes:
+      "Wants lifted but natural, nothing too done. Hasn't agreed to photos, so don't post hers. New to lamination as of this year and happy with how it sat.",
+    past: [[-24, "brow-sculpt"]],
     upcoming: [
-      [1, "signature-brow-lamination"],
-      [12, "naked-brow-lamination"],
+      [1, "brow-lamination-tint"],
+      [12, "brow-lamination"],
     ],
   },
   {
     name: "Harpreet Saini",
     phone: "778-555-0190",
-    notes: "Mild eczema on the brow bone in winter. Keep an eye on redness.",
-    past: [[-17, "brow-shape-tint"]],
+    notes:
+      "Mild eczema on the brow bone in winter, so check the skin before starting and keep an eye on redness afterwards. Wants more fullness through the front. Pays cash.",
+    past: [[-17, "brow-sculpt-tint"]],
     upcoming: [
-      [5, "brow-shape-wax"],
-      [13, "brow-lamination-only"],
+      [5, "brow-sculpt"],
+      [13, "brow-lamination"],
     ],
-    cancelled: [[18, "lash-lift"]],
+    cancelled: [[18, "korean-lash-lift"]],
   },
 ];
 
@@ -117,7 +126,8 @@ const FLAGS: Record<string, Record<string, string>> = {
   "Darren Raj": {
     "previous-reaction": "Yes",
     goal: "Clean shape, as gentle as possible.",
-    "anything-else": "Waxing left me red for two days once, threading was fine.",
+    "anything-else":
+      "A wax years ago left me red for two days, threading has always been fine.",
   },
   "Chani Sahota": { allergies: "Yes", contacts: "Yes", goal: "Something soft." },
   "Harpreet Saini": {

@@ -82,7 +82,7 @@ function connect(): Database.Database {
       ON clients (LOWER(email)) WHERE email <> '';
 
     -- Signed intake and consent forms. One per client per service: the
-    -- questions differ between a wax and a lash lift, so a returning client
+    -- questions differ between a tint and a lash lift, so a returning client
     -- booking something new signs again.
     --
     -- Rows are never updated or deleted in normal use. A signature is a

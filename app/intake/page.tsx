@@ -30,7 +30,7 @@ export default async function IntakePage({
         lede={
           service
             ? "A few questions about your skin and health, then the agreement to sign. It takes a couple of minutes and only needs doing once per service."
-            : "Each service has its own form, because the questions that matter for a lash lift aren't the ones that matter for a wax. Pick what you're booking."
+            : "Each service has its own form, because the questions that matter for a lash lift aren't the ones that matter for a brow tint. Pick what you're booking."
         }
       />
 

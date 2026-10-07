@@ -85,14 +85,20 @@ export type Service = {
   popular?: boolean;
 };
 
-// Prices and descriptions are taken from her Instagram price list.
-// TODO: the `durationMinutes` values are estimates — she needs to confirm
-// them, because they decide how much time each booking blocks off.
+/*
+ * Prices are Japman's, from October 2026. Waxing is no longer offered: the
+ * brow services are threading now.
+ *
+ * TODO: every `durationMinutes` below is an estimate of mine, not her
+ * number. They decide how much of her day each booking blocks out and how
+ * many slots a client is offered, so they're worth ten minutes of her time
+ * to check.
+ */
 export const services: Service[] = [
   {
-    slug: "brow-threading",
-    name: "Brow Threading",
-    price: 12,
+    slug: "brow-sculpt",
+    name: "Brow Sculpt",
+    price: 15,
     durationMinutes: 15,
     summary:
       "Brow mapping and threading, for a clean shape without any wax.",
@@ -103,79 +109,48 @@ export const services: Service[] = [
     ],
   },
   {
-    slug: "brow-shape-wax",
-    name: "Brow Shape & Wax",
-    price: 35,
+    slug: "brow-sculpt-tint",
+    name: "Brow Sculpt + Tint",
+    price: 30,
     durationMinutes: 30,
     summary:
-      "Simple brow package option that includes brow mapping and waxing. (Threading also available)",
+      "Brow mapping and threading, finished with a tint matched to your colouring.",
     details: [
-      "Brows mapped to your facial proportions",
-      "Waxing, or threading if you prefer",
-      "Great as a standalone maintenance visit",
-    ],
-  },
-  {
-    slug: "brow-shape-tint",
-    name: "Brow Shape & Tint",
-    price: 45,
-    durationMinutes: 45,
-    summary:
-      "Brow package option that includes brow mapping, tinting and waxing.",
-    details: [
-      "Everything in the shape & wax, plus a custom tint",
+      "Everything in the sculpt, plus a custom tint",
       "Tint shade matched to your hair and skin tone",
       "Tint typically lasts 2 to 4 weeks",
     ],
   },
   {
-    slug: "brow-lamination-only",
-    name: "Brow Lamination Only",
-    price: 65,
+    slug: "brow-lamination",
+    name: "Brow Lamination",
+    price: 70,
     durationMinutes: 45,
     summary:
-      "Perfect for clients that want the lifted effect from a lamination. Does NOT include shape, wax or tint.",
+      "The lifted, brushed-up effect, for brows that sit fuller and softer.",
     details: [
-      "The lifted, brushed-up effect on its own",
-      "No shaping, waxing, or tinting included",
+      "Brows set in a lifted, brushed-up shape",
+      "Suits sparse or unruly brows particularly well",
       "Results typically last 6 to 8 weeks",
     ],
   },
   {
-    slug: "naked-brow-lamination",
-    name: "Naked Brow Lamination",
-    price: 95,
+    slug: "brow-lamination-tint",
+    name: "Brow Lamination + Tint",
+    price: 80,
     durationMinutes: 60,
     summary:
-      "Brow lamination, mapping and waxing. Perfect for those wanting a natural look.",
+      "Lamination with a tint, for the lifted effect with a little more definition.",
     details: [
-      "Lamination with a full shape and wax",
-      "No tint, which keeps things soft and natural",
+      "The lift of a lamination, plus a custom tint",
+      "Most definition of any brow option",
       "Results typically last 6 to 8 weeks",
     ],
-    popular: true,
   },
   {
-    slug: "signature-brow-lamination",
-    name: "Signature Brow Lamination Package",
-    price: 105,
-    durationMinutes: 75,
-    summary:
-      "A full package including brow lamination, mapping, tinting and waxing. Perfect for those wanting the lifted effect of brow lamination with a little more definition.",
-    details: [
-      "The complete service: lamination, mapping, tint and wax",
-      "Most definition of any option",
-      "Results typically last 6 to 8 weeks",
-    ],
-    popular: true,
-  },
-  {
-    slug: "lash-lift",
-    name: "Lash Lift",
-    // TODO: PLACEHOLDER price and length, both invented. Confirm with Japman
-    // before quoting anyone. The length matters most, since it decides how
-    // much time each booking blocks off in her calendar.
-    price: 75,
+    slug: "korean-lash-lift",
+    name: "Korean Lash Lift",
+    price: 70,
     durationMinutes: 60,
     summary:
       "A lift and set for your natural lashes, curling them upward so your eyes look more open. No extensions involved.",
@@ -184,6 +159,19 @@ export const services: Service[] = [
       "No extensions and no daily upkeep",
       "Results typically last 6 to 8 weeks",
       "Keep lashes dry for 24 hours afterwards",
+    ],
+  },
+  {
+    slug: "korean-lash-lift-tint",
+    name: "Korean Lash Lift + Tint",
+    price: 80,
+    durationMinutes: 75,
+    summary:
+      "A lash lift finished with a tint, so the lashes read darker and fuller without mascara.",
+    details: [
+      "Everything in the lash lift, plus a tint",
+      "Darker lashes without daily mascara",
+      "Results typically last 6 to 8 weeks",
     ],
   },
 ];
@@ -337,23 +325,23 @@ export const gallery: GalleryItem[] = [
   {
     // The tile always shows the finished result; the before is revealed on tap.
     src: "/gallery/brow-shape-wax-after.jpeg",
-    alt: "A client's brow after shaping and waxing, with a clean arch and a defined edge",
-    caption: "Brow Shape & Wax",
+    alt: "A client's brow after shaping, with a clean arch and a defined edge",
+    caption: "Brow Shaping",
     pair: {
       before: {
         src: "/gallery/brow-shape-wax-before.jpeg",
-        alt: "A client's natural brow before shaping and waxing, with stray hairs and a soft, undefined edge",
+        alt: "A client's natural brow before shaping, with stray hairs and a soft, undefined edge",
       },
       after: {
         src: "/gallery/brow-shape-wax-after.jpeg",
-        alt: "The same client's brow after shaping and waxing, with a clean arch and a defined edge",
+        alt: "The same client's brow after shaping, with a clean arch and a defined edge",
       },
     },
   },
   {
     src: "/gallery/brow-threading-after.jpg",
     alt: "A client's brow after threading, with a clean arch and a defined edge",
-    caption: "Brow Threading",
+    caption: "Brow Sculpt",
     pair: {
       // Portrait shots, unlike the near-square pair above.
       aspect: 3 / 4,
@@ -375,22 +363,22 @@ export const gallery: GalleryItem[] = [
   {
     src: "/gallery/placeholder-2.svg",
     alt: "Placeholder artwork for a lamination and tint before and after",
-    caption: "Lamination + Tint",
+    caption: "Brow Lamination + Tint",
   },
   {
     src: "/gallery/placeholder-4.svg",
     alt: "Placeholder artwork for a brow shape and tint before and after",
-    caption: "Brow Shape & Tint",
+    caption: "Brow Sculpt + Tint",
   },
   {
     src: "/gallery/placeholder-5.svg",
     alt: "Placeholder artwork for a men's brow shaping before and after",
-    caption: "Men's Brow Shaping",
+    caption: "Men's Brow Sculpt",
   },
   {
     src: "/gallery/placeholder-6.svg",
     alt: "Placeholder artwork for a naked lamination before and after",
-    caption: "Naked Lamination",
+    caption: "Korean Lash Lift",
   },
 ];
 
@@ -428,7 +416,7 @@ export const home = {
 export const about = {
   headline: "Hi, I'm Japman.",
   paragraphs: [
-    "I'm a brow and lash artist working from a private studio in Vancouver, specialising in brow lamination, shaping, waxing, tinting and lash lifts.",
+    "I'm a brow and lash artist working from a private studio in Vancouver, specialising in brow lamination, sculpting, tinting and Korean lash lifts.",
     "Every appointment starts with mapping your brows to your features, so the shape we land on suits your face rather than a template.",
     "I keep the studio small and book by appointment only, so you have my full attention from consultation to aftercare.",
     "Outside the studio, I love technology and travelling. Discovering new tools at home and new beauty traditions abroad keeps inspiring the way I work.",
@@ -457,7 +445,7 @@ export const faqs = [
   },
   {
     q: "Does it hurt?",
-    a: "Lamination and tinting are painless. Shaping involves waxing or tweezing, which some people find briefly uncomfortable, but it's over quickly.",
+    a: "Lamination and tinting are painless. Threading is a quick pinch for some people, though it's over in minutes and most find it gentler than waxing.",
   },
   {
     q: "Can I wear makeup afterwards?",
@@ -465,7 +453,7 @@ export const faqs = [
   },
   {
     q: "Which service should I pick?",
-    a: "If you just want a clean shape, start with Brow Shape & Wax. If you want the lifted, fuller look, the Signature package is the complete option, while Naked Lamination gives the same lift with a softer, untinted finish. Message me if you're not sure and I'll help you choose.",
+    a: "If you just want a clean shape, start with the Brow Sculpt. Add a tint if you'd like a little more depth. For the lifted, fuller look, Brow Lamination is the one, and adding a tint gives the most definition. Message me if you're not sure and I'll help you choose.",
   },
   {
     q: "Is a deposit required?",

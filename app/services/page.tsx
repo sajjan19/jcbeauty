@@ -8,7 +8,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "Services & Prices",
   description:
-    "Brow lamination, shaping, waxing, tinting and lash lifts in Vancouver. Full service list with prices and appointment lengths.",
+    "Brow lamination, sculpting, tinting and Korean lash lifts in Vancouver. Full service list with prices and appointment lengths.",
 };
 
 export default function ServicesPage() {

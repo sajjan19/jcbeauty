@@ -2,8 +2,8 @@
  * Client intake and consent form.
  *
  * A separate form is signed per service, not per client: the questions that
- * matter for a lash lift are not the ones that matter for a wax, which is
- * why a returning client booking something new has to fill one in again.
+ * matter for a lash lift are not the ones that matter for a brow tint,
+ * which is why a returning client booking something new fills one in again.
  *
  * SAMPLE WORDING. Japman should read every line and change anything that
  * isn't how she works, and the consent and release section in particular is
@@ -29,20 +29,14 @@ export type IntakeSection = {
   appliesTo?: string[];
 };
 
-const LAMINATION = [
-  "brow-lamination-only",
-  "naked-brow-lamination",
-  "signature-brow-lamination",
+const LAMINATION = ["brow-lamination", "brow-lamination-tint"];
+const TINT = [
+  "brow-sculpt-tint",
+  "brow-lamination-tint",
+  "korean-lash-lift-tint",
 ];
-const TINT = ["brow-shape-tint", "signature-brow-lamination"];
-const HAIR_REMOVAL = [
-  "brow-threading",
-  "brow-shape-wax",
-  "brow-shape-tint",
-  "naked-brow-lamination",
-  "signature-brow-lamination",
-];
-const LASH = ["lash-lift"];
+const THREADING = ["brow-sculpt", "brow-sculpt-tint"];
+const LASH = ["korean-lash-lift", "korean-lash-lift-tint"];
 
 export const intakeSections: IntakeSection[] = [
   {
@@ -86,7 +80,7 @@ export const intakeSections: IntakeSection[] = [
       {
         id: "previous-reaction",
         label:
-          "Have you ever reacted badly to a tint, lamination, wax, thread or lash treatment?",
+          "Have you ever reacted badly to a tint, lamination, threading or lash treatment?",
         type: "yesno",
         flagOnYes: true,
       },
@@ -96,8 +90,8 @@ export const intakeSections: IntakeSection[] = [
     id: "skin-prep",
     title: "Skin in the last few weeks",
     blurb:
-      "Waxing and threading lift the top layer of skin. These make that riskier, and are the usual reason an appointment gets rescheduled.",
-    appliesTo: HAIR_REMOVAL,
+      "Threading lifts the top layer of skin with it. These make that riskier, and are the usual reason an appointment gets rescheduled.",
+    appliesTo: THREADING,
     questions: [
       {
         id: "accutane",
@@ -122,7 +116,7 @@ export const intakeSections: IntakeSection[] = [
       },
       {
         id: "sunburn",
-        label: "Is the area sunburnt, newly tanned or recently waxed elsewhere?",
+        label: "Is the area sunburnt, newly tanned, or recently treated?",
         type: "yesno",
       },
     ],
