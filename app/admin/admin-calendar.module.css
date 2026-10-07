@@ -598,6 +598,48 @@
   text-overflow: ellipsis;
 }
 
+/* ── Dragging an appointment ─────────────── */
+
+.event {
+  touch-action: none;
+}
+
+.eventDragging {
+  opacity: 0.35;
+}
+
+/* Where it would land. Same blue as picking a new slot, so the two gestures
+   read as the same thing happening. */
+.dropPreview {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  display: flex;
+  align-items: flex-start;
+  border-radius: 4px;
+  background: rgba(10, 132, 255, 0.18);
+  border: 1px solid #0a84ff;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.dropLabel {
+  padding: 2px var(--sp-2);
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: #0a6fd8;
+}
+
+.moveError {
+  margin: 0;
+  padding: var(--sp-3) var(--sp-4);
+  border-top: 1px solid var(--line);
+  background: #f7e4e2;
+  color: #9b3b32;
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
 /* ── Weekend ─────────────────────────────── */
 
 /* Applied to the day header, the day/week column and the month cell, so

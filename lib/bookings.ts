@@ -499,6 +499,31 @@ export function updateBooking(
  * is cleared again if the appointment is reinstated — keeping a stale "they
  * were ill" on a live booking would be worse than having nothing.
  */
+/**
+ * Moves an appointment to a new day and time, keeping everything else as it
+ * was. Used by dragging on the calendar, where only the when changes.
+ */
+export function moveBooking(
+  id: number,
+  date: string,
+  time: string,
+): { ok: true } | { ok: false; error: string } {
+  const booking = db.prepare(`SELECT * FROM bookings WHERE id = ?`).get(id) as
+    | Booking
+    | undefined;
+
+  if (!booking) return { ok: false, error: "That appointment no longer exists." };
+
+  return updateBooking(
+    id,
+    date,
+    time,
+    booking.duration_minutes,
+    booking.price,
+    booking.notes,
+  );
+}
+
 export function setBookingStatus(
   id: number,
   status: BookingStatus,

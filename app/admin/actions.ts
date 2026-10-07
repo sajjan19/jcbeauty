@@ -14,6 +14,7 @@ import {
   createClient,
   deleteClient,
   getClient,
+  moveBooking,
   updateClientNotes,
   setBookingStatus,
   updateBooking,
@@ -122,6 +123,31 @@ export async function addBooking(
 
   revalidatePath("/admin");
   return { added: `${name} booked in for ${date} at ${time}.` };
+}
+
+/**
+ * Dragging an appointment to a new slot. Takes plain arguments rather than a
+ * form, since there's no form involved — just a drop.
+ */
+export async function moveAppointment(
+  id: number,
+  date: string,
+  time: string,
+): Promise<{ ok: boolean; error?: string }> {
+  await requireAdmin();
+
+  if (!Number.isInteger(id) || id <= 0) {
+    return { ok: false, error: "Invalid appointment." };
+  }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(time)) {
+    return { ok: false, error: "That isn't a valid slot." };
+  }
+
+  const result = moveBooking(id, date, time);
+  if (!result.ok) return { ok: false, error: result.error };
+
+  revalidatePath("/admin");
+  return { ok: true };
 }
 
 export type EditBookingState = { error?: string; saved?: string };

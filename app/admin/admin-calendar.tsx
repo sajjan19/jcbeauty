@@ -1,6 +1,13 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useActionState,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import type { BlockedPeriod, Booking } from "@/lib/bookings";
 import { hours as businessHours, scheduling } from "@/lib/content";
 import {
@@ -19,6 +26,7 @@ import { CancelBookingButton } from "./cancel-button";
 import { EditBookingFields } from "./edit-booking-form";
 import {
   editAppointment,
+  moveAppointment,
   updateBookingStatus,
   type EditBookingState,
 } from "./actions";
@@ -207,6 +215,8 @@ export function AdminCalendar({
   const [view, setView] = useState<View>("week");
   const [cursor, setCursor] = useState(today);
   const [selected, setSelected] = useState<Booking | null>(null);
+  const [moveError, setMoveError] = useState<string | null>(null);
+  const [moving, startMove] = useTransition();
   const [creating, setCreating] = useState<{
     date: string;
     time: string;
@@ -273,6 +283,31 @@ export function AdminCalendar({
     const [y, m] = cursor.split("-").map(Number);
     const next = new Date(Date.UTC(y, m - 1 + direction, 1));
     setCursor(`${next.getUTCFullYear()}-${pad(next.getUTCMonth() + 1)}-01`);
+  }
+
+  /*
+   * Dropping an appointment somewhere new. The move can be refused — it
+   * might land on top of something — so say why rather than letting the
+   * appointment silently spring back to where it was.
+   */
+  function handleDrop(booking: Booking, date: string, minutes: number) {
+    setMoveError(null);
+    startMove(async () => {
+      try {
+        const result = await moveAppointment(
+          booking.id,
+          date,
+          formatTime24(minutes),
+        );
+        if (!result.ok) setMoveError(result.error ?? "That move didn't work.");
+      } catch {
+        // A signed-out session or a dropped connection throws rather than
+        // returning. Say so in place, instead of taking the page down.
+        setMoveError(
+          "Couldn't move that appointment. Check you're still signed in, then try again.",
+        );
+      }
+    });
   }
 
   function openDay(date: string) {
@@ -392,6 +427,7 @@ export function AdminCalendar({
             setCreating({ date, time: formatTime24(minutes) })
           }
           singleDay={view === "day"}
+          onDrop={handleDrop}
           ghost={
             creating
               ? { date: creating.date, minutes: parseTime(creating.time) }
@@ -400,9 +436,16 @@ export function AdminCalendar({
         />
       )}
 
+      {moveError && (
+        <p className={styles.moveError} role="alert">
+          {moveError}
+        </p>
+      )}
+
       <p className={styles.gestureHint}>
-        Double click or press and hold anywhere on the calendar to add an
-        appointment at that time.
+        Drag an appointment to move it{moving ? ", saving…" : ""}. Double click
+        or press and hold anywhere on the calendar to add an appointment at
+        that time.
       </p>
 
       {selected && (
@@ -727,6 +770,7 @@ function TimeGrid({
   onCreate,
   singleDay,
   ghost,
+  onDrop,
 }: {
   days: string[];
   today: string;
@@ -741,8 +785,109 @@ function TimeGrid({
   singleDay: boolean;
   /** The spot picked for a new appointment, marked in blue. */
   ghost: { date: string; minutes: number } | null;
+  onDrop: (booking: Booking, date: string, minutes: number) => void;
 }) {
   const hourMarks = hourMarksFor(gridStart, gridEnd);
+  const colsRef = useRef<HTMLDivElement>(null);
+
+  // Where the dragged appointment currently sits, for the preview block.
+  const [drag, setDrag] = useState<{
+    booking: Booking;
+    date: string;
+    minutes: number;
+  } | null>(null);
+
+  // The pointer gesture itself. A ref rather than state: it changes on every
+  // move and nothing renders from it directly.
+  const gesture = useRef<{
+    booking: Booking;
+    startX: number;
+    startY: number;
+    moved: boolean;
+  } | null>(null);
+  // Kept in a ref so the pointerup handler reads the latest landing spot
+  // rather than the one captured when the listener was attached. Written in
+  // an effect, since refs mustn't be touched during render.
+  const latest = useRef<typeof drag>(null);
+  useEffect(() => {
+    latest.current = drag;
+  }, [drag]);
+
+  /** Which day column and which minute the pointer is over. */
+  const slotAt = (clientX: number, clientY: number) => {
+    const el = colsRef.current;
+    if (!el) return null;
+
+    const rect = el.getBoundingClientRect();
+    const columnWidth = rect.width / days.length;
+    const index = Math.min(
+      days.length - 1,
+      Math.max(0, Math.floor((clientX - rect.left) / columnWidth)),
+    );
+
+    const step = scheduling.slotIntervalMinutes;
+    const raw = gridStart + ((clientY - rect.top) / HOUR_HEIGHT) * 60;
+    const snapped = Math.round(raw / step) * step;
+
+    return {
+      date: days[index],
+      minutes: Math.min(Math.max(snapped, gridStart), gridEnd - step),
+    };
+  };
+
+  /* Dragging is tracked on the window, so the pointer can leave the column
+     it started in — which is the whole point when moving to another day. */
+  useEffect(() => {
+    function onPointerMove(e: PointerEvent) {
+      const g = gesture.current;
+      if (!g) return;
+
+      if (!g.moved) {
+        const far =
+          Math.abs(e.clientX - g.startX) > 5 || Math.abs(e.clientY - g.startY) > 5;
+        if (!far) return;
+        g.moved = true;
+      }
+
+      const slot = slotAt(e.clientX, e.clientY);
+      if (slot) setDrag({ booking: g.booking, ...slot });
+    }
+
+    function onPointerUp() {
+      const g = gesture.current;
+      const landed = latest.current;
+      gesture.current = null;
+      setDrag(null);
+
+      if (!g?.moved || !landed) return;
+
+      const unchanged =
+        landed.date === g.booking.date &&
+        landed.minutes === g.booking.start_minutes;
+      if (!unchanged) onDrop(g.booking, landed.date, landed.minutes);
+    }
+
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
+    };
+  });
+
+  const beginDrag = (booking: Booking, e: React.PointerEvent) => {
+    gesture.current = {
+      booking,
+      startX: e.clientX,
+      startY: e.clientY,
+      moved: false,
+    };
+  };
+
+  /** True once the pointer has actually moved, so the drop isn't read as a click. */
+  const didDrag = () => Boolean(gesture.current?.moved);
   const bodyHeight = ((gridEnd - gridStart) / 60) * HOUR_HEIGHT;
 
   return (
@@ -791,6 +936,7 @@ function TimeGrid({
         </div>
 
         <div
+          ref={colsRef}
           className={styles.cols}
           style={{ gridTemplateColumns: `repeat(${days.length}, 1fr)` }}
         >
@@ -805,6 +951,11 @@ function TimeGrid({
               hourMarks={hourMarks}
               items={onDate(date)}
               blocked={onBlocked(date)}
+              dragging={drag?.booking.id ?? null}
+              dropMinutes={drag && drag.date === date ? drag.minutes : null}
+              dropDuration={drag?.booking.duration_minutes ?? 0}
+              onDragStart={beginDrag}
+              didDrag={didDrag}
               onSelect={onSelect}
               onCreate={onCreate}
               singleDay={singleDay}
@@ -826,6 +977,11 @@ function DayColumn({
   hourMarks,
   items,
   blocked,
+  dragging,
+  dropMinutes,
+  dropDuration,
+  onDragStart,
+  didDrag,
   onSelect,
   onCreate,
   singleDay,
@@ -839,6 +995,13 @@ function DayColumn({
   hourMarks: number[];
   items: Booking[];
   blocked: BlockedPeriod[];
+  /** Id of the appointment being dragged, wherever it currently is. */
+  dragging: number | null;
+  /** Where it would land on this day, if it's over this column. */
+  dropMinutes: number | null;
+  dropDuration: number;
+  onDragStart: (booking: Booking, e: React.PointerEvent) => void;
+  didDrag: () => boolean;
   onSelect: (b: Booking) => void;
   onCreate: (date: string, minutes: number) => void;
   singleDay: boolean;
@@ -904,17 +1067,24 @@ function DayColumn({
             type="button"
             className={`${styles.event} ${styles[`event_${booking.status}`]} ${
               height < 40 ? styles.eventShort : ""
-            }`}
+            } ${dragging === booking.id ? styles.eventDragging : ""}`}
             style={{
               top,
               height,
               left: `calc(${(lane / laneCount) * 100}% + 2px)`,
               width: `calc(${100 / laneCount}% - 4px)`,
             }}
-            // Keep the create gestures from firing on an existing appointment.
-            onPointerDown={(e) => e.stopPropagation()}
+            // Keep the create gestures from firing on an existing appointment,
+            // and start a drag from here instead.
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              onDragStart(booking, e);
+            }}
             onDoubleClick={(e) => e.stopPropagation()}
-            onClick={() => onSelect(booking)}
+            // A drop isn't a click: without this, moving one would also open it.
+            onClick={() => {
+              if (!didDrag()) onSelect(booking);
+            }}
           >
             <span className={styles.eventTime}>
               {formatTime12(booking.start_minutes)}
@@ -930,6 +1100,20 @@ function DayColumn({
           </button>
         );
       })}
+
+      {/* Where the dragged appointment would land. */}
+      {dropMinutes !== null && (
+        <span
+          className={styles.dropPreview}
+          style={{
+            top: ((dropMinutes - gridStart) / 60) * HOUR_HEIGHT,
+            height: Math.max(22, (dropDuration / 60) * HOUR_HEIGHT - 2),
+          }}
+          aria-hidden
+        >
+          <span className={styles.dropLabel}>{formatTime12(dropMinutes)}</span>
+        </span>
+      )}
 
       {ghostMinutes !== null && (
         <span
