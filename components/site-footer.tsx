@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { business, dayNames, hours, mapsUrl, phoneHref } from "@/lib/content";
 import { formatTime12, parseTime } from "@/lib/time";
-import { InstagramIcon } from "./instagram-icon";
+import {
+  EmailIcon,
+  InstagramIcon,
+  LocationIcon,
+  PhoneIcon,
+} from "./icons";
 import styles from "./site-footer.module.css";
 
 export function SiteFooter() {
@@ -18,12 +23,19 @@ export function SiteFooter() {
             <ul className={styles.list}>
               {business.phone && telHref && (
                 <li>
-                  <a href={telHref}>{business.phone}</a>
+                  <a href={telHref} className={styles.handle}>
+                    <PhoneIcon />
+                    {business.phone}
+                  </a>
                 </li>
               )}
               {hasEmail && (
                 <li>
-                  <a className={styles.wrap} href={`mailto:${business.email}`}>
+                  <a
+                    className={`${styles.wrap} ${styles.handle}`}
+                    href={`mailto:${business.email}`}
+                  >
+                    <EmailIcon />
                     {business.email}
                   </a>
                 </li>
@@ -41,16 +53,20 @@ export function SiteFooter() {
               <li>
                 {business.showAddress ? (
                   <a
-                    className={styles.wrap}
+                    className={`${styles.wrap} ${styles.handle}`}
                     href={mapsUrl()}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
+                    <LocationIcon />
                     {business.street}, {business.city}
                   </a>
                 ) : (
                   /* No map link: there's nowhere specific to send them yet. */
-                  <span className={styles.wrap}>{business.area}</span>
+                  <span className={`${styles.wrap} ${styles.handle}`}>
+                    <LocationIcon />
+                    {business.area}
+                  </span>
                 )}
               </li>
             </ul>

@@ -9,7 +9,6 @@ import {
   phoneHref,
 } from "@/lib/content";
 import { formatTime12, parseTime } from "@/lib/time";
-import { InstagramIcon } from "@/components/instagram-icon";
 import { PageHeader } from "@/components/page-header";
 import styles from "./page.module.css";
 
@@ -50,8 +49,8 @@ export default function ContactPage() {
                       Instagram
                     </span>
                     <span className={styles.cardBody}>
-                      <span className={`${styles.cardValue} ${styles.handle}`}>
-                        <InstagramIcon size={17} />@{business.instagram}
+                      <span className={styles.cardValue}>
+                        @{business.instagram}
                       </span>
                     </span>
                     <span className={styles.cardGo} aria-hidden>
@@ -175,7 +174,7 @@ export default function ContactPage() {
                 })}
               </ul>
               <p className={`hint ${styles.hoursNote}`}>
-                Appointments are by booking only, so please don&apos;t drop in.
+                Appointments are by booking only.
               </p>
             </aside>
           </div>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { about, business } from "@/lib/content";
-import { InstagramIcon } from "@/components/instagram-icon";
+import { InstagramIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { LogoLockup } from "@/components/logo";
 import styles from "./page.module.css";

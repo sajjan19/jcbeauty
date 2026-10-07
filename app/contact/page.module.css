@@ -57,13 +57,6 @@ a.card:hover .cardGo {
   color: var(--char);
 }
 
-/* The glyph sits on the text baseline beside the handle. */
-.handle {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-2);
-}
-
 /* An address is machine text, not a name: the body face keeps it on one
    line at a size the Didone can't manage. */
 .cardValueAddress {
