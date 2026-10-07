@@ -80,6 +80,30 @@ function connect(): Database.Database {
     -- Partial, so several contacts without an email don't collide.
     CREATE UNIQUE INDEX IF NOT EXISTS idx_clients_email
       ON clients (LOWER(email)) WHERE email <> '';
+
+    -- Signed intake and consent forms. One per client per service: the
+    -- questions differ between a wax and a lash lift, so a returning client
+    -- booking something new signs again.
+    --
+    -- Rows are never updated or deleted in normal use. A signature is a
+    -- record of what someone agreed to on a date, and editing it after the
+    -- fact would make it worthless.
+    CREATE TABLE IF NOT EXISTS intake_forms (
+      id            INTEGER PRIMARY KEY AUTOINCREMENT,
+      client_name   TEXT NOT NULL,
+      email         TEXT NOT NULL,
+      phone         TEXT NOT NULL DEFAULT '',
+      service_slug  TEXT NOT NULL,
+      service_name  TEXT NOT NULL,
+      answers       TEXT NOT NULL,
+      consents      TEXT NOT NULL,
+      photo_consent INTEGER NOT NULL DEFAULT 0,
+      signature     TEXT NOT NULL,
+      signed_at     TEXT NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_intake_email
+      ON intake_forms (LOWER(email));
   `);
 
   // First run after this table appeared: seed it from whoever has booked.

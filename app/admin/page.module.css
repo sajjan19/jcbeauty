@@ -186,6 +186,88 @@
   margin-bottom: 0;
 }
 
+/* ── Signed intake forms ─────────────────── */
+
+.intakeList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.intake {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.intakeHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  cursor: pointer;
+  list-style: none;
+}
+
+.intakeHead::-webkit-details-marker {
+  display: none;
+}
+
+.intakeService {
+  font-size: 0.9375rem;
+  color: var(--char);
+}
+
+.intakeWhen {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.intakeBody {
+  padding: 0 var(--sp-4) var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  border-top: 1px solid var(--border);
+  padding-top: var(--sp-4);
+}
+
+.intakeAnswer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--sp-4);
+  align-items: baseline;
+  font-size: 0.875rem;
+}
+
+.intakeQuestion {
+  color: var(--text-muted);
+}
+
+.intakeValue {
+  color: var(--char);
+  text-align: right;
+}
+
+.intakeSign {
+  margin: 0;
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--border);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.intakeSign strong {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--char);
+  font-weight: 400;
+}
+
 /* The editable fields of an appointment, wherever they're shown. */
 .editRow {
   display: grid;

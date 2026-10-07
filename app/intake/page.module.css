@@ -1,0 +1,164 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+
+.block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6);
+}
+
+.blockTitle {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  color: var(--char);
+  margin: 0 0 var(--sp-3);
+}
+
+.blurb {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  margin: 0 0 var(--sp-5);
+  max-width: 62ch;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--sp-4);
+}
+
+.grid .field {
+  margin-bottom: 0;
+}
+
+.questions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.question {
+  display: block;
+  font-size: 0.9375rem;
+  color: var(--char);
+  margin-bottom: var(--sp-3);
+  max-width: 62ch;
+}
+
+.yesno {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.choices {
+  display: flex;
+  gap: var(--sp-4);
+}
+
+.choice,
+.consent {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  font-size: 0.9375rem;
+  color: var(--slate);
+  cursor: pointer;
+}
+
+.choice input,
+.consent input {
+  margin-top: 0.2em;
+  flex: none;
+}
+
+.consents {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.optionalHead {
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: var(--sp-6) 0 var(--sp-3);
+}
+
+/* A typed signature reads as a signature when it isn't set in the body face. */
+.signature {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+}
+
+.switch {
+  margin-top: var(--sp-5);
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.done {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-7) var(--sp-6);
+  text-align: center;
+}
+
+.doneTitle {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--char);
+  margin: var(--sp-2) 0 var(--sp-4);
+}
+
+.doneBody {
+  color: var(--slate);
+  max-width: 52ch;
+  margin: 0 auto var(--sp-6);
+}
+
+.picker {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.pick {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.pick:hover {
+  border-color: var(--taupe);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.pickName {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--char);
+}
+
+.pickMeta {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}

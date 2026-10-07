@@ -10,6 +10,7 @@ import {
   listClients,
   type Booking,
 } from "@/lib/bookings";
+import { listIntakeFormsForClient } from "@/lib/intake-store";
 import {
   addDays,
   formatDateLong,
@@ -114,7 +115,11 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
   // list. Only built for the tab that needs them.
   const contactsWithHistory =
     tab === "contacts"
-      ? clients.map((c) => ({ ...c, history: listBookingsForClient(c.email) }))
+      ? clients.map((c) => ({
+          ...c,
+          history: listBookingsForClient(c.email),
+          intake: listIntakeFormsForClient(c.email),
+        }))
       : [];
 
   return (

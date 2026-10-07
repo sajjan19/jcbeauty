@@ -29,6 +29,16 @@ export type ContactBooking = {
   notes: string | null;
 };
 
+export type ContactIntake = {
+  id: number;
+  serviceName: string;
+  signature: string;
+  signedAt: string;
+  photoConsent: boolean;
+  answers: { id: string; label: string; value: string }[];
+  consents: string[];
+};
+
 export type Contact = {
   id: number;
   name: string;
@@ -42,6 +52,7 @@ export type Contact = {
   lastVisit: string | null;
   spent: number;
   history: ContactBooking[];
+  intake: ContactIntake[];
 };
 
 export function ContactsList({
@@ -311,6 +322,58 @@ function ContactDialog({
               </span>
             </div>
           </div>
+
+          <h3 className={styles.dialogSection}>Signed forms</h3>
+          {client.intake.length === 0 ? (
+            <p className="muted">
+              Nothing signed yet. Each service is signed for separately, so a
+              returning client books something new and signs again.
+            </p>
+          ) : (
+            <ul className={styles.intakeList}>
+              {client.intake.map((form) => (
+                <li key={form.id}>
+                  <details className={styles.intake}>
+                    <summary className={styles.intakeHead}>
+                      <span className={styles.intakeService}>
+                        {form.serviceName}
+                      </span>
+                      <span className={styles.intakeWhen}>
+                        signed {formatDateShort(form.signedAt.slice(0, 10))}
+                      </span>
+                    </summary>
+
+                    <div className={styles.intakeBody}>
+                      {form.answers.map((answer) => (
+                        <div key={answer.id} className={styles.intakeAnswer}>
+                          <span className={styles.intakeQuestion}>
+                            {answer.label}
+                          </span>
+                          <span className={styles.intakeValue}>
+                            {answer.value}
+                          </span>
+                        </div>
+                      ))}
+
+                      <div className={styles.intakeAnswer}>
+                        <span className={styles.intakeQuestion}>
+                          Photos for social media
+                        </span>
+                        <span className={styles.intakeValue}>
+                          {form.photoConsent ? "Agreed" : "Not agreed"}
+                        </span>
+                      </div>
+
+                      <p className={styles.intakeSign}>
+                        Agreed to all {form.consents.length} terms and signed{" "}
+                        <strong>{form.signature}</strong>.
+                      </p>
+                    </div>
+                  </details>
+                </li>
+              ))}
+            </ul>
+          )}
 
           <h3 className={styles.dialogSection}>Notes</h3>
           <ClientNotesForm client={client} />
