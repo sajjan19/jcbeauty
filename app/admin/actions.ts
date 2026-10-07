@@ -23,6 +23,11 @@ import {
   updateBlockedPeriod,
   type BookingStatus,
 } from "@/lib/bookings";
+import {
+  clearSampleData,
+  loadSampleData,
+  sampleDataLoaded,
+} from "@/lib/sample-data";
 import { formatDateLong, formatTime12, parseTime } from "@/lib/time";
 
 export type LoginState = { error?: string };
@@ -251,6 +256,57 @@ export async function removeClient(formData: FormData): Promise<void> {
 
   deleteClient(id);
   revalidatePath("/admin");
+}
+
+export type SampleDataState = { error?: string; done?: string };
+
+/**
+ * Fills the admin with sample contacts, appointments and signed forms, for
+ * showing someone how it works. Only ever touches rows on the reserved
+ * example.com domain, so real clients can't be caught by either of these.
+ */
+export async function addSampleData(
+  _prev: SampleDataState,
+  formData: FormData,
+): Promise<SampleDataState> {
+  await requireAdmin();
+
+  if (formData.get("confirm") !== "add") {
+    return { error: "Something went wrong. Please try again." };
+  }
+
+  if (sampleDataLoaded()) {
+    return { error: "Sample data is already loaded. Remove it first." };
+  }
+
+  const added = loadSampleData();
+  revalidatePath("/admin");
+  return {
+    done: `Added ${added.clients} contacts, ${added.bookings} appointments and ${added.forms} signed forms.`,
+  };
+}
+
+export async function removeSampleData(
+  _prev: SampleDataState,
+  formData: FormData,
+): Promise<SampleDataState> {
+  await requireAdmin();
+
+  // Deleting rows shouldn't happen on a stray POST to the action.
+  if (formData.get("confirm") !== "remove") {
+    return { error: "Please confirm before removing the sample data." };
+  }
+
+  const gone = clearSampleData();
+  revalidatePath("/admin");
+
+  if (gone.clients === 0 && gone.bookings === 0) {
+    return { error: "There was no sample data to remove." };
+  }
+
+  return {
+    done: `Removed ${gone.clients} contacts, ${gone.bookings} appointments and ${gone.forms} forms.`,
+  };
 }
 
 export type BlockTimeState = { error?: string; done?: string };

@@ -11,6 +11,7 @@ import {
   type Booking,
 } from "@/lib/bookings";
 import { listIntakeFormsForClient } from "@/lib/intake-store";
+import { sampleDataLoaded } from "@/lib/sample-data";
 import {
   addDays,
   formatDateLong,
@@ -26,6 +27,7 @@ import { BlockTimeButton, EditBlockTimeButton } from "./block-time-form";
 import { CancelBookingButton } from "./cancel-button";
 import { EditBookingButton } from "./edit-booking-form";
 import { ContactsList } from "./contacts-list";
+import { SampleDataPanel } from "./sample-data-panel";
 import { logout, removeBlockedTime, updateBookingStatus } from "./actions";
 import styles from "./page.module.css";
 
@@ -270,6 +272,7 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
               <AddClientButton />
             </div>
             <ContactsList contacts={contactsWithHistory} today={today} />
+            <SampleDataPanel loaded={sampleDataLoaded()} />
           </section>
         )}
 

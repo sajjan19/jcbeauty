@@ -186,6 +186,41 @@
   margin-bottom: 0;
 }
 
+/* ── Sample data ─────────────────────────── */
+
+.sample {
+  margin-top: var(--sp-7);
+  padding: var(--sp-5);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  background: var(--bg);
+}
+
+.sampleTitle {
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 var(--sp-2);
+}
+
+.sampleBody {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 68ch;
+}
+
+.sampleActions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
 .removeRow {
   display: flex;
   align-items: center;
