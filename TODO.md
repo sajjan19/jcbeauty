@@ -33,6 +33,31 @@ gets tedious before the above is sorted, a one-tap version — tomorrow's
 appointments with the message pre-written, opening her own Messages or Mail
 app — needs no accounts and no monthly cost.
 
+## A loyalty program
+
+Wanted, shape not decided yet.
+
+Most of this already exists: every contact tracks `visits` (past
+appointments, not counting cancellations) and `spent`, both calculated in
+`listClients`. A scheme is mostly a rule and somewhere to show it.
+
+Three shapes worth choosing between:
+
+- **A punch card** — every sixth visit free or half price. Easiest to
+  explain to a client and easiest to honour on the spot. Suits a one-artist
+  studio best.
+- **Tiers by spend** — Regular, Gold, VIP with a standing perk each. Rewards
+  the lamination clients more than the $15 sculpt regulars.
+- **Points per dollar** — the most flexible and the most to explain, and the
+  most to untangle by hand if a count goes wrong.
+
+Also to decide: whether clients see their own progress when booking, or
+whether it stays in the admin so she can offer it in person.
+
+**Wait for the persistent database first.** Visit counts reset when the free
+instance wipes its database, and a loyalty program that forgets your visits
+is worse than not having one.
+
 ## Bookings disappear from the live site
 
 Free Render instances have no persistent disk, so the database is wiped on
