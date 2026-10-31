@@ -468,18 +468,17 @@ export const gallery: GalleryItem[] = [
     },
   },
   {
-    src: "/gallery/korean-lash-lift-v3-after.jpg",
-    focus: "23% 50%",
+    src: "/gallery/korean-lash-lift-v4-after.jpg",
     alt: "A client's lashes after a Korean lash lift, curled upward and separated",
     caption: "Korean Lash Lift",
     pair: {
-      aspect: 1040 / 500,
+      aspect: 560 / 440,
       before: {
-        src: "/gallery/korean-lash-lift-v3-before.jpg",
+        src: "/gallery/korean-lash-lift-v4-before.jpg",
         alt: "A client's natural lashes before a Korean lash lift, straight and pointing down",
       },
       after: {
-        src: "/gallery/korean-lash-lift-v3-after.jpg",
+        src: "/gallery/korean-lash-lift-v4-after.jpg",
         alt: "The same client's lashes after a Korean lash lift, curled upward and separated",
       },
     },
