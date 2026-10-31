@@ -16,7 +16,7 @@ export const business = {
   tagline: "Vancouver Esthetician",
   /** Shown in the hero, under the headline. */
   intro:
-    "Brow lamination, threading, tinting, lash lifts and skin treatments in Vancouver.",
+    "Brows, lashes and skin, cared for one client at a time in a private Vancouver studio.",
   /**
    * The longer version, for search results and link previews only. Those
    * want a fuller sentence than the page itself does.
