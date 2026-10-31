@@ -2,7 +2,7 @@
 
 .hero {
   position: relative;
-  padding: var(--sp-9) 0 var(--sp-8);
+  padding: var(--sp-8) 0 var(--sp-8);
   background: linear-gradient(180deg, var(--shell) 0%, var(--bone) 100%);
   border-bottom: 1px solid var(--border);
   overflow: hidden;
@@ -264,6 +264,11 @@
 }
 
 @media (max-width: 900px) {
+  /* The photo sits first on a phone, so it needs little room above it. */
+  .hero {
+    padding: var(--sp-6) 0 var(--sp-7);
+  }
+
   .heroGrid {
     grid-template-columns: 1fr;
     gap: var(--sp-7);
