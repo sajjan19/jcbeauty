@@ -14,8 +14,11 @@
 export type IntakeQuestion = {
   id: string;
   label: string;
-  /** "yesno" asks for a yes or no with room to explain; "text" is a box. */
-  type: "yesno" | "text";
+  /**
+   * "yesno" asks for a yes or no; "text" is an optional box; "line" is a
+   * single required line, for short facts like a phone number.
+   */
+  type: "yesno" | "text" | "line";
   /** A yes here is worth talking about before starting. */
   flagOnYes?: boolean;
 };
@@ -36,9 +39,31 @@ const TINT = [
   "korean-lash-lift-tint",
 ];
 const THREADING = ["brow-sculpt", "brow-sculpt-tint"];
+const BROWS = [...THREADING, ...LAMINATION];
 const LASH = ["korean-lash-lift", "korean-lash-lift-tint"];
+const SKIN = [
+  "microneedling-pdrn",
+  "microneedling-exosomes",
+  "nano-infusion-pdrn",
+  "nano-infusion-exosomes",
+];
+const MICRONEEDLING = ["microneedling-pdrn", "microneedling-exosomes"];
 
 export const intakeSections: IntakeSection[] = [
+  {
+    id: "emergency",
+    title: "Emergency contact",
+    blurb: "Someone I can call if anything goes wrong during your appointment.",
+    questions: [
+      { id: "emergency-name", label: "Emergency contact's full name", type: "line" },
+      { id: "emergency-phone", label: "Emergency contact's phone number", type: "line" },
+      {
+        id: "emergency-relationship",
+        label: "How you know your emergency contact (partner, parent, friend…)",
+        type: "line",
+      },
+    ],
+  },
   {
     id: "health",
     title: "Health and skin",
@@ -59,28 +84,41 @@ export const intakeSections: IntakeSection[] = [
         flagOnYes: true,
       },
       {
+        id: "sensitive-skin",
+        label:
+          "Is your skin sensitive, meaning it goes red or reacts easily to new products?",
+        type: "yesno",
+      },
+      {
         id: "skin-conditions",
         label:
-          "Do you have eczema, psoriasis, dermatitis, rosacea, or any broken or irritated skin near the brows or eyes?",
+          "Do you have eczema, psoriasis, dermatitis, rosacea, an infection, or any broken or irritated skin in the area being treated?",
         type: "yesno",
         flagOnYes: true,
       },
       {
         id: "cold-sores",
-        label: "Do you get cold sores around the eyes or brows?",
+        label: "Do you get cold sores?",
         type: "yesno",
       },
       {
         id: "medication",
         label:
-          "Are you taking any medication that affects your skin or healing, including blood thinners?",
+          "Are you taking any medication, supplements or herbal remedies that affect your skin or healing, including blood thinners?",
+        type: "yesno",
+        flagOnYes: true,
+      },
+      {
+        id: "accutane",
+        label:
+          "Are you on Accutane or isotretinoin, or any other prescription acne treatment, or have you been in the last six months?",
         type: "yesno",
         flagOnYes: true,
       },
       {
         id: "previous-reaction",
         label:
-          "Have you ever reacted badly to a tint, lamination, threading or lash treatment?",
+          "Have you ever reacted badly to a tint, lamination, threading, lash or skin treatment?",
         type: "yesno",
         flagOnYes: true,
       },
@@ -88,35 +126,36 @@ export const intakeSections: IntakeSection[] = [
   },
   {
     id: "skin-prep",
-    title: "Skin in the last few weeks",
+    title: "Your brows in the last few weeks",
     blurb:
-      "Threading lifts the top layer of skin with it. These make that riskier, and are the usual reason an appointment gets rescheduled.",
-    appliesTo: THREADING,
+      "Threading lifts the top layer of skin with it, and lamination is a chemical treatment. These make either riskier, and are the usual reason an appointment gets rescheduled.",
+    appliesTo: BROWS,
     questions: [
-      {
-        id: "accutane",
-        label:
-          "Are you on Accutane or isotretinoin, or have you been in the last six months?",
-        type: "yesno",
-        flagOnYes: true,
-      },
       {
         id: "retinoids",
         label:
-          "Are you using retinol, tretinoin, AHAs, BHAs or benzoyl peroxide on or near the brow area?",
+          "In the last two weeks, have you used retinol, tretinoin, AHAs (like glycolic acid), BHAs (like salicylic acid) or benzoyl peroxide on or near your brows?",
         type: "yesno",
         flagOnYes: true,
       },
       {
         id: "resurfacing",
         label:
-          "Have you had a chemical peel, laser, microdermabrasion or microneedling in the last two weeks?",
+          "Have you had a facial, chemical peel, laser, microdermabrasion or microneedling in the last three weeks?",
+        type: "yesno",
+        flagOnYes: true,
+      },
+      {
+        id: "brow-tattoo",
+        label:
+          "Have you had your brows tattooed, microbladed or powdered in the last three months?",
         type: "yesno",
         flagOnYes: true,
       },
       {
         id: "sunburn",
-        label: "Is the area sunburnt, newly tanned, or recently treated?",
+        label:
+          "Have you had a spray or self tan on your face in the last 48 hours, or is the area sunburnt?",
         type: "yesno",
       },
     ],
@@ -128,6 +167,11 @@ export const intakeSections: IntakeSection[] = [
       "Tint and lamination both use products that a small number of people react to. A patch test is done at least 48 hours beforehand.",
     appliesTo: [...new Set([...TINT, ...LAMINATION])],
     questions: [
+      {
+        id: "tinted-before",
+        label: "Have you had your brows or lashes tinted before?",
+        type: "yesno",
+      },
       {
         id: "patch-done",
         label: "Have you had a patch test for this service with me before?",
@@ -151,23 +195,113 @@ export const intakeSections: IntakeSection[] = [
       {
         id: "eye-conditions",
         label:
-          "Do you have any eye condition, infection, or recent eye surgery, including laser?",
+          "Do you have any eye condition or infection, such as conjunctivitis or a stye, or have you had eye surgery, including laser, in the last six months?",
         type: "yesno",
         flagOnYes: true,
       },
       {
         id: "contacts",
-        label: "Do you wear contact lenses?",
+        label:
+          "Do you wear contact lenses? Please bring your case, as they need to come out.",
         type: "yesno",
       },
       {
         id: "extensions",
-        label: "Do you currently have lash extensions or a previous lift?",
+        label:
+          "Do you currently have lash extensions, or have you had a lash lift in the last six weeks?",
         type: "yesno",
       },
       {
         id: "dry-eye",
         label: "Do you get dry, watery or easily irritated eyes?",
+        type: "yesno",
+      },
+      {
+        id: "lash-growth-serum",
+        label: "Do you use a lash growth serum?",
+        type: "yesno",
+      },
+    ],
+  },
+  {
+    id: "skin-history",
+    title: "Your skin",
+    blurb:
+      "Skin treatments affect the whole face, so these matter more than they do for brows. A yes doesn't rule anything out, but some mean waiting, or checking with your doctor first.",
+    appliesTo: SKIN,
+    questions: [
+      {
+        id: "skin-type",
+        label:
+          "How would you describe your skin? (Oily, dry, combination, acne-prone, sensitive, normal…)",
+        type: "text",
+      },
+      {
+        id: "skin-routine",
+        label: "What's your usual skincare routine, morning and night?",
+        type: "text",
+      },
+      {
+        id: "skin-retinoids",
+        label:
+          "In the last ten days, have you used retinol, tretinoin, or any exfoliating acid on your face?",
+        type: "yesno",
+        flagOnYes: true,
+      },
+      {
+        id: "active-breakout",
+        label:
+          "Do you have an active breakout, open wound, or any cold sore on your face right now?",
+        type: "yesno",
+        flagOnYes: true,
+      },
+      {
+        id: "sun-exposure",
+        label:
+          "Have you had a lot of sun, a sunburn or a tan, including self tan, in the last two weeks?",
+        type: "yesno",
+        flagOnYes: true,
+      },
+      {
+        id: "recent-procedures",
+        label:
+          "In the last two weeks, have you had Botox, fillers, a peel, laser or any facial surgery?",
+        type: "yesno",
+        flagOnYes: true,
+      },
+      {
+        id: "healing",
+        label:
+          "Do you have diabetes, an autoimmune condition, or anything else that slows healing?",
+        type: "yesno",
+        flagOnYes: true,
+      },
+    ],
+  },
+  {
+    id: "needling",
+    title: "Before microneedling",
+    blurb:
+      "Microneedling makes tiny, controlled punctures in the skin, so how your skin heals and scars matters.",
+    appliesTo: MICRONEEDLING,
+    questions: [
+      {
+        id: "scarring",
+        label:
+          "Do you scar easily, or have you ever had keloid or raised scars?",
+        type: "yesno",
+        flagOnYes: true,
+      },
+      {
+        id: "bruising",
+        label: "Do you bruise easily or bleed for longer than usual?",
+        type: "yesno",
+        flagOnYes: true,
+      },
+      {
+        id: "pigmentation",
+        label:
+          "Has your skin ever darkened or lightened in patches after a spot, cut or treatment?",
         type: "yesno",
       },
     ],
@@ -190,8 +324,15 @@ export const intakeSections: IntakeSection[] = [
   },
 ];
 
-/** Ticked individually. Every one of these is required to go ahead. */
-export const intakeConsents: { id: string; label: string }[] = [
+export type IntakeConsent = {
+  id: string;
+  label: string;
+  /** Service slugs this applies to. Absent means every service. */
+  appliesTo?: string[];
+};
+
+/** Ticked individually. Every one that applies is required to go ahead. */
+export const intakeConsents: IntakeConsent[] = [
   {
     id: "accurate",
     label:
@@ -203,14 +344,42 @@ export const intakeConsents: { id: string; label: string }[] = [
       "I understand results vary with my own hair and skin, and that no particular result is guaranteed.",
   },
   {
-    id: "aftercare",
+    id: "brow-change",
     label:
-      "I've read the aftercare and understand that following it is my responsibility, and that not following it can affect how my results last.",
+      "I understand my brows will be reshaped, and that any tint can stain the skin around them for a few days.",
+    appliesTo: BROWS,
   },
   {
     id: "risks",
     label:
       "I understand there is a small risk of redness, irritation or an allergic reaction, and that I should contact a doctor if I'm worried after my appointment.",
+  },
+  {
+    id: "skin-risks",
+    label:
+      "I understand this treatment can cause redness, swelling, tenderness, pinpoint bleeding, temporary changes in skin colour, breakouts and, rarely, infection or scarring.",
+    appliesTo: SKIN,
+  },
+  {
+    id: "not-medical",
+    label:
+      "I understand this is a cosmetic treatment, not medical care, and that Japman may ask me to check with my doctor first.",
+    appliesTo: SKIN,
+  },
+  {
+    id: "stop",
+    label:
+      "I'll speak up about any pain or discomfort. I can ask to stop at any time, and Japman may pause or not finish the service if a reaction or safety concern comes up.",
+  },
+  {
+    id: "report-reaction",
+    label:
+      "If I think I'm reacting to anything after my appointment, I'll let Japman know within 48 hours.",
+  },
+  {
+    id: "aftercare",
+    label:
+      "I've read the aftercare and understand that following it is my responsibility, and that not following it can affect how my results last.",
   },
   {
     id: "policies",
@@ -223,8 +392,15 @@ export const intakeConsents: { id: string; label: string }[] = [
 export const intakePhotoConsent = {
   id: "photos",
   label:
-    "You may take before and after photos of my brows or lashes and use them on your website and social media. My face will not be identifiable unless I say otherwise.",
+    "You may take before and after photos and use them on your website and social media. My face will not be identifiable unless I say otherwise.",
 };
+
+/** Which agreement lines a given service asks for. */
+export function consentsForService(slug: string): IntakeConsent[] {
+  return intakeConsents.filter(
+    (consent) => !consent.appliesTo || consent.appliesTo.includes(slug),
+  );
+}
 
 /** Which sections a given service asks about. */
 export function sectionsForService(slug: string): IntakeSection[] {

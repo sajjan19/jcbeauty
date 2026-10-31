@@ -1,7 +1,7 @@
 import "server-only";
 import { db } from "./db";
 import { getService } from "./content";
-import { intakeConsents, sectionsForService } from "./intake";
+import { consentsForService, sectionsForService } from "./intake";
 import { addDays, studioNow } from "./time";
 
 /*
@@ -344,7 +344,7 @@ export function loadSampleData(): {
           slug,
           service.name,
           JSON.stringify(answers),
-          JSON.stringify(intakeConsents.map((c) => c.id)),
+          JSON.stringify(consentsForService(slug).map((c) => c.id)),
           person.name === "Gagan Chera" ? 0 : 1,
           person.name,
           `${addDays(today, -120)}T09:30:00.000Z`,

@@ -2,7 +2,7 @@
 
 import { getService } from "@/lib/content";
 import {
-  intakeConsents,
+  consentsForService,
   intakePhotoConsent,
   sectionsForService,
 } from "@/lib/intake";
@@ -40,11 +40,12 @@ export async function submitIntakeForm(
   }
 
   // Every consent has to be ticked; the photo one is deliberately optional.
-  const consents = intakeConsents
+  const required = consentsForService(serviceSlug);
+  const consents = required
     .filter((c) => formData.get(`consent-${c.id}`) === "on")
     .map((c) => c.id);
 
-  if (consents.length !== intakeConsents.length) {
+  if (consents.length !== required.length) {
     return {
       status: "error",
       message:
@@ -65,6 +66,12 @@ export async function submitIntakeForm(
   for (const section of sectionsForService(serviceSlug)) {
     for (const question of section.questions) {
       const value = String(formData.get(question.id) ?? "").trim();
+      if (question.type === "line" && !value) {
+        return {
+          status: "error",
+          message: `Please fill in "${question.label}" under ${section.title.toLowerCase()}.`,
+        };
+      }
       if (value) answers.push({ id: question.id, label: question.label, value });
     }
   }

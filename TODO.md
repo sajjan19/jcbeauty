@@ -81,10 +81,10 @@ with Japman's prices and lengths. Two things are still mine rather than hers:
 
 - **The descriptions** on the services page. She should read them,
   particularly anything that sounds like a promise about results.
-- **The intake form** was written for brows and lashes. Microneedling has its
-  own reasons not to go ahead (active breakouts or infection, pregnancy,
-  recent isotretinoin, blood thinners, a tendency to keloid scarring), and the
-  form doesn't ask about them yet.
+- **The skin questions on the intake form** (healing, scarring, recent
+  Botox or peels, sun) were drawn from the example Jotform forms Japman
+  shared, reworded. Worth her checking the waiting periods (ten days off
+  retinol, two weeks after Botox or a peel) match how she works.
 
 ## Smaller things
 

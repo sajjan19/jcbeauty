@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import Link from "next/link";
 import type { Service } from "@/lib/content";
 import {
-  intakeConsents,
+  consentsForService,
   intakePhotoConsent,
   sectionsForService,
 } from "@/lib/intake";
@@ -18,6 +18,7 @@ export function IntakeForm({ service }: { service: Service }) {
   );
 
   const sections = sectionsForService(service.slug);
+  const consents = consentsForService(service.slug);
   const today = new Date().toLocaleDateString("en-CA", {
     weekday: "long",
     day: "numeric",
@@ -112,6 +113,16 @@ export function IntakeForm({ service }: { service: Service }) {
                     ))}
                   </div>
                 </fieldset>
+              ) : question.type === "line" ? (
+                <label key={question.id} className="field">
+                  <span className={styles.question}>{question.label}</span>
+                  <input
+                    className="input"
+                    name={question.id}
+                    required
+                    maxLength={200}
+                  />
+                </label>
               ) : (
                 <label key={question.id} className="field">
                   <span className={styles.question}>{question.label}</span>
@@ -136,7 +147,7 @@ export function IntakeForm({ service }: { service: Service }) {
         </p>
 
         <div className={styles.consents}>
-          {intakeConsents.map((consent) => (
+          {consents.map((consent) => (
             <label key={consent.id} className={styles.consent}>
               <input type="checkbox" name={`consent-${consent.id}`} required />
               <span>{consent.label}</span>

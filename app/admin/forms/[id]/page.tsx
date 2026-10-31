@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isAdmin } from "@/lib/auth";
 import { business } from "@/lib/content";
-import { intakeConsents, intakePhotoConsent } from "@/lib/intake";
+import { consentsForService, intakePhotoConsent } from "@/lib/intake";
 import { getIntakeForm } from "@/lib/intake-store";
 import { PrintButton } from "./print-button";
 import styles from "./page.module.css";
@@ -90,7 +90,7 @@ export default async function SignedFormPage({
         <section>
           <h2 className={styles.heading}>Agreed</h2>
           <ul className={styles.consents}>
-            {intakeConsents.map((consent) => (
+            {consentsForService(form.serviceSlug).map((consent) => (
               <li key={consent.id}>
                 <span className={styles.tick} aria-hidden>
                   {form.consents.includes(consent.id) ? "✓" : "—"}
