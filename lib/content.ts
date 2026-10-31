@@ -325,36 +325,43 @@ export const gallery: GalleryItem[] = [
   // Real client work. Everything below marked "placeholder" is still artwork
   // waiting to be replaced the same way: drop the file into public/gallery/
   // and swap the src, alt and caption here.
+  /*
+   * Every real pair below has been aligned: the two shots were taken at
+   * different distances and angles, so one is warped onto the other and
+   * both are cropped to the brow, eye and nose bridge. Laid over each other
+   * as they came, the face jumped as the slider moved. `aspect` is the
+   * shape of that crop.
+   */
   {
     // The tile always shows the finished result; the before is revealed on tap.
-    src: "/gallery/brow-shape-wax-after.jpeg",
+    src: "/gallery/brow-shaping-after.jpg",
     alt: "A client's brow after shaping, with a clean arch and a defined edge",
     caption: "Brow Shaping",
     pair: {
+      aspect: 929 / 700,
       before: {
-        src: "/gallery/brow-shape-wax-before.jpeg",
+        src: "/gallery/brow-shaping-before.jpg",
         alt: "A client's natural brow before shaping, with stray hairs and a soft, undefined edge",
       },
       after: {
-        src: "/gallery/brow-shape-wax-after.jpeg",
+        src: "/gallery/brow-shaping-after.jpg",
         alt: "The same client's brow after shaping, with a clean arch and a defined edge",
       },
     },
   },
   {
-    src: "/gallery/brow-threading-after.jpg",
-    alt: "A client's brow after threading, with a clean arch and a defined edge",
-    caption: "Brow Sculpt",
+    src: "/gallery/brow-sculpt-tint-after.jpg",
+    alt: "A client's brow after sculpting and tinting, darker and cleanly shaped",
+    caption: "Brow Sculpt + Tint",
     pair: {
-      // Portrait shots, unlike the near-square pair above.
-      aspect: 3 / 4,
+      aspect: 1058 / 750,
       before: {
-        src: "/gallery/brow-threading-before.jpg",
-        alt: "A client's brow before threading, fuller and softer with stray hairs above and below the arch",
+        src: "/gallery/brow-sculpt-tint-before.jpg",
+        alt: "A client's brow before sculpting and tinting, fuller and softer with stray hairs above and below the arch",
       },
       after: {
-        src: "/gallery/brow-threading-after.jpg",
-        alt: "The same client's brow after threading, with a clean arch and a defined edge",
+        src: "/gallery/brow-sculpt-tint-after.jpg",
+        alt: "The same client's brow after sculpting and tinting, darker and cleanly shaped",
       },
     },
   },
