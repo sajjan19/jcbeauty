@@ -626,7 +626,7 @@ export const faqs = [
   },
   {
     q: "Does it hurt?",
-    a: "Lamination, tinting and lash lifts are painless. Threading is a quick pinch for some people, though it's over in minutes. Microneedling feels like a light prickling. Nano infusion is gentler still.",
+    a: "Lamination, tinting and lash lifts are painless. Threading is a quick pinch for some people, though it's over in minutes. Microneedling feels like a light prickling and numbing cream is applied first to keep you comfortable. Nano infusion is gentler still.",
   },
   {
     q: "Can I wear makeup afterwards?",
