@@ -114,6 +114,14 @@ const PEOPLE: Person[] = [
     ],
     cancelled: [[18, "korean-lash-lift"]],
   },
+  {
+    name: "Navreet Gill",
+    phone: "604-555-0166",
+    notes:
+      "Darkens easily after a breakout, keep the depth conservative\nCombination skin, more sensitive on the cheeks\nTried nano infusion first to see how her skin took it",
+    past: [[-21, "nano-infusion-pdrn"]],
+    upcoming: [[6, "microneedling-exosomes"]],
+  },
 ];
 
 /**
@@ -137,23 +145,71 @@ const CLIENT_NOTES = [
 /** A few yes answers each, so the sample forms don't all read the same. */
 const FLAGS: Record<string, Record<string, string>> = {
   "Gary Singh": {
+    "emergency-name": "Manpreet Singh",
+    "emergency-phone": "604-555-0161",
+    "emergency-relationship": "Wife",
     medication: "Yes",
+    "tinted-before": "Yes",
     goal: "Keep the shape I had last time, it suited me.",
     "anything-else": "On blood thinners, bruises easily.",
   },
   "Darren Raj": {
+    "emergency-name": "Anita Raj",
+    "emergency-phone": "604-555-0119",
+    "emergency-relationship": "Mother",
+    "sensitive-skin": "Yes",
     "previous-reaction": "Yes",
     goal: "Clean shape, as gentle as possible.",
     "anything-else":
       "A wax years ago left me red for two days, threading has always been fine.",
   },
-  "Chani Sahota": { allergies: "Yes", contacts: "Yes", goal: "Something soft." },
-  "Harpreet Saini": {
-    "skin-conditions": "Yes",
-    goal: "Fuller through the front.",
+  "Chani Sahota": {
+    "emergency-name": "Ravi Sahota",
+    "emergency-phone": "778-555-0154",
+    "emergency-relationship": "Brother",
+    allergies: "Yes",
+    contacts: "Yes",
+    "lash-growth-serum": "Yes",
+    goal: "Something soft.",
+    "anything-else": "Allergic to nickel.",
   },
-  "Charan Randhawa": { "cold-sores": "Yes", goal: "Tidy up, nothing drastic." },
-  "Gagan Chera": { goal: "Lifted but still natural." },
+  "Harpreet Saini": {
+    "emergency-name": "Jaspreet Saini",
+    "emergency-phone": "778-555-0126",
+    "emergency-relationship": "Husband",
+    "sensitive-skin": "Yes",
+    "skin-conditions": "Yes",
+    "tinted-before": "Yes",
+    goal: "Fuller through the front.",
+    "anything-else": "Mild eczema on the brow bone, worse in winter.",
+  },
+  "Charan Randhawa": {
+    "emergency-name": "Simran Randhawa",
+    "emergency-phone": "604-555-0137",
+    "emergency-relationship": "Sister",
+    "cold-sores": "Yes",
+    goal: "Tidy up, nothing drastic.",
+  },
+  "Gagan Chera": {
+    "emergency-name": "Amrit Chera",
+    "emergency-phone": "604-555-0103",
+    "emergency-relationship": "Father",
+    goal: "Lifted but still natural.",
+  },
+  "Navreet Gill": {
+    "emergency-name": "Harjit Gill",
+    "emergency-phone": "604-555-0172",
+    "emergency-relationship": "Partner",
+    "sensitive-skin": "Yes",
+    "skin-type": "Combination, oily through the T-zone.",
+    "skin-routine":
+      "Gentle cleanser and moisturiser morning and night, SPF in the morning. Stopped my retinol two weeks ago.",
+    "sun-exposure": "Yes",
+    pigmentation: "Yes",
+    goal: "Smoother texture and less redness on my cheeks.",
+    "anything-else":
+      "Back from a week in Mexico, wore SPF but got some sun. A spot on my chin left a dark mark that took months to fade.",
+  },
 };
 
 const OPEN = 10 * 60;
