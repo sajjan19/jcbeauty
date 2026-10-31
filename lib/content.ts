@@ -385,6 +385,22 @@ export const gallery: GalleryItem[] = [
     },
   },
   {
+    src: "/gallery/mens-brow-sculpt-after.jpg",
+    alt: "A client's brow after a men's sculpt, cleaned up and defined while staying natural",
+    caption: "Men's Brow Sculpt",
+    pair: {
+      aspect: 820 / 640,
+      before: {
+        src: "/gallery/mens-brow-sculpt-before.jpg",
+        alt: "A client's brow before a men's sculpt, full with stray hairs around the shape",
+      },
+      after: {
+        src: "/gallery/mens-brow-sculpt-after.jpg",
+        alt: "The same client's brow after a men's sculpt, cleaned up and defined while staying natural",
+      },
+    },
+  },
+  {
     src: "/gallery/placeholder-2.svg",
     alt: "Placeholder artwork for a lamination and tint before and after",
     caption: "Brow Lamination + Tint",
@@ -393,11 +409,6 @@ export const gallery: GalleryItem[] = [
     src: "/gallery/placeholder-4.svg",
     alt: "Placeholder artwork for a brow shape and tint before and after",
     caption: "Brow Sculpt + Tint",
-  },
-  {
-    src: "/gallery/placeholder-5.svg",
-    alt: "Placeholder artwork for a men's brow shaping before and after",
-    caption: "Men's Brow Sculpt",
   },
   {
     src: "/gallery/placeholder-6.svg",
