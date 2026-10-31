@@ -306,6 +306,12 @@ export type GalleryItem = {
   alt: string;
   caption: string;
   /**
+   * Which part of the image the square tile keeps, as a CSS
+   * object-position ("23% 50%"). Defaults to the centre, which on a wide
+   * two-eye shot lands on the nose.
+   */
+  focus?: string;
+  /**
    * When present, tapping the tile opens both shots full size with
    * before/after labels.
    */
@@ -418,6 +424,7 @@ export const gallery: GalleryItem[] = [
   },
   {
     src: "/gallery/korean-lash-lift-v3-after.jpg",
+    focus: "23% 50%",
     alt: "A client's lashes after a Korean lash lift, curled upward and separated",
     caption: "Korean Lash Lift",
     pair: {

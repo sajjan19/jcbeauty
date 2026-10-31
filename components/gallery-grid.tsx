@@ -53,6 +53,7 @@ export function GalleryGrid({
                   fill
                   sizes="(max-width: 600px) 50vw, (max-width: 1000px) 33vw, 280px"
                   className={tileStyles.image}
+                  style={item.focus ? { objectPosition: item.focus } : undefined}
                 />
                 <figcaption className={tileStyles.caption}>
                   {item.caption}
@@ -75,6 +76,7 @@ export function GalleryGrid({
                 fill
                 sizes="(max-width: 600px) 50vw, (max-width: 1000px) 33vw, 280px"
                 className={tileStyles.image}
+                style={item.focus ? { objectPosition: item.focus } : undefined}
                 priority={i === 0}
               />
               <span className={tileStyles.caption}>
