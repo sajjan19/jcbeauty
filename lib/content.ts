@@ -406,11 +406,6 @@ export const gallery: GalleryItem[] = [
     caption: "Brow Lamination + Tint",
   },
   {
-    src: "/gallery/placeholder-4.svg",
-    alt: "Placeholder artwork for a brow shape and tint before and after",
-    caption: "Brow Sculpt + Tint",
-  },
-  {
     src: "/gallery/placeholder-6.svg",
     alt: "Placeholder artwork for a naked lamination before and after",
     caption: "Korean Lash Lift",
