@@ -13,7 +13,7 @@
 export const business = {
   name: "JC Beauty",
   artist: "Japman Chera",
-  tagline: "Vancouver Brow and Lash Artist",
+  tagline: "Vancouver Esthetician",
   /** Shown in the hero, under the headline. */
   intro: "Brow lamination, shaping, tinting and lash lifts in Vancouver.",
   /**
