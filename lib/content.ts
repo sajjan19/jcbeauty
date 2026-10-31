@@ -87,7 +87,8 @@ export type Service = {
 
 /*
  * Prices and appointment lengths are Japman's, from October 2026. Waxing is
- * no longer offered: the brow services are threading now.
+ * no longer offered at all, lamination clean-ups included: every brow
+ * service is threading only.
  */
 export const services: Service[] = [
   {
@@ -125,6 +126,7 @@ export const services: Service[] = [
       "The lifted, brushed-up effect, for brows that sit fuller and softer.",
     details: [
       "Brows set in a lifted, brushed-up shape",
+      "Strays tidied by threading, never wax",
       "Suits sparse or unruly brows particularly well",
       "Results typically last 6 to 8 weeks",
     ],
@@ -138,6 +140,7 @@ export const services: Service[] = [
       "Lamination with a tint, for the lifted effect with a little more definition.",
     details: [
       "The lift of a lamination, plus a custom tint",
+      "Strays tidied by threading, never wax",
       "Most definition of any brow option",
       "Results typically last 6 to 8 weeks",
     ],

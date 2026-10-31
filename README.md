@@ -1,7 +1,7 @@
 # JC Beauty
 
-Website and booking app for **Japman Chera** — brow lamination, shaping, waxing
-and tinting in Vancouver.
+Website and booking app for **Japman Chera** — brow lamination, threading,
+tinting, Korean lash lifts and skin treatments in Vancouver.
 
 Built with Next.js 16 (App Router) and SQLite.
 
