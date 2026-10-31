@@ -86,20 +86,15 @@ export type Service = {
 };
 
 /*
- * Prices are Japman's, from October 2026. Waxing is no longer offered: the
- * brow services are threading now.
- *
- * TODO: every `durationMinutes` below is an estimate of mine, not her
- * number. They decide how much of her day each booking blocks out and how
- * many slots a client is offered, so they're worth ten minutes of her time
- * to check.
+ * Prices and appointment lengths are Japman's, from October 2026. Waxing is
+ * no longer offered: the brow services are threading now.
  */
 export const services: Service[] = [
   {
     slug: "brow-sculpt",
     name: "Brow Sculpt",
     price: 15,
-    durationMinutes: 15,
+    durationMinutes: 30,
     summary:
       "Brow mapping and threading, for a clean shape without any wax.",
     details: [
@@ -112,7 +107,7 @@ export const services: Service[] = [
     slug: "brow-sculpt-tint",
     name: "Brow Sculpt + Tint",
     price: 30,
-    durationMinutes: 30,
+    durationMinutes: 45,
     summary:
       "Brow mapping and threading, finished with a tint matched to your colouring.",
     details: [
@@ -125,7 +120,7 @@ export const services: Service[] = [
     slug: "brow-lamination",
     name: "Brow Lamination",
     price: 70,
-    durationMinutes: 45,
+    durationMinutes: 90,
     summary:
       "The lifted, brushed-up effect, for brows that sit fuller and softer.",
     details: [
@@ -138,7 +133,7 @@ export const services: Service[] = [
     slug: "brow-lamination-tint",
     name: "Brow Lamination + Tint",
     price: 80,
-    durationMinutes: 60,
+    durationMinutes: 105,
     summary:
       "Lamination with a tint, for the lifted effect with a little more definition.",
     details: [
@@ -151,7 +146,7 @@ export const services: Service[] = [
     slug: "korean-lash-lift",
     name: "Korean Lash Lift",
     price: 70,
-    durationMinutes: 60,
+    durationMinutes: 90,
     summary:
       "A lift and set for your natural lashes, curling them upward so your eyes look more open. No extensions involved.",
     details: [
@@ -165,13 +160,70 @@ export const services: Service[] = [
     slug: "korean-lash-lift-tint",
     name: "Korean Lash Lift + Tint",
     price: 80,
-    durationMinutes: 75,
+    durationMinutes: 105,
     summary:
       "A lash lift finished with a tint, so the lashes read darker and fuller without mascara.",
     details: [
       "Everything in the lash lift, plus a tint",
       "Darker lashes without daily mascara",
       "Results typically last 6 to 8 weeks",
+    ],
+  },
+  /*
+   * Skin. TODO: the summaries and details below are my wording, not
+   * Japman's. Worth her reading them, particularly anything that sounds
+   * like a promise about results.
+   */
+  {
+    slug: "microneedling-pdrn",
+    name: "Microneedling with PDRN",
+    price: 150,
+    durationMinutes: 90,
+    summary:
+      "Microneedling finished with a PDRN serum, for skin that looks smoother and more even.",
+    details: [
+      "Fine needles create tiny channels in the skin",
+      "PDRN serum applied while those channels are open",
+      "Expect some redness for a day or two afterwards",
+    ],
+  },
+  {
+    slug: "microneedling-exosomes",
+    name: "Microneedling with Exosomes",
+    price: 200,
+    durationMinutes: 90,
+    summary:
+      "Microneedling finished with an exosome serum, for a brighter, more refreshed look.",
+    details: [
+      "Fine needles create tiny channels in the skin",
+      "Exosome serum applied while those channels are open",
+      "Expect some redness for a day or two afterwards",
+    ],
+  },
+  {
+    slug: "nano-infusion-pdrn",
+    name: "Nano Infusion with PDRN",
+    price: 150,
+    durationMinutes: 90,
+    summary:
+      "A gentler, needle-free alternative to microneedling, pressing a PDRN serum into the skin's surface.",
+    details: [
+      "No needles, so little to no downtime",
+      "PDRN serum worked into the skin's surface",
+      "Suits more sensitive skin",
+    ],
+  },
+  {
+    slug: "nano-infusion-exosomes",
+    name: "Nano Infusion with Exosomes",
+    price: 200,
+    durationMinutes: 90,
+    summary:
+      "A gentler, needle-free alternative to microneedling, pressing an exosome serum into the skin's surface.",
+    details: [
+      "No needles, so little to no downtime",
+      "Exosome serum worked into the skin's surface",
+      "Suits more sensitive skin",
     ],
   },
 ];
@@ -186,14 +238,7 @@ export type UpcomingService = {
   summary: string;
 };
 
-export const comingSoon: UpcomingService[] = [
-  {
-    name: "Microneedling",
-    // TODO: price and appointment length, once Japman has set them.
-    summary:
-      "Coming soon. Message me on Instagram and I'll let you know as soon as it opens for booking.",
-  },
-];
+export const comingSoon: UpcomingService[] = [];
 
 export function getService(slug: string): Service | undefined {
   return services.find((s) => s.slug === slug);

@@ -8,7 +8,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "Services & Prices",
   description:
-    "Brow lamination, sculpting, tinting and Korean lash lifts in Vancouver. Full service list with prices and appointment lengths.",
+    "Brow lamination, sculpting, tinting, Korean lash lifts, microneedling and nano infusion in Vancouver. Full service list with prices and appointment lengths.",
 };
 
 export default function ServicesPage() {
@@ -17,7 +17,7 @@ export default function ServicesPage() {
       <PageHeader
         eyebrow="Services"
         title="Services & price list."
-        lede="Every appointment includes a consultation and mapping to your facial proportions. Not sure which to pick? Message me and I'll help you choose."
+        lede="Every appointment starts with a consultation, and brows are mapped to your facial proportions. Not sure which to pick? Message me and I'll help you choose."
       >
         <Link href="/book" className="btn">
           Book an Appointment

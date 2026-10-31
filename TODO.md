@@ -67,23 +67,6 @@ demonstrating, not for real clients.
 `render.yaml` carries the exact five lines to fix it. It needs a paid
 instance, around $7/month, and no code changes.
 
-## Confirm the appointment lengths
-
-Every `durationMinutes` in `lib/content.ts` is an estimate, not Japman's
-number:
-
-| Service | Assumed |
-| --- | --- |
-| Brow Sculpt | 15 min |
-| Brow Sculpt + Tint | 30 min |
-| Brow Lamination | 45 min |
-| Brow Lamination + Tint | 60 min |
-| Korean Lash Lift | 60 min |
-| Korean Lash Lift + Tint | 75 min |
-
-These decide how much of her day each booking blocks out and how many times a
-client is offered. Worth ten minutes of her time.
-
 ## Have the intake form read properly
 
 `lib/intake.ts` is a first draft written by me. The health questions and
@@ -91,10 +74,17 @@ particularly the consent and release section should be read line by line, and
 the release wording is worth a professional eye before she relies on it. It
 is not legal advice.
 
-## Microneedling
+## Skin treatments
 
-Announced as coming soon with no price or length. Moving it into `services`
-in `lib/content.ts` makes it bookable; it needs both numbers first.
+Microneedling and nano infusion (each with PDRN or exosomes) are bookable,
+with Japman's prices and lengths. Two things are still mine rather than hers:
+
+- **The descriptions** on the services page. She should read them,
+  particularly anything that sounds like a promise about results.
+- **The intake form** was written for brows and lashes. Microneedling has its
+  own reasons not to go ahead (active breakouts or infection, pregnancy,
+  recent isotretinoin, blood thinners, a tendency to keloid scarring), and the
+  form doesn't ask about them yet.
 
 ## Smaller things
 
