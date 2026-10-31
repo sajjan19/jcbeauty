@@ -522,10 +522,10 @@ export const home = {
 export const about = {
   headline: "Hi, I'm Japman.",
   paragraphs: [
-    "I'm a brow and lash artist working from a private studio in Vancouver, specialising in brow lamination, sculpting, tinting and Korean lash lifts.",
-    "Every appointment starts with mapping your brows to your features, so the shape we land on suits your face rather than a template.",
+    "I'm an esthetician working from a private studio in Vancouver, specialising in brow lamination, sculpting, tinting, Korean lash lifts, microneedling and nano infusion.",
+    "Every brow appointment starts with mapping your brows to your features, so the shape we land on suits your face rather than a template.",
     "I keep the studio small and book by appointment only, so you have my full attention from consultation to aftercare.",
-    "Outside the studio, I love technology and travelling. Discovering new tools at home and new beauty traditions abroad keeps inspiring the way I work.",
+    "Outside the studio, I love all things beauty, from makeup and hair to skin, and I care just as much about health and fitness. I love cooking, long walks, being out in nature and travelling.",
   ],
   /**
    * Put a portrait in public/about/ and set the path, e.g. "/about/japman.jpg".
