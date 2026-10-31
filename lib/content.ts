@@ -401,9 +401,20 @@ export const gallery: GalleryItem[] = [
     },
   },
   {
-    src: "/gallery/placeholder-2.svg",
-    alt: "Placeholder artwork for a lamination and tint before and after",
+    src: "/gallery/brow-lamination-tint-after.jpg",
+    alt: "A client's brows after lamination and tint, darker, fuller and brushed into a lifted shape",
     caption: "Brow Lamination + Tint",
+    pair: {
+      aspect: 580 / 440,
+      before: {
+        src: "/gallery/brow-lamination-tint-before.jpg",
+        alt: "A client's natural brows before lamination and tint, light and sparse",
+      },
+      after: {
+        src: "/gallery/brow-lamination-tint-after.jpg",
+        alt: "The same client's brows after lamination and tint, darker, fuller and brushed into a lifted shape",
+      },
+    },
   },
   {
     src: "/gallery/placeholder-6.svg",
