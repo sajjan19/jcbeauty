@@ -359,9 +359,23 @@ export const gallery: GalleryItem[] = [
     },
   },
   {
-    src: "/gallery/placeholder-1.svg",
-    alt: "Placeholder artwork for a brow lamination before and after",
+    src: "/gallery/brow-lamination-after.jpg",
+    alt: "A client's brow after lamination, brushed up, glossy and set in a lifted shape",
     caption: "Brow Lamination",
+    pair: {
+      // The two shots were taken at different distances with her head
+      // slightly turned, so the after is warped onto the before and both are
+      // cropped to the brow, eye and nose bridge, which is what lines up.
+      aspect: 10 / 7,
+      before: {
+        src: "/gallery/brow-lamination-before.jpg",
+        alt: "A client's natural brow before lamination, softer and growing in different directions",
+      },
+      after: {
+        src: "/gallery/brow-lamination-after.jpg",
+        alt: "The same client's brow after lamination, brushed up, glossy and set in a lifted shape",
+      },
+    },
   },
   {
     src: "/gallery/placeholder-2.svg",
