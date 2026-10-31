@@ -165,7 +165,7 @@ export function IntakeForm({ service }: { service: Service }) {
       <section className={styles.block}>
         <h2 className={styles.blockTitle}>Signature</h2>
         <p className={styles.blurb}>
-          Typing your full name below counts as your signature, and records
+          Typing your full name below counts as your signature and records
           that you agreed to the above on {today}.
         </p>
         <label className="field">

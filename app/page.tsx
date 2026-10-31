@@ -1,17 +1,26 @@
 import Image from "next/image";
 import Link from "next/link";
-import { business, gallery, home, services } from "@/lib/content";
+import {
+  business,
+  gallery,
+  home,
+  serviceCategories,
+  services,
+} from "@/lib/content";
 import { formatDuration } from "@/lib/time";
 import { LogoLockup } from "@/components/logo";
 import { GalleryGrid } from "@/components/gallery-grid";
 import styles from "./page.module.css";
 
 export default function HomePage() {
-  const featured = services.filter((s) => s.popular);
-  const showcase = [...featured, ...services.filter((s) => !s.popular)].slice(
-    0,
-    3,
-  );
+  // One card per kind of service, so the home page shows the range: the
+  // most booked in each category if one is flagged, otherwise the first.
+  const showcase = serviceCategories
+    .map((category) => {
+      const inCategory = services.filter((s) => s.category === category.id);
+      return inCategory.find((s) => s.popular) ?? inCategory[0];
+    })
+    .filter(Boolean);
   const fromPrice = Math.min(...services.map((s) => s.price));
 
   return (
@@ -23,7 +32,7 @@ export default function HomePage() {
             <div className={styles.heroCopy}>
               <p className="eyebrow">{business.tagline}</p>
               <h1 className={styles.heroTitle}>
-                Brows that suit <em>you</em>.
+                Beauty that suits <em>you</em>.
               </h1>
               <p className={`lede ${styles.heroLede}`}>{business.intro}</p>
 
@@ -42,8 +51,8 @@ export default function HomePage() {
                   <span className={styles.metaLabel}>Services from</span>
                 </div>
                 <div className={styles.metaItem}>
-                  <span className={styles.metaValue}>6 to 8</span>
-                  <span className={styles.metaLabel}>Weeks of results</span>
+                  <span className={styles.metaValue}>{services.length}</span>
+                  <span className={styles.metaLabel}>Treatments</span>
                 </div>
                 <div className={styles.metaItem}>
                   <span className={styles.metaValue}>{business.city}</span>
@@ -76,7 +85,7 @@ export default function HomePage() {
           <div className={styles.sectionHead}>
             <div className={styles.sectionHeadText}>
               <p className="eyebrow">Services</p>
-              <h2>Shaped, laminated, tinted.</h2>
+              <h2>Brows, lashes &amp; skin.</h2>
             </div>
             <Link href="/services" className="btn btn-outline btn-sm">
               All Services
@@ -123,32 +132,32 @@ export default function HomePage() {
               <span className={styles.stepNumber}>01</span>
               <h3 className={styles.stepTitle}>Consultation</h3>
               <p className={styles.stepBody}>
-                We talk through what you want and what your natural brow can
-                hold, so there are no surprises later.
+                We talk through what you want and what your brows, lashes or
+                skin can take, so there are no surprises later.
               </p>
             </div>
             <div>
               <span className={styles.stepNumber}>02</span>
-              <h3 className={styles.stepTitle}>Mapping</h3>
+              <h3 className={styles.stepTitle}>A plan for you</h3>
               <p className={styles.stepBody}>
-                Your brows are measured and mapped to your facial proportions
-                before a single hair is touched.
+                Brows are mapped to your facial proportions and skin is
+                assessed before anything begins.
               </p>
             </div>
             <div>
               <span className={styles.stepNumber}>03</span>
               <h3 className={styles.stepTitle}>The service</h3>
               <p className={styles.stepBody}>
-                Lamination, sculpting, tinting or a lash lift. Whichever you booked, it&apos;s
-                done unhurried in a private studio.
+                Brows, lashes or skin. Whichever you booked, it&apos;s done
+                unhurried in a private studio.
               </p>
             </div>
             <div>
               <span className={styles.stepNumber}>04</span>
               <h3 className={styles.stepTitle}>Aftercare</h3>
               <p className={styles.stepBody}>
-                You leave knowing exactly how to look after them, so the results
-                last as long as they should.
+                You leave knowing exactly how to look after your results, so
+                they last as long as they should.
               </p>
             </div>
           </div>

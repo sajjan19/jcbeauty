@@ -7,7 +7,7 @@ import { BookingFlow } from "./booking-flow";
 export const metadata: Metadata = {
   title: "Book an Appointment",
   description:
-    "Choose your brow service, pick a time that works and request your appointment.",
+    "Choose your brow, lash or skin service, pick a time that works and request your appointment.",
 };
 
 export default async function BookPage({

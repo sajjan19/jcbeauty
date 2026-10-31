@@ -235,7 +235,7 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
           <section className={styles.section}>
             <p className={styles.sectionHint}>
               Appointments that were called off. The time they held is free
-              again, and reinstating one puts it back as unconfirmed.
+              again and reinstating one puts it back as unconfirmed.
             </p>
             {cancelled.length === 0 ? (
               <p className="muted">Nothing cancelled.</p>
@@ -271,7 +271,7 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
           <section className={styles.section}>
             <p className={styles.sectionHint}>
               Your address book. Anyone who books through the website is added
-              automatically, and you can save someone here before they book.
+              automatically and you can save someone here before they book.
               Removing a contact keeps their past appointments.
             </p>
 

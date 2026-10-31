@@ -40,7 +40,7 @@ export const business = {
   instagram: "jcbeauty.van",
   instagramUrl: "https://www.instagram.com/jcbeauty.van/",
 
-  email: "jap_chera@hotmail.com",
+  email: "japman_chera@hotmail.com",
   /** Display format. The tel: link is derived from the digits. */
   phone: "(604) 396-3072" as string | null,
 };
@@ -76,9 +76,19 @@ export function mapEmbedUrl(): string {
  *
  * `price` is in whole dollars.
  */
+export type ServiceCategory = "brows" | "lashes" | "skin";
+
+/** In the order they're listed on the site. */
+export const serviceCategories: { id: ServiceCategory; label: string }[] = [
+  { id: "brows", label: "Brows" },
+  { id: "lashes", label: "Lashes" },
+  { id: "skin", label: "Skin" },
+];
+
 export type Service = {
   slug: string;
   name: string;
+  category: ServiceCategory;
   price: number;
   durationMinutes: number;
   summary: string;
@@ -95,6 +105,7 @@ export const services: Service[] = [
   {
     slug: "brow-sculpt",
     name: "Brow Sculpt",
+    category: "brows",
     price: 15,
     durationMinutes: 30,
     summary:
@@ -108,6 +119,7 @@ export const services: Service[] = [
   {
     slug: "brow-sculpt-tint",
     name: "Brow Sculpt + Tint",
+    category: "brows",
     price: 30,
     durationMinutes: 45,
     summary:
@@ -121,6 +133,7 @@ export const services: Service[] = [
   {
     slug: "brow-lamination",
     name: "Brow Lamination",
+    category: "brows",
     price: 70,
     durationMinutes: 90,
     summary:
@@ -135,6 +148,7 @@ export const services: Service[] = [
   {
     slug: "brow-lamination-tint",
     name: "Brow Lamination + Tint",
+    category: "brows",
     price: 80,
     durationMinutes: 105,
     summary:
@@ -149,6 +163,7 @@ export const services: Service[] = [
   {
     slug: "korean-lash-lift",
     name: "Korean Lash Lift",
+    category: "lashes",
     price: 70,
     durationMinutes: 90,
     summary:
@@ -163,6 +178,7 @@ export const services: Service[] = [
   {
     slug: "korean-lash-lift-tint",
     name: "Korean Lash Lift + Tint",
+    category: "lashes",
     price: 80,
     durationMinutes: 105,
     summary:
@@ -181,6 +197,7 @@ export const services: Service[] = [
   {
     slug: "microneedling-pdrn",
     name: "Microneedling with PDRN",
+    category: "skin",
     price: 150,
     durationMinutes: 90,
     summary:
@@ -194,6 +211,7 @@ export const services: Service[] = [
   {
     slug: "microneedling-exosomes",
     name: "Microneedling with Exosomes",
+    category: "skin",
     price: 200,
     durationMinutes: 90,
     summary:
@@ -207,6 +225,7 @@ export const services: Service[] = [
   {
     slug: "nano-infusion-pdrn",
     name: "Nano Infusion with PDRN",
+    category: "skin",
     price: 150,
     durationMinutes: 90,
     summary:
@@ -220,6 +239,7 @@ export const services: Service[] = [
   {
     slug: "nano-infusion-exosomes",
     name: "Nano Infusion with Exosomes",
+    category: "skin",
     price: 200,
     durationMinutes: 90,
     summary:
@@ -290,24 +310,78 @@ export const scheduling = {
 };
 
 /**
- * Shown on the info page and at the last booking step.
- * Taken from her PRE-APPT Instagram highlight.
+ * Before and aftercare, per kind of service. Shown on the info page, and the
+ * list for whatever someone is booking shows at the last booking step.
+ *
+ * The brow lists are from her PRE-APPT and AFTERCARE Instagram highlights.
+ * TODO: the lash and skin lists are my wording, from standard practice.
+ * Japman should check them against how she works.
  */
-export const preAppointment = [
-  "Do NOT tweeze or trim your brows 3 to 4 weeks prior to your appointment.",
-  "Avoid retinol, AHAs and exfoliants for at least 2 weeks prior to your appointment.",
-  "You must be off Accutane for 6+ months.",
-  "Avoid spray tans for 48 hours before and after your appointment.",
-  "You must not be pregnant or breastfeeding.",
+export type CareGuide = {
+  category: ServiceCategory;
+  before: string[];
+  after: string[];
+};
+
+export const careGuides: CareGuide[] = [
+  {
+    category: "brows",
+    before: [
+      "Do NOT tweeze or trim your brows 3 to 4 weeks prior to your appointment.",
+      "Avoid retinol, AHAs and exfoliants for at least 2 weeks prior to your appointment.",
+      "You must be off Accutane for 6+ months.",
+      "Avoid spray tans for 48 hours before and after your appointment.",
+      "You must not be pregnant or breastfeeding.",
+    ],
+    after: [
+      "Keep your brows dry for 24 hours.",
+      "Avoid steam, saunas and heavy workouts for 24 hours.",
+      "Apply castor oil every night and brush your brows.",
+      "Please be gentle with your brows!",
+    ],
+  },
+  {
+    category: "lashes",
+    before: [
+      "Come without mascara or eye makeup.",
+      "Contact lenses need to come out, so bring your case or wear glasses.",
+      "Avoid a lash lift or perm in the 6 weeks before your appointment.",
+      "You must not be pregnant or breastfeeding.",
+    ],
+    after: [
+      "Keep your lashes dry for 24 hours.",
+      "No mascara for 24 hours.",
+      "Avoid steam, saunas and heavy workouts for 24 hours.",
+      "Try not to sleep face down for the first night.",
+      "Brush your lashes upward each morning.",
+    ],
+  },
+  {
+    category: "skin",
+    before: [
+      "Avoid retinol, exfoliating acids and scrubs for 10 days prior to your appointment.",
+      "No Botox, fillers, peels or laser in the 2 weeks before.",
+      "Stay out of the sun and avoid tanning, including self tan, for 2 weeks before.",
+      "If you have a cold sore or breakout on your face, message me to reschedule.",
+      "You must be off Accutane for 6+ months.",
+      "You must not be pregnant or breastfeeding.",
+    ],
+    after: [
+      "No makeup for 24 hours.",
+      "Avoid sweating, saunas and heavy workouts for 48 hours.",
+      "Wear SPF every day and stay out of direct sun for at least a week.",
+      "Skip retinol, acids and exfoliants for 5 to 7 days.",
+      "Use a gentle cleanser and keep your skin hydrated.",
+      "Let any flaking come away on its own, no picking.",
+    ],
+  },
 ];
 
-/** Shown on the info page. Taken from her AFTERCARE Instagram highlight. */
-export const aftercare = [
-  "Keep your brows dry for 24 hours.",
-  "Avoid steam, saunas and heavy workouts for 24 hours.",
-  "Apply castor oil every night and brush your brows.",
-  "Please be gentle with your brows!",
-];
+/** The care guide for whichever kind of service this is. */
+export function careGuideFor(slug: string): CareGuide | undefined {
+  const service = getService(slug);
+  return service && careGuides.find((g) => g.category === service.category);
+}
 
 /**
  * The deposit amount, surfaced in the booking flow as well as the info page.
@@ -403,6 +477,21 @@ export const gallery: GalleryItem[] = [
         alt: "The same client's brow after shaping, with a clean arch and a defined edge",
       },
     },
+  },  {
+    src: "/gallery/korean-lash-lift-v4-after.jpg",
+    alt: "A client's lashes after a Korean lash lift, curled upward and separated",
+    caption: "Korean Lash Lift",
+    pair: {
+      aspect: 560 / 440,
+      before: {
+        src: "/gallery/korean-lash-lift-v4-before.jpg",
+        alt: "A client's natural lashes before a Korean lash lift, straight and pointing down",
+      },
+      after: {
+        src: "/gallery/korean-lash-lift-v4-after.jpg",
+        alt: "The same client's lashes after a Korean lash lift, curled upward and separated",
+      },
+    },
   },
   {
     src: "/gallery/brow-sculpt-tint-after.jpg",
@@ -471,22 +560,7 @@ export const gallery: GalleryItem[] = [
       },
     },
   },
-  {
-    src: "/gallery/korean-lash-lift-v4-after.jpg",
-    alt: "A client's lashes after a Korean lash lift, curled upward and separated",
-    caption: "Korean Lash Lift",
-    pair: {
-      aspect: 560 / 440,
-      before: {
-        src: "/gallery/korean-lash-lift-v4-before.jpg",
-        alt: "A client's natural lashes before a Korean lash lift, straight and pointing down",
-      },
-      after: {
-        src: "/gallery/korean-lash-lift-v4-after.jpg",
-        alt: "The same client's lashes after a Korean lash lift, curled upward and separated",
-      },
-    },
-  },
+
 ];
 
 /** Short answers shown on the info page. */
@@ -548,30 +622,34 @@ export const about = {
 export const faqs = [
   {
     q: "How long does brow lamination last?",
-    a: "Usually 6 to 8 weeks, depending on your hair type and how well you follow the aftercare. Most clients rebook around the 8 week mark.",
+    a: "Usually 6 to 8 weeks, depending on your hair type and how well you follow the aftercare. Most clients rebook around the 8 week mark. A lash lift lasts about as long.",
   },
   {
     q: "Does it hurt?",
-    a: "Lamination and tinting are painless. Threading is a quick pinch for some people, though it's over in minutes and most find it gentler than waxing.",
+    a: "Lamination, tinting and lash lifts are painless. Threading is a quick pinch for some people, though it's over in minutes. Microneedling feels like a light prickling. Nano infusion is gentler still.",
   },
   {
     q: "Can I wear makeup afterwards?",
-    a: "Keep the brow area dry and product-free for the first 24 hours. After that, you're free to do your usual routine, though most clients find they need much less brow product.",
+    a: "Give the treated area 24 hours first, so no brow product after a brow service, no mascara after a lash lift and no makeup after a skin treatment. After that you're free to go back to your usual routine.",
   },
   {
     q: "Which service should I pick?",
-    a: "If you just want a clean shape, start with the Brow Sculpt. Add a tint if you'd like a little more depth. For the lifted, fuller look, Brow Lamination is the one, and adding a tint gives the most definition. Message me if you're not sure and I'll help you choose.",
+    a: "For brows, start with the Brow Sculpt if you just want a clean shape. For the lifted, fuller look, Brow Lamination is the one and adding a tint gives the most definition. For lashes, the Korean Lash Lift curls your own lashes. For skin, nano infusion is the gentler, needle-free option while microneedling works deeper. Message me if you're not sure and I'll help you choose.",
+  },
+  {
+    q: "How many skin treatments will I need?",
+    a: "It depends on your skin and what you're after. Many people book a short course a few weeks apart. We'll talk it through at your consultation.",
   },
   {
     q: "Is a deposit required?",
     a: `Yes, a non-refundable $${deposit.amount} deposit secures your appointment, sent by e-transfer to ${deposit.etransferEmail}.`,
   },
   {
-    q: "Do you do men's brows?",
-    a: "Absolutely. Men's shaping and lamination are a regular part of what I do, with a focus on keeping things natural.",
+    q: "Do you see men?",
+    a: "Absolutely. Men's brows, lash lifts and skin treatments are a regular part of what I do, with a focus on keeping things natural.",
   },
   {
-    q: "What if I've never had my brows done before?",
-    a: "That's very common. We'll talk through what you want at the start of the appointment and map your shape together before anything begins.",
+    q: "What if I've never had a treatment like this before?",
+    a: "That's very common. We'll talk through what you want at the start of the appointment and plan it together before anything begins.",
   },
 ];

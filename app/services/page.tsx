@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { comingSoon, deposit, services } from "@/lib/content";
+import {
+  comingSoon,
+  deposit,
+  serviceCategories,
+  services,
+} from "@/lib/content";
 import { formatDuration } from "@/lib/time";
 import { PageHeader } from "@/components/page-header";
 import styles from "./page.module.css";
@@ -17,7 +22,7 @@ export default function ServicesPage() {
       <PageHeader
         eyebrow="Services"
         title="Services & price list."
-        lede="Every appointment starts with a consultation, and brows are mapped to your facial proportions. Not sure which to pick? Message me and I'll help you choose."
+        lede="Brows, lashes and skin. Every appointment starts with a consultation. Not sure which to pick? Message me and I'll help you choose."
       >
         <Link href="/book" className="btn">
           Book an Appointment
@@ -27,43 +32,57 @@ export default function ServicesPage() {
       <section className="section-sm">
         <div className="container">
           <div className={styles.list}>
-            {services.map((service) => (
-              <article
-                key={service.slug}
-                id={service.slug}
-                className={`${styles.row} ${
-                  service.popular ? styles.rowPopular : ""
-                }`}
+            {serviceCategories.map((category) => (
+              <section
+                key={category.id}
+                id={category.id}
+                className={styles.group}
+                aria-labelledby={`${category.id}-title`}
               >
-                <div>
-                  <div className={styles.head}>
-                    <h2 className={styles.name}>{service.name}</h2>
-                    {service.popular && (
-                      <span className={styles.flag}>Most Booked</span>
-                    )}
-                  </div>
-                  <p className={styles.summary}>{service.summary}</p>
-                  <ul className={styles.details}>
-                    {service.details.map((detail) => (
-                      <li key={detail}>{detail}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className={styles.aside}>
-                  <span className={styles.price}>${service.price}</span>
-                  <span className={styles.duration}>
-                    {formatDuration(service.durationMinutes)}
-                  </span>
-                  <Link
-                    href={`/book?service=${service.slug}`}
-                    className={`btn btn-outline btn-sm ${styles.bookLink}`}
-                    aria-label={`Book ${service.name}`}
+                <h2 id={`${category.id}-title`} className={styles.groupTitle}>
+                  {category.label}
+                </h2>
+                {services
+                  .filter((service) => service.category === category.id)
+                  .map((service) => (
+                  <article
+                    key={service.slug}
+                    id={service.slug}
+                    className={`${styles.row} ${
+                      service.popular ? styles.rowPopular : ""
+                    }`}
                   >
-                    Book
-                  </Link>
-                </div>
-              </article>
+                    <div>
+                      <div className={styles.head}>
+                        <h3 className={styles.name}>{service.name}</h3>
+                        {service.popular && (
+                          <span className={styles.flag}>Most Booked</span>
+                        )}
+                      </div>
+                      <p className={styles.summary}>{service.summary}</p>
+                      <ul className={styles.details}>
+                        {service.details.map((detail) => (
+                          <li key={detail}>{detail}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className={styles.aside}>
+                      <span className={styles.price}>${service.price}</span>
+                      <span className={styles.duration}>
+                        {formatDuration(service.durationMinutes)}
+                      </span>
+                      <Link
+                        href={`/book?service=${service.slug}`}
+                        className={`btn btn-outline btn-sm ${styles.bookLink}`}
+                        aria-label={`Book ${service.name}`}
+                      >
+                        Book
+                      </Link>
+                    </div>
+                  </article>
+                ))}
+              </section>
             ))}
 
             {/* No price, no length, nothing to click: it isn't bookable yet. */}

@@ -9,7 +9,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "Intake Form",
   description:
-    "The health, consent and aftercare form signed before a brow or lash appointment at JC Beauty.",
+    "The health, consent and aftercare form signed before an appointment at JC Beauty.",
   robots: { index: false, follow: false },
 };
 

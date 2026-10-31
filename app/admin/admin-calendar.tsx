@@ -665,7 +665,7 @@ function BookingDialog({
               <EditBookingFields booking={booking} />
               <p className={styles.createHint}>
                 Keeps the same service. Give a client more or less time than
-                usual by changing the length, and the finish time follows.
+                usual by changing the length and the finish time follows.
               </p>
               <button type="submit" className="btn btn-sm" disabled={pending}>
                 {pending ? "Saving…" : "Save Changes"}

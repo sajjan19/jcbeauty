@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   deposit,
   policies,
-  preAppointment,
+  careGuideFor,
   services,
   type Service,
 } from "@/lib/content";
@@ -510,7 +510,9 @@ export function BookingFlow({
               <div className={styles.policyBox}>
                 <p className={styles.policyHead}>Before you confirm</p>
                 <ul className={styles.policyList}>
-                  {preAppointment.slice(0, 3).map((item) => (
+                  {(service ? careGuideFor(service.slug)?.before ?? [] : [])
+                    .slice(0, 3)
+                    .map((item) => (
                     <li key={item}>{item}</li>
                   ))}
                   <li>

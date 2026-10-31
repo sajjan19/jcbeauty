@@ -172,7 +172,7 @@ function EditBookingDialog({
 
             <p className={styles.blockHint}>
               Keeps the same service. Give a client more or less time than
-              usual by changing the length, and the finish time follows.
+              usual by changing the length and the finish time follows.
             </p>
 
             <div className={styles.dialogFoot}>

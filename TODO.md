@@ -77,8 +77,11 @@ is not legal advice.
 ## Skin treatments
 
 Microneedling and nano infusion (each with PDRN or exosomes) are bookable,
-with Japman's prices and lengths. Two things are still mine rather than hers:
+with Japman's prices and lengths. Some of the wording is still mine rather than hers:
 
+- **The lash and skin before and aftercare lists** on the info page. The
+  brow lists came from her Instagram highlights; the lash and skin ones are
+  mine, from standard practice.
 - **The descriptions** on the services page. She should read them,
   particularly anything that sounds like a promise about results.
 - **The skin questions on the intake form** (healing, scarring, recent
@@ -96,6 +99,6 @@ with Japman's prices and lengths. Two things are still mine rather than hers:
 - **The certifications on the About page are lorem ipsum.**
 - **The hero photograph is AI generated.**
 - **No sitemap, robots file or structured data**, which is most of what would
-  help her show up in local searches for brows in Vancouver.
+  help her show up in local searches for an esthetician in Vancouver.
 - **Nothing is tested.** The scheduling rules — overlaps, buffers, blocked
   time, timezones — are pure functions and would be straightforward to cover.

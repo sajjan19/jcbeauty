@@ -5,6 +5,13 @@
   align-items: start;
 }
 
+.guides {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  scroll-margin-top: 100px;
+}
+
 .block {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -16,6 +23,11 @@
 .blockTitle {
   font-size: 1.75rem;
   margin: 0 0 var(--sp-5);
+}
+
+.guideTitle {
+  font-size: 1.35rem;
+  margin: var(--sp-2) 0 var(--sp-4);
 }
 
 .checkList {

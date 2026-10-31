@@ -173,3 +173,19 @@
     width: auto;
   }
 }
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+  scroll-margin-top: 100px;
+}
+
+.group + .group {
+  margin-top: var(--sp-6);
+}
+
+.groupTitle {
+  font-size: 1.75rem;
+  margin: 0;
+}

@@ -18,7 +18,7 @@ export default function AboutPage() {
       <PageHeader
         eyebrow="About"
         title={`Meet ${business.artist}.`}
-        lede="The person behind the brows and what to expect when you're in her chair."
+        lede="The person behind JC Beauty and what to expect when you're in her chair."
       />
 
       <section className="section-sm">

@@ -7,7 +7,7 @@ import { GalleryGrid } from "@/components/gallery-grid";
 export const metadata: Metadata = {
   title: "Gallery",
   description:
-    "Before and after brow lamination, shaping and tinting work by Japman Chera in Vancouver.",
+    "Before and after brow, lash and skin work by Japman Chera in Vancouver.",
 };
 
 export default function GalleryPage() {
@@ -16,7 +16,7 @@ export default function GalleryPage() {
       <PageHeader
         eyebrow="Recent work"
         title="Before & after."
-        lede="A look at recent appointments. Every set of brows is mapped to the face it's on, so no two results are identical."
+        lede="A look at recent appointments. Every result is tailored to the person it's on, so no two are identical."
       >
         <Link href="/book" className="btn">
           Book an Appointment

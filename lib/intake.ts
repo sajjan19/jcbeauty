@@ -128,7 +128,7 @@ export const intakeSections: IntakeSection[] = [
     id: "skin-prep",
     title: "Your brows in the last few weeks",
     blurb:
-      "Threading lifts the top layer of skin with it, and lamination is a chemical treatment. These make either riskier, and are the usual reason an appointment gets rescheduled.",
+      "Threading lifts the top layer of skin with it and lamination is a chemical treatment. These make either riskier and are the usual reason an appointment gets rescheduled.",
     appliesTo: BROWS,
     questions: [
       {
@@ -189,7 +189,7 @@ export const intakeSections: IntakeSection[] = [
     id: "lashes",
     title: "Your eyes",
     blurb:
-      "Your eyes stay closed throughout a lash lift, and the solution sits close to the lash line.",
+      "Your eyes stay closed throughout a lash lift and the solution sits close to the lash line.",
     appliesTo: LASH,
     questions: [
       {
@@ -336,23 +336,23 @@ export const intakeConsents: IntakeConsent[] = [
   {
     id: "accurate",
     label:
-      "Everything I've written here is accurate and complete, and I'll tell Japman if my health or medication changes before my appointment.",
+      "Everything I've written here is accurate and complete and I'll tell Japman if my health or medication changes before my appointment.",
   },
   {
     id: "results-vary",
     label:
-      "I understand results vary with my own hair and skin, and that no particular result is guaranteed.",
+      "I understand results vary with my own hair and skin and that no particular result is guaranteed.",
   },
   {
     id: "brow-change",
     label:
-      "I understand my brows will be reshaped, and that any tint can stain the skin around them for a few days.",
+      "I understand my brows will be reshaped and that any tint can stain the skin around them for a few days.",
     appliesTo: BROWS,
   },
   {
     id: "risks",
     label:
-      "I understand there is a small risk of redness, irritation or an allergic reaction, and that I should contact a doctor if I'm worried after my appointment.",
+      "I understand there is a small risk of redness, irritation or an allergic reaction and that I should contact a doctor if I'm worried after my appointment.",
   },
   {
     id: "skin-risks",
@@ -363,13 +363,13 @@ export const intakeConsents: IntakeConsent[] = [
   {
     id: "not-medical",
     label:
-      "I understand this is a cosmetic treatment, not medical care, and that Japman may ask me to check with my doctor first.",
+      "I understand this is a cosmetic treatment, not medical care and that Japman may ask me to check with my doctor first.",
     appliesTo: SKIN,
   },
   {
     id: "stop",
     label:
-      "I'll speak up about any pain or discomfort. I can ask to stop at any time, and Japman may pause or not finish the service if a reaction or safety concern comes up.",
+      "I'll speak up about any pain or discomfort. I can ask to stop at any time and Japman may pause or not finish the service if a reaction or safety concern comes up.",
   },
   {
     id: "report-reaction",
@@ -379,7 +379,7 @@ export const intakeConsents: IntakeConsent[] = [
   {
     id: "aftercare",
     label:
-      "I've read the aftercare and understand that following it is my responsibility, and that not following it can affect how my results last.",
+      "I've read the aftercare and understand that following it is my responsibility and that not following it can affect how my results last.",
   },
   {
     id: "policies",
