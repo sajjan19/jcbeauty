@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Logo } from "./logo";
 import { business } from "@/lib/content";
 import styles from "./site-header.module.css";
@@ -23,8 +23,36 @@ export function SiteHeader() {
   // pathname) keeps the panel from lingering over the incoming page.
   const close = () => setOpen(false);
 
+  /*
+   * While the menu covers the screen, the page behind it shouldn't scroll.
+   * Locked on <html> as well as <body>: iOS Safari keeps scrolling a page
+   * whose body alone is set to hidden. Escape closes it, as a menu should.
+   */
+  useEffect(() => {
+    if (!open) return;
+
+    const root = document.documentElement;
+    const previous = {
+      html: root.style.overflow,
+      body: document.body.style.overflow,
+    };
+    root.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+
+    return () => {
+      root.style.overflow = previous.html;
+      document.body.style.overflow = previous.body;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
   return (
-    <header className={styles.header}>
+    <header className={`${styles.header} ${open ? styles.headerOpen : ""}`}>
       <div className={`container ${styles.inner}`}>
         <Link href="/" className={styles.brand} onClick={close}>
           <Logo size={44} />
