@@ -385,6 +385,22 @@ export const gallery: GalleryItem[] = [
     },
   },
   {
+    src: "/gallery/mens-brow-sculpt-v2-after.jpg",
+    alt: "A client's brow after a men's sculpt, cleaned up and defined while staying natural",
+    caption: "Men's Brow Sculpt",
+    pair: {
+      aspect: 870 / 600,
+      before: {
+        src: "/gallery/mens-brow-sculpt-v2-before.jpg",
+        alt: "A client's brow before a men's sculpt, full with stray hairs between and around the brows",
+      },
+      after: {
+        src: "/gallery/mens-brow-sculpt-v2-after.jpg",
+        alt: "The same client's brow after a men's sculpt, cleaned up and defined while staying natural",
+      },
+    },
+  },
+  {
     src: "/gallery/brow-lamination-tint-close-after.jpg",
     alt: "A client's brows after lamination and tint, darker, fuller and brushed into a lifted shape",
     caption: "Brow Lamination + Tint",
